@@ -82,13 +82,12 @@
     <button class="zml-btn" type="submit">Wejdź</button>
     <div class="blad ukryty" id="blad"></div>
   </form>
-  <p class="podglad ukryty" id="podglad">Tryb podglądu: strona nie jest jeszcze połączona z bazą. Wpisz kod <b>DEMO-2026</b>.</p>
   <div class="autor">ZMIANOLOGICA · dr Marcin Żółtak</div>
 </main>
 <script>
 (async()=>{
   if(APM.kod()){ location.replace('akademia.html'); return; }
-  await APM.init(); if(APM.trybPodgladu()) APM.$('#podglad').classList.remove('ukryty');
+  await APM.init();
   const pole=APM.$('#kod');
   pole.addEventListener('input',e=>{let v=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8); if(v.length>4) v=v.slice(0,4)+'-'+v.slice(4); e.target.value=v;});
   APM.$('#form').addEventListener('submit',async e=>{
