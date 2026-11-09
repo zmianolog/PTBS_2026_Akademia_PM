@@ -1,8 +1,15 @@
 /* ===== Akademia Zarządzania Projektami PTBS — elementy wspólne wszystkich stron ===== */
 
-/* KONFIGURACJA BAZY: wklej konfigurację osobnego projektu Firebase Akademii.
-   Dopóki wartość to null, strona działa w trybie podglądu (kod DEMO-2026, zapis w przeglądarce). */
-const FIREBASE_CONFIG = null;
+/* KONFIGURACJA BAZY: projekt Firebase „apmptbs” (Firestore europe-central2).
+   Wartość null przełącza stronę w tryb podglądu (kod DEMO-2026, zapis w przeglądarce). */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDBcaUQnHhZjSTbSX7s9edw7IFNkI3gDoE",
+  authDomain: "apmptbs.firebaseapp.com",
+  projectId: "apmptbs",
+  storageBucket: "apmptbs.firebasestorage.app",
+  messagingSenderId: "239089861415",
+  appId: "1:239089861415:web:3ba42fa352854067d95f02"
+};
 
 /* MENU: jedna lista dla wszystkich stron. Nowa strona = nowa pozycja na tej liście. */
 const MENU = [

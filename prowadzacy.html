@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prowadzący — Akademia Zarządzania Projektami PTBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="wspolne.css">
+<script src="wspolne.js"></script>
+<meta name="robots" content="noindex">
+<style>
+.tab{width:100%;border-collapse:collapse;font-size:14px;margin-top:12px}
+.tab th,.tab td{border:1px solid var(--ramka);padding:6px 8px;text-align:center}
+.tab th{background:var(--jasny);color:var(--g)}
+.tab td.l{text-align:left;font-weight:700;color:var(--g);font-family:Consolas,monospace;letter-spacing:1px}
+.przewijana{overflow-x:auto}
+.pole{font:600 15px var(--font);padding:10px;border:2px solid var(--ramka);border-radius:8px;width:120px}
+.komunikat{margin-top:12px;padding:10px 12px;border-radius:8px;background:var(--jasny);font-size:14px}
+.komunikat.blad{background:#F8D7DA;color:var(--czerwien)}
+.nieakt{color:var(--tekst2);text-decoration:line-through}
+</style>
+</head>
+<body>
+<header class="naglowek"><div class="wewn"><span class="marka" id="marka"></span><span style="font-size:14px;font-weight:700;color:var(--g)">Panel prowadzącego</span></div></header>
+<main class="wrap">
+  <span class="nadtytul">Prowadzący</span>
+  <h1>Panel prowadzącego</h1>
+  <div id="wejscie">
+    <p class="lead">Zaloguj się kontem Google prowadzącego (marcin.zoltak@zmianologi.ca).</p>
+    <div class="przyciski"><button class="zml-btn" id="zaloguj">Zaloguj się kontem Google</button></div>
+    <div id="msgLog"></div>
+  </div>
+  <div id="panel" class="ukryty">
+    <p class="lead" id="kto"></p>
+    <section class="sekcja">
+      <h2>Kody uczestników</h2>
+      <p>Każdy kod to jedna osoba. Kod nieaktywny nie pozwala wejść na stronę ani zapisać samooceny.</p>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px">
+        <label>Liczba nowych kodów: <input class="pole" id="ile" type="number" min="1" max="50" value="20"></label>
+      </div>
+      <div class="przyciski">
+        <button class="zml-btn" id="generuj">Wygeneruj kody</button>
+        <button class="zml-btn" id="demo">Dodaj kod testowy DEMO-2026</button>
+        <button class="zml-btn" id="csvKody">Pobierz kody (CSV)</button>
+      </div>
+      <div id="msgKody"></div>
+      <div class="przewijana"><table class="tab" id="tabKody"></table></div>
+    </section>
+    <section class="sekcja">
+      <h2>Samoocena kompetencji — wyniki</h2>
+      <p>Skala od 1 do 4. P1 to samoocena na początku Akademii, P2 na zakończenie.</p>
+      <div class="przyciski">
+        <button class="zml-btn" id="odswiez">Odśwież wyniki</button>
+        <button class="zml-btn" id="csvWyniki">Pobierz wyniki (CSV)</button>
+      </div>
+      <div class="przewijana"><table class="tab" id="tabWyniki"></table></div>
+    </section>
+    <div class="przyciski" style="margin-top:30px"><button class="zml-btn" id="wyloguj">Wyloguj</button></div>
+  </div>
+</main>
+<script>
+const PROWADZACY='marcin.zoltak@zmianologi.ca';
+const ALF='ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+const $=APM.$;
+$('#marka').innerHTML=APM.znak()+'<span>Akademia<br><b>Zarządzania Projektami PTBS</b></span>';
+const msg=(id,t,blad)=>{ $(id).innerHTML=t?`<div class="komunikat${blad?' blad':''}">${t}</div>`:''; };
+const nowyKod=()=>{ const r=new Uint32Array(8); crypto.getRandomValues(r); const z=[...r].map(x=>ALF[x%ALF.length]).join(''); return z.slice(0,4)+'-'+z.slice(4); };
+const csv=(nazwa,wiersze)=>{ const t='﻿'+wiersze.map(w=>w.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(';')).join('\r\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([t],{type:'text/csv;charset=utf-8'})); a.download=nazwa; a.click(); };
+(async()=>{
+  const V='10.12.2';
+  const app=(await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`)).initializeApp(FIREBASE_CONFIG);
+  const au=await import(`https://www.gstatic.com/firebasejs/${V}/firebase-auth.js`);
+  const fs=await import(`https://www.gstatic.com/firebasejs/${V}/firebase-firestore.js`);
+  const auth=au.getAuth(app), db=fs.getFirestore(app);
+  let KODY=[], WYN=[];
+  $('#zaloguj').addEventListener('click',async()=>{ msg('#msgLog','');
+    try{ await au.signInWithPopup(auth,new au.GoogleAuthProvider()); }catch(e){ msg('#msgLog','Logowanie nie powiodło się: '+e.code,true); } });
+  $('#wyloguj').addEventListener('click',()=>au.signOut(auth));
+  au.onAuthStateChanged(auth,u=>{
+    const ok=u&&u.email===PROWADZACY;
+    $('#wejscie').classList.toggle('ukryty',!!ok); $('#panel').classList.toggle('ukryty',!ok);
+    if(u&&!u.isAnonymous&&!ok){ msg('#msgLog','To konto ('+u.email+') nie ma uprawnień prowadzącego.',true); au.signOut(auth); }
+    if(ok){ $('#kto').textContent='Zalogowany: '+u.email; wczytajKody(); wczytajWyniki(); }
+  });
+  async function wczytajKody(){
+    const s=await fs.getDocs(fs.collection(db,'kody'));
+    KODY=s.docs.map(d=>({kod:d.id,...d.data()})).sort((a,b)=>(a.utworzono||'').localeCompare(b.utworzono||'')||a.kod.localeCompare(b.kod));
+    $('#tabKody').innerHTML='<tr><th>Lp.</th><th>Kod</th><th>Rola</th><th>Grupa</th><th>Aktywny</th><th>Zmień</th></tr>'+
+      KODY.map((k,i)=>`<tr><td>${i+1}</td><td class="l ${k.aktywny?'':'nieakt'}">${k.kod}</td><td>${k.rola||''}</td><td>${k.grupa||''}</td><td>${k.aktywny?'tak':'nie'}</td>
+        <td><button class="link" data-k="${k.kod}">${k.aktywny?'Wyłącz':'Włącz'}</button></td></tr>`).join('');
+    $('#tabKody').querySelectorAll('[data-k]').forEach(b=>b.addEventListener('click',async()=>{
+      const k=KODY.find(x=>x.kod===b.dataset.k); await fs.updateDoc(fs.doc(db,'kody',k.kod),{aktywny:!k.aktywny}); wczytajKody(); }));
+  }
+  $('#generuj').addEventListener('click',async()=>{
+    const n=Math.min(50,Math.max(1,+$('#ile').value||20)), ist=new Set(KODY.map(k=>k.kod)), b=fs.writeBatch(db), t=new Date().toISOString();
+    let dod=0; while(dod<n){ const k=nowyKod(); if(ist.has(k)) continue; ist.add(k); b.set(fs.doc(db,'kody',k),{aktywny:true,rola:'uczestnik',grupa:'',utworzono:t}); dod++; }
+    try{ await b.commit(); msg('#msgKody',`Dodano ${n} nowych kodów.`); wczytajKody(); }catch(e){ msg('#msgKody','Zapis nie powiódł się: '+e.code,true); }
+  });
+  $('#demo').addEventListener('click',async()=>{
+    try{ await fs.setDoc(fs.doc(db,'kody','DEMO-2026'),{aktywny:true,rola:'test',grupa:'',utworzono:new Date().toISOString()}); msg('#msgKody','Kod testowy DEMO-2026 jest aktywny. Wyłącz go, gdy skończysz testy.'); wczytajKody(); }
+    catch(e){ msg('#msgKody','Zapis nie powiódł się: '+e.code,true); }
+  });
+  $('#csvKody').addEventListener('click',()=>csv('PTBS_2026_Akademia_PM_Kody.csv',[['Lp.','Kod','Rola','Grupa','Aktywny'],...KODY.map((k,i)=>[i+1,k.kod,k.rola,k.grupa,k.aktywny?'tak':'nie'])]));
+  async function wczytajWyniki(){
+    const s=await fs.getDocs(fs.collection(db,'samoocena'));
+    WYN=s.docs.map(d=>d.data()).sort((a,b)=>(a.kod+a.pomiar).localeCompare(b.kod+b.pomiar));
+    const K=KOMPETENCJE.map(k=>k.k);
+    $('#tabWyniki').innerHTML='<tr><th>Kod</th><th>Pomiar</th><th>Status</th>'+K.map(k=>`<th title="${KOMPETENCJE.find(x=>x.k===k).n}">${k}</th>`).join('')+'<th>Zapisano</th></tr>'+
+      (WYN.length?WYN.map(w=>`<tr><td class="l">${w.kod}</td><td>${w.pomiar}</td><td>${w.status}</td>${K.map(k=>`<td>${(w.samo||{})[k]||''}</td>`).join('')}<td>${(w.zapisano||'').slice(0,10)}</td></tr>`).join('')
+        :`<tr><td colspan="${K.length+4}">Brak zapisanych samoocen.</td></tr>`);
+  }
+  $('#odswiez').addEventListener('click',wczytajWyniki);
+  $('#csvWyniki').addEventListener('click',()=>{ const K=KOMPETENCJE.map(k=>k.k);
+    csv('PTBS_2026_Akademia_PM_Samoocena_wyniki.csv',[['Kod','Pomiar','Status',...K,'Zapisano'],...WYN.map(w=>[w.kod,w.pomiar,w.status,...K.map(k=>(w.samo||{})[k]||''),w.zapisano||''])]); });
+})();
+</script>
+</body>
+</html>
