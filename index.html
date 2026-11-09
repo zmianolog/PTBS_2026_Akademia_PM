@@ -94,7 +94,7 @@
     e.preventDefault(); const k=pole.value.trim(), b=APM.$('#blad'); b.classList.add('ukryty');
     let ok=null; try{ ok=await APM.sprawdzKod(k); }catch(err){}
     if(!ok){ b.textContent='Ten kod nie jest aktywny. Sprawdź, czy został wpisany poprawnie, albo skontaktuj się z prowadzącym.'; b.classList.remove('ukryty'); return; }
-    APM.ustawKod(k); location.href='akademia.html';
+    APM.ustawKod(k,ok.rola); location.href='akademia.html';
   });
 })();
 </script>

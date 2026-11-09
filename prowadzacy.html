@@ -59,7 +59,9 @@
       <div class="przyciski">
         <button class="zml-btn" id="odswiez">Odśwież wyniki</button>
         <button class="zml-btn" id="csvWyniki">Pobierz wyniki (CSV)</button>
+        <button class="zml-btn" id="publikuj">Opublikuj wyniki zbiorcze dla Zarządu</button>
       </div>
+      <div id="msgWyniki"></div>
       <div class="przewijana"><table class="tab" id="tabWyniki"></table></div>
     </section>
     <div class="przyciski" style="margin-top:30px"><button class="zml-btn" id="wyloguj">Wyloguj</button></div>
@@ -121,6 +123,16 @@ const csv=(nazwa,wiersze)=>{ const t='﻿'+wiersze.map(w=>w.map(x=>`"${String(x?
         :`<tr><td colspan="${K.length+4}">Brak zapisanych samoocen.</td></tr>`);
   }
   $('#odswiez').addEventListener('click',wczytajWyniki);
+  $('#publikuj').addEventListener('click',async()=>{
+    await wczytajKody(); await wczytajWyniki();
+    const rolaK={}, K=KOMPETENCJE.map(k=>k.k), t=new Date().toISOString(); KODY.forEach(k=>rolaK[k.kod]=k.rola);
+    for(const P of ['P1','P2']){
+      const L=WYN.filter(w=>w.pomiar===P&&w.status==='zapisany'&&rolaK[w.kod]==='uczestnik');
+      const sr={}, rk={}; K.forEach(k=>{ const v=L.map(w=>(w.samo||{})[k]).filter(Boolean); rk[k]=[1,2,3,4].map(x=>v.filter(y=>y===x).length); sr[k]=v.length?Math.round(100*v.reduce((a,b)=>a+b,0)/v.length)/100:null; });
+      await fs.setDoc(fs.doc(db,'zbiorcze',P),{n:L.length,srednie:sr,rozklad:rk,opublikowano:t});
+    }
+    msg('#msgWyniki','Wyniki zbiorcze zostały opublikowane. Uwzględniono tylko kody uczestników (bez kodów Zarządu i testowych).');
+  });
   $('#csvWyniki').addEventListener('click',()=>{ const K=KOMPETENCJE.map(k=>k.k);
     csv('PTBS_2026_Akademia_PM_Samoocena_wyniki.csv',[['Kod','Pomiar','Status',...K,'Zapisano'],...WYN.map(w=>[w.kod,w.pomiar,w.status,...K.map(k=>(w.samo||{})[k]||''),w.zapisano||''])]); });
 })();
