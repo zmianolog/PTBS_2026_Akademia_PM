@@ -41,9 +41,15 @@
       </div>
       <div class="przyciski">
         <button class="zml-btn" id="generuj">Wygeneruj kody</button>
-        <button class="zml-btn" id="demo">Dodaj kod testowy DEMO-2026</button>
         <button class="zml-btn" id="csvKody">Pobierz kody (CSV)</button>
       </div>
+      <h3 style="margin-top:22px">Dodaj własny kod</h3>
+      <p>Kod w formacie XXXX-XXXX, na przykład BEST-BOSS albo DEMO-2026 (kod testowy).</p>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <input class="pole" id="wlasny" maxlength="9" placeholder="XXXX-XXXX" style="width:150px;text-transform:uppercase">
+        <select class="pole" id="rola" style="width:170px"><option value="zarzad">Zarząd</option><option value="uczestnik">uczestnik</option><option value="test">test</option></select>
+      </div>
+      <div class="przyciski"><button class="zml-btn" id="dodaj">Dodaj kod</button></div>
       <div id="msgKody"></div>
       <div class="przewijana"><table class="tab" id="tabKody"></table></div>
     </section>
@@ -98,8 +104,11 @@ const csv=(nazwa,wiersze)=>{ const t='﻿'+wiersze.map(w=>w.map(x=>`"${String(x?
     let dod=0; while(dod<n){ const k=nowyKod(); if(ist.has(k)) continue; ist.add(k); b.set(fs.doc(db,'kody',k),{aktywny:true,rola:'uczestnik',grupa:'',utworzono:t}); dod++; }
     try{ await b.commit(); msg('#msgKody',`Dodano ${n} nowych kodów.`); wczytajKody(); }catch(e){ msg('#msgKody','Zapis nie powiódł się: '+e.code,true); }
   });
-  $('#demo').addEventListener('click',async()=>{
-    try{ await fs.setDoc(fs.doc(db,'kody','DEMO-2026'),{aktywny:true,rola:'test',grupa:'',utworzono:new Date().toISOString()}); msg('#msgKody','Kod testowy DEMO-2026 jest aktywny. Wyłącz go, gdy skończysz testy.'); wczytajKody(); }
+  $('#wlasny').addEventListener('input',e=>{let v=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8); if(v.length>4) v=v.slice(0,4)+'-'+v.slice(4); e.target.value=v;});
+  $('#dodaj').addEventListener('click',async()=>{
+    const k=$('#wlasny').value.trim(), rola=$('#rola').value;
+    if(!/^[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(k)){ msg('#msgKody','Kod musi mieć format XXXX-XXXX (litery i cyfry).',true); return; }
+    try{ await fs.setDoc(fs.doc(db,'kody',k),{aktywny:true,rola,grupa:'',utworzono:new Date().toISOString()}); msg('#msgKody',`Kod ${k} (${rola}) jest aktywny.`); $('#wlasny').value=''; wczytajKody(); }
     catch(e){ msg('#msgKody','Zapis nie powiódł się: '+e.code,true); }
   });
   $('#csvKody').addEventListener('click',()=>csv('PTBS_2026_Akademia_PM_Kody.csv',[['Lp.','Kod','Rola','Grupa','Aktywny'],...KODY.map((k,i)=>[i+1,k.kod,k.rola,k.grupa,k.aktywny?'tak':'nie'])]));
