@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Samoocena kompetencji — Akademia Zarządzania Projektami PTBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="wspolne.css">
+<script src="wspolne.js"></script>
+<style>
+.postep{height:10px;background:var(--tlo);border-radius:6px;overflow:hidden;margin:12px 0 6px}
+.postep i{display:block;height:100%;background:var(--m);width:0;transition:width .3s}
+.postep-opis{font-size:13px;color:var(--tekst2)}
+.pytanie{margin-top:12px;border:2px solid var(--ramka);border-left:6px solid var(--g);border-radius:12px;padding:14px}
+.pytanie .glowa{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.pytanie .nzk{font-weight:700;color:var(--g);font-size:16px;line-height:1.3}
+.pytanie .tresc{font-size:17px;font-weight:600;margin-bottom:10px;line-height:1.4}
+.opcje{display:grid;gap:8px}
+.opcja{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--ramka);border-radius:10px;padding:9px 12px;cursor:pointer;font-size:15px;line-height:1.4}
+.opcja:hover{border-color:var(--g)}
+.opcja input{margin-top:3px;accent-color:var(--g);width:18px;height:18px;flex:none}
+.opcja.wyb{border-color:var(--g);background:var(--jasny)}
+.opcja b{color:var(--g)}
+.nawig{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;position:sticky;bottom:0;background:#fff;padding:10px 0;border-top:2px solid var(--ramka)}
+.nawig .zml-btn{min-width:0;width:100%}
+#wPytanie{padding-top:14px;padding-bottom:0}
+@media (min-width:1000px){ #wPytanie .opcje{grid-template-columns:1fr 1fr} }
+.radar-uklad{display:grid;gap:16px;margin-top:10px}
+.radar{width:100%;max-width:560px;margin:0 auto;display:block;overflow:visible}
+.radar .siec{fill:none;stroke:var(--ramka);stroke-width:1.5}
+.radar .os{stroke:var(--ramka);stroke-width:1.5}
+.radar .pole{fill:rgba(31,68,96,.18);stroke:var(--g);stroke-width:3}
+.radar .pkt{fill:var(--g)}
+.radar .etyk{font:600 12px var(--font);fill:var(--tekst2)}
+.radar .ik{cursor:pointer}
+.radar .ik circle{fill:#fff;stroke:var(--g);stroke-width:2.5}
+.radar .ik.spol circle{fill:var(--g)}
+.radar .ik.wyb circle,.radar .ik:focus circle{stroke:var(--m);stroke-width:5}
+.radar .ik:focus{outline:none}
+.radar .ik.spol .zi{--zi-linia:#fff;--zi-akcent:var(--m)}
+.opis-k{border:2px solid var(--g);border-radius:12px;padding:16px}
+.opis-k .nz{font-weight:700;color:var(--g);font-size:17px;margin-bottom:6px}
+@media (min-width:1000px){ .radar-uklad{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:start} }
+</style>
+</head>
+<body>
+<div id="naglowek"></div>
+
+<main class="wrap widok" id="wStart">
+  <span class="nadtytul">Samoocena kompetencji · na początku Akademii</span>
+  <h1>Samoocena kompetencji</h1>
+  <div id="stan"></div>
+  <div class="ramka-info">
+    <ol class="lista">
+      <li>Przeczytasz opisy <b>12 działań</b>, po jednym dla każdej kompetencji lidera projektu.</li>
+      <li>Przy każdym opisie wybierz jedno zdanie, które najlepiej opisuje, jak <b>dziś</b> wykonujesz takie działania w swojej pracy. Nie ma odpowiedzi dobrych ani złych.</li>
+      <li>Wypełnienie zajmuje około 5 minut. Odpowiedzi zapisują się na bieżąco.</li>
+      <li>Po zapisaniu zobaczysz swój profil na wykresie. Tę samą samoocenę wypełnisz na zakończenie Akademii i porównasz oba profile.</li>
+      <li>Samoocena nie jest oceną pracowniczą. Służy Tobie: pokazuje, od czego zaczynasz i jaki postęp zrobisz.</li>
+    </ol>
+  </div>
+  <div class="przyciski" id="przStart"></div>
+  <div id="wynikStart"></div>
+</main>
+
+<main class="wrap widok ukryty" id="wPytanie">
+  <span class="nadtytul">Samoocena kompetencji</span>
+  <div class="postep"><i id="pPasek"></i></div>
+  <div class="postep-opis" id="pOpis"></div>
+  <div class="pytanie" id="pytanie"></div>
+  <div class="nawig"><button class="zml-btn" id="wstecz">Wstecz</button><button class="zml-btn" id="dalej">Dalej</button></div>
+</main>
+
+<main class="wrap widok ukryty" id="wKoniec">
+  <span class="nadtytul">Samoocena kompetencji · na początku Akademii</span>
+  <h1>Zakończ samoocenę</h1>
+  <div class="ramka-info" id="podsum"></div>
+  <div class="przyciski"><button class="zml-btn" id="zapiszBtn">Sprawdź wyniki</button><button class="zml-btn" data-do="wStart">Zamknij i powróć do listy zadań</button></div>
+  <div id="wynik"></div>
+</main>
+
+<div id="stopka"></div>
+<script>
+const POMIAR='P1';
+const DANE={"samo": [{"k": "M1", "t": "Zanim zacznę działać, ustalam z przełożonym, jaki ma być rezultat, w jakim czasie i za ile."}, {"k": "M2", "t": "Rozpisuję przedsięwzięcie na zadania z terminami, osobami, kosztami i możliwymi zagrożeniami."}, {"k": "M3", "t": "Ustalam, kto co robi i kto zatwierdza, oraz stały sposób informowania się w zespole."}, {"k": "M4", "t": "W trakcie prac sprawdzam, czy idą zgodnie z planem, i reaguję, gdy coś odbiega od planu."}, {"k": "M5", "t": "Wprowadzam nowe rozwiązania do codziennej pracy tak, żeby po zakończeniu przedsięwzięcia nadal działały."}, {"k": "M6", "t": "Po zakończeniu etapu lub przedsięwzięcia sprawdzam rezultat i wyciągam wnioski na przyszłość."}, {"k": "S1", "t": "Uzgadniam z osobami z innych działów zasady wspólnej pracy i pilnuję, żeby ustalenia były wykonywane."}, {"k": "S2", "t": "Dbam o to, żeby ludzie w zespole ufali sobie, mówili o problemach i pomagali sobie nawzajem."}, {"k": "S3", "t": "Podtrzymuję zaangażowanie innych, chociaż nie jestem ich przełożonym."}, {"k": "S4", "t": "Gdy ludzie albo działy mają sprzeczne oczekiwania, doprowadzam do uzgodnienia."}, {"k": "S5", "t": "Przekazuję różnym osobom potrzebne im informacje, także te niekorzystne, bez zwłoki."}, {"k": "S6", "t": "Pomagam ludziom przejść na nowy sposób pracy, także wtedy, gdy się temu sprzeciwiają."}]};
+const SKALA=[[1,'Nie wykonywałem takich działań albo nie wiem, jak je wykonać.'],[2,'Wykonywałem je z pomocą innych osób albo tylko częściowo.'],[3,'Wykonuję je samodzielnie w typowych sytuacjach.'],[4,'Wykonuję je samodzielnie także w trudnych sytuacjach i mogę pokazać innym, jak to robić.']];
+if(APM.wymagajLogowania()) (async()=>{
+  APM.naglowek(); APM.stopka(); await APM.init();
+  const $=APM.$, KOD=APM.kod(), ID=`${KOD}_${POMIAR}`;
+  let ST=(await APM.wczytaj('samoocena',ID))||{kod:KOD,pomiar:POMIAR,status:'nowy',samo:{},poz:0};
+  const zapisz=()=>APM.zapisz('samoocena',ID,ST);
+  const widok=id=>{document.querySelectorAll('.widok').forEach(w=>w.classList.toggle('ukryty',w.id!==id));window.scrollTo(0,0);};
+  const L=DANE.samo, KK={}; KOMPETENCJE.forEach(k=>KK[k.k]=k);
+  function startWidok(){
+    const ile=Object.keys(ST.samo).length;
+    $('#stan').innerHTML= ST.status==='zapisany'?'<span class="stan ok">Samoocena zapisana</span>':(ile?`<span class="stan do">W toku: ${ile} z ${L.length}</span>`:'<span class="stan do">Do wykonania</span>');
+    $('#przStart').innerHTML= ST.status==='zapisany' ? '<button class="zml-btn" id="pokazWynik">Sprawdź wyniki</button>'
+      : `<button class="zml-btn" id="startBtn">${ile?'Kontynuuj samoocenę':'Rozpocznij samoocenę'}</button>`;
+    $('#wynikStart').innerHTML='';
+    const s=$('#startBtn'); if(s) s.addEventListener('click',()=>{ if(ST.status==='nowy'){ST.status='w_toku';zapisz();} rysuj(); });
+    const w=$('#pokazWynik'); if(w) w.addEventListener('click',()=>wynik('#wynikStart'));
+    widok('wStart');
+  }
+  function rysuj(){
+    const el=L[ST.poz], k=KK[el.k], n=L.length, wyb=ST.samo[el.k];
+    $('#pPasek').style.width=(100*ST.poz/n)+'%'; $('#pOpis').textContent=`Kompetencja ${ST.poz+1} z ${n}`;
+    $('#pytanie').innerHTML=`<div class="glowa">${APM.ikona(k.ik,k.k[0]==='S'?'spol':'')}<div class="nzk">${k.n}</div></div>
+      <div class="tresc">${el.t}</div><div class="opcje">`+SKALA.map(([v,t])=>`<label class="opcja${wyb===v?' wyb':''}"><input type="radio" name="o" value="${v}"${wyb===v?' checked':''}><span><b>${v}.</b> ${t}</span></label>`).join('')+'</div>';
+    $('#pytanie').querySelectorAll('input').forEach(inp=>inp.addEventListener('change',()=>{
+      ST.samo[el.k]=+inp.value; $('#pytanie').querySelectorAll('.opcja').forEach(l=>l.classList.toggle('wyb',l.contains(inp)));
+      $('#dalej').disabled=false; zapisz(); }));
+    $('#dalej').disabled=!wyb; $('#dalej').textContent= ST.poz===n-1?'Przejdź do zakończenia':'Dalej';
+    widok('wPytanie');
+  }
+  $('#dalej').addEventListener('click',()=>{ if(ST.poz<L.length-1){ST.poz++;zapisz();rysuj();} else koniec(); });
+  $('#wstecz').addEventListener('click',()=>{ if(ST.poz>0){ST.poz--;zapisz();rysuj();} else startWidok(); });
+  document.querySelectorAll('[data-do]').forEach(b=>b.addEventListener('click',startWidok));
+  function koniec(){
+    const brak=L.filter(e=>!ST.samo[e.k]).length;
+    $('#podsum').innerHTML= brak?`<p style="margin:0">Brakuje odpowiedzi przy <b>${brak}</b> kompetencjach. Wróć i uzupełnij je.</p>`
+      :'<p style="margin:0">Oceniłeś wszystkie kompetencje. Kliknij „Sprawdź wyniki”. Twoja samoocena zostanie wtedy zapisana, a poniżej pojawi się Twój profil. Po kliknięciu nie można już zmienić odpowiedzi.</p>';
+    $('#zapiszBtn').disabled=!!brak; $('#zapiszBtn').classList.remove('ukryty'); $('#wynik').innerHTML=''; widok('wKoniec');
+  }
+  $('#zapiszBtn').addEventListener('click',async()=>{ ST.status='zapisany'; ST.zapisano=new Date().toISOString(); await zapisz();
+    $('#zapiszBtn').classList.add('ukryty'); $('#podsum').innerHTML='<p style="margin:0">Twoja samoocena została zapisana. Twój profil jest poniżej.</p>'; wynik('#wynik'); });
+  function wynik(cel){
+    const N=KOMPETENCJE.length, C=300, R=190, kat=i=>(-90+i*360/N)*Math.PI/180;
+    const pt=(i,v)=>[C+R*v/4*Math.cos(kat(i)), C+R*v/4*Math.sin(kat(i))];
+    let g='';
+    for(let l=1;l<=4;l++) g+=`<polygon class="siec" points="${KOMPETENCJE.map((k,i)=>pt(i,l).join(',')).join(' ')}"/>`;
+    KOMPETENCJE.forEach((k,i)=>{const [x,y]=pt(i,4); g+=`<line class="os" x1="${C}" y1="${C}" x2="${x}" y2="${y}"/>`;});
+    g+=`<polygon class="pole" points="${KOMPETENCJE.map((k,i)=>pt(i,ST.samo[k.k]||0).join(',')).join(' ')}"/>`;
+    KOMPETENCJE.forEach((k,i)=>{const [x,y]=pt(i,ST.samo[k.k]||0); g+=`<circle class="pkt" cx="${x}" cy="${y}" r="5"/>`;});
+    [1,2,3,4].forEach(l=>{const [x,y]=pt(0,l); g+=`<text class="etyk" x="${x+6}" y="${y+4}">${l}</text>`;});
+    KOMPETENCJE.forEach((k,i)=>{ const [x,y]=pt(i,5.15), ic=IKONY[k.ik];
+      g+=`<g class="ik ${k.k[0]==='S'?'spol':''}" tabindex="0" role="button" data-i="${i}" aria-label="${k.n}"><circle cx="${x}" cy="${y}" r="28"/><svg class="zi zi-r-${ic.r}" x="${x-15}" y="${y-15}" width="30" height="30" viewBox="0 0 24 24">${ic.s}</svg></g>`; });
+    $(cel).innerHTML=`<div class="sekcja" style="margin-top:24px"><h2>Twój profil na początku Akademii</h2>
+      <p class="lead">Każda oś wykresu to jedna kompetencja. Im dalej od środka sięga pole, tym wyżej oceniłeś swoje działanie w tej kompetencji (od 1 do 4). Kliknij ikonę, aby zobaczyć opis kompetencji i swoją ocenę. Białe ikony to kompetencje merytoryczne, granatowe to społeczne.</p>
+      <div class="radar-uklad"><svg class="radar" viewBox="-20 -20 640 640" role="img" aria-label="Profil samooceny">${g}</svg><div class="opis-k" id="opisK"></div></div></div>`;
+    const pokazK=i=>{ const k=KOMPETENCJE[i], v=ST.samo[k.k];
+      $(cel).querySelectorAll('.ik').forEach(e=>e.classList.toggle('wyb',+e.dataset.i===i));
+      $('#opisK').innerHTML=`<div class="nz">${k.n}</div><div style="font-size:13px;color:var(--tekst2)">${k.k[0]==='M'?'Kompetencja merytoryczna · '+k.faza:'Kompetencja społeczna · przez cały projekt'}</div>
+        <p style="margin:8px 0">${k.d}</p><p style="margin:0 0 8px;font-size:14px">${APM.kiedy(k)}</p><p style="margin:0"><b>Twoja ocena: ${v||'—'}.</b> ${v?SKALA[v-1][1]:''}</p>`; };
+    $(cel).querySelectorAll('.ik').forEach(e=>{ e.addEventListener('click',()=>pokazK(+e.dataset.i)); e.addEventListener('keydown',ev=>{ if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();pokazK(+e.dataset.i);} }); });
+    pokazK(0);
+  }
+  startWidok();
+})();
+</script>
+</body>
+</html>

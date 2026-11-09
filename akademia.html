@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O Akademii — Akademia Zarządzania Projektami PTBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="wspolne.css">
+<script src="wspolne.js"></script>
+</head>
+<body>
+<div id="naglowek"></div>
+<main class="wrap">
+  <span class="nadtytul">O Akademii</span>
+  <h1>Uczymy się prowadzić projekty, prowadząc projekty Spółki</h1>
+  <p class="lead">Akademia Zarządzania Projektami przygotowuje wybranych pracowników PTBS do samodzielnego prowadzenia projektów: od uruchomienia, przez planowanie, realizację, sterowanie i wdrożenie, po zamknięcie i wnioski.</p>
+  <p class="lead">Uczestnicy nie ćwiczą na wymyślonych przykładach. Pracują w zespołach na rzeczywistych projektach Spółki, wybranych razem z Zarządem. Każdy zespół prowadzi jeden projekt przez cały program, więc każde nowe narzędzie od razu stosuje na własnym projekcie. Prowadzący prowadzi zajęcia i jednocześnie wspiera zespoły w ich pracy projektowej.</p>
+
+  <section class="sekcja">
+    <h2>Zakładane efekty uczenia się</h2>
+    <p class="lead">Po zakończeniu Akademii uczestnik:</p>
+    <div class="grupa-tyt">Kompetencje merytoryczne</div>
+    <div class="siatka k3" id="efM"></div>
+    <div class="grupa-tyt">Kompetencje społeczne</div>
+    <div class="siatka k3" id="efS"></div>
+    <p style="font-size:13px;color:var(--tekst2);margin-top:12px">Przy każdym efekcie podano poziom według taksonomii celów kształcenia Blooma.</p>
+  </section>
+
+  <section class="sekcja">
+    <h2>Zakładane efekty realizacyjne</h2>
+    <p class="lead">Akademia ma przynieść także rezultaty w samej Spółce. Na zakończenie programu:</p>
+    <div class="siatka k2" id="efR"></div>
+  </section>
+
+  <section class="sekcja">
+    <h2>Jak pracujemy</h2>
+    <p class="lead">Akademia łączy spotkania szkoleniowe z pracą nad rzeczywistymi projektami. Na każdym spotkaniu szkoleniowym uczestnicy poznają wiedzę i narzędzia potrzebne na kolejnym etapie projektu. Między spotkaniami zespoły wprowadzają to, czego się nauczyły, do swoich projektów. Na następnym spotkaniu zespoły pokazują, co zrobiły, i dopiero potem przechodzą do kolejnej części szkolenia.</p>
+    <div class="siatka k6" id="petla"></div>
+  </section>
+
+  <section class="sekcja">
+    <h2>Przebieg Akademii</h2>
+    <p class="lead">Akademia trwa około pięciu miesięcy i składa się z dwóch części. Część pierwsza przygotowuje projekty do realizacji, a część druga prowadzi je przez realizację do podsumowania. Każdy etap obejmuje szkolenie oraz wprowadzenie jego treści do projektów zespołów. Program obejmuje czternaście spotkań szkoleniowych, od D00 do D13; ich szczegółowy opis jest w zakładce „Programy szkoleniowe”.</p>
+    <div class="grupa-tyt">Część I</div>
+    <div class="siatka k3" id="etapy1"></div>
+    <div class="grupa-tyt">Część II</div>
+    <div class="siatka k3" id="etapy2"></div>
+  </section>
+
+  <section class="sekcja">
+    <h2>Czego się uczymy</h2>
+    <p class="lead">Program rozwija dwanaście kompetencji lidera projektu. Sześć kompetencji merytorycznych odpowiada kolejnym fazom projektu. Model opiera się na standardzie zarządzania projektami PMI (PMBOK Guide, wydanie ósme) i jest rozszerzony o wdrożenie rozwiązania w Spółce. Sześć kompetencji społecznych dotyczy pracy z ludźmi przez cały czas trwania projektu.</p>
+    <div class="grupa-tyt">Kompetencje merytoryczne — kolejne fazy projektu</div>
+    <div class="siatka k3" id="kM"></div>
+    <div class="grupa-tyt">Kompetencje społeczne — przez cały projekt</div>
+    <div class="siatka k3" id="kS"></div>
+  </section>
+
+  <section class="sekcja ramka-info">
+    <h3>Pierwszy krok: samoocena kompetencji</h3>
+    <p>Ocenisz, jak dziś wykonujesz działania opisane w dwunastu kompetencjach. Po zapisaniu zobaczysz swój profil. Tę samą samoocenę wypełnisz na zakończenie Akademii i porównasz oba profile, aby zobaczyć, jaki postęp zrobiłeś.</p>
+    <div class="przyciski" style="margin-top:8px"><a class="zml-btn" href="samoocena.html">Przejdź do samooceny</a></div>
+  </section>
+</main>
+<div id="stopka"></div>
+<script>
+if(APM.wymagajLogowania()){
+  APM.naglowek(); APM.stopka();
+  const $=APM.$, M=KOMPETENCJE.filter(k=>k.k[0]==='M'), S=KOMPETENCJE.filter(k=>k.k[0]==='S');
+  const spol=k=>k.k[0]==='S'?'spol':'';
+  const ef=k=>`<div class="karta">${APM.ikona(k.ik,spol(k))}<div class="nz">${k.n}</div><div class="df">${k.ef[0].toUpperCase()+k.ef.slice(1)}.</div><div class="stopka-karty">Poziom: ${k.bl}</div></div>`;
+  $('#efM').innerHTML=M.map(ef).join(''); $('#efS').innerHTML=S.map(ef).join('');
+  const R=[['cel','Dokumenty każdego projektu','Każdy zespół ma kartę i plan swojego projektu, raporty o jego stanie oraz rejestr decyzji i zmian.'],
+           ['kamien-milowy','Postęp projektów','Każdy projekt osiągnął co najmniej jeden zaplanowany kamień milowy, a jego postęp był mierzony i przedstawiany Zarządowi.'],
+           ['zespol','Prezentacja przed Zarządem','Zespoły przedstawiły Zarządowi rezultaty swoich projektów i wnioski na przyszłość.'],
+           ['standard','Wzorce dla Spółki','Spółka ma wzorce dokumentów projektowych i opis sposobu prowadzenia projektu, sprawdzone na projektach uczestników.']];
+  $('#efR').innerHTML=R.map(r=>`<div class="karta">${APM.ikona(r[0])}<div class="nz">${r[1]}</div><div class="df">${r[2]}</div></div>`).join('');
+  const P=[['Szkolenie','Na spotkaniu szkoleniowym prowadzący przedstawia wiedzę i narzędzia potrzebne na kolejnym etapie projektu.'],
+   ['Ćwiczenie na projekcie','Jeszcze w trakcie szkolenia zespół stosuje narzędzie na dokumentach własnego projektu.'],
+   ['Wprowadzenie do projektu','Między spotkaniami zespół wprowadza to, czego się nauczył, do swojego projektu i przygotowuje kolejny dokument projektowy.'],
+   ['Konsultacja','Zespół omawia z prowadzącym konkretne problemy, które pojawiły się przy wprowadzaniu narzędzia do projektu.'],
+   ['Przegląd','Na następnym spotkaniu zespoły pokazują, co zrobiły w projektach, i poprawiają to, co wymaga zmiany.'],
+   ['Kolejna część szkolenia','Po przeglądzie zaczyna się kolejna część szkolenia, poświęcona następnemu etapowi projektu.']];
+  $('#petla').innerHTML=P.map((p,i)=>`<div class="karta"><span class="nr">${i+1}</span><div class="nz">${p[0]}</div><div class="df">${p[1]}</div></div>`).join('');
+  const E=[["Diagnoza i przygotowanie", "Spotkanie startowe D00: cel i przebieg Akademii, model dwunastu kompetencji, zasady pracy i konsultacji.", "Uczestnicy wypełniają samoocenę kompetencji, a zespoły poznają swoje projekty i sponsorów."], ["Uruchomienie projektów", "D01–D02: interesariusze i sposób ich zaangażowania, cel i rezultat projektu, karta projektu, role i odpowiedzialności, zasady współpracy zespołu, podział prac.", "Zespoły przygotowują karty swoich projektów, mapy interesariuszy, macierze odpowiedzialności i zasady pracy zespołu."], ["Planowanie", "D03: harmonogram i kamienie milowe, zasoby, budżet, kryteria odbioru oraz rozpoznawanie ryzyk.", "Zespoły przygotowują plany swoich projektów i rejestry ryzyk, a sponsorzy je zatwierdzają."], ["Realizacja", "D04–D06: organizacja pracy i spotkania projektowe, rola lidera (delegowanie, egzekwowanie ustaleń, zaufanie, motywowanie), porównanie planu z wykonaniem i raport statusu.", "Zespoły zbierają dane o stanie obecnym z udziałem interesariuszy, kończą diagnozę (KM1) i przygotowują raporty statusu."], ["Sterowanie i przygotowanie wdrożenia", "D07–D10: ryzyko w realizacji, wybór wariantu i zmiany w projekcie, konflikty, negocjacje i opór wobec zmiany, działania korygujące, plan pilotażu.", "Zespoły porównują warianty rozwiązania, uzyskują zatwierdzenie koncepcji (KM2), przygotowują rozwiązanie do pilotażu (KM3) i uruchamiają pilotaż (KM4)."], ["Wdrożenie i zamknięcie", "D11–D13: uruchomienie pilotażu, odbiór rezultatu, zamknięcie projektu, wnioski i prezentacje.", "Zespoły uruchamiają pilotaż, zamykają prace projektowe, przedstawiają rezultaty Zarządowi i ponownie wypełniają samoocenę."]];
+
+  const ke=(e,i)=>`<div class="karta"><span class="nr">${i+1}</span><div class="nz">${e[0]}</div><div class="df"><b>${i===0?'Przygotowanie':'Szkolenie'}:</b> ${e[1]}</div><div class="df"><b>W projektach:</b> ${e[2]}</div></div>`;
+  $('#etapy1').innerHTML=E.slice(0,3).map(ke).join(''); $('#etapy2').innerHTML=E.slice(3).map((e,i)=>ke(e,i+3)).join('');
+  const kk=k=>`<div class="karta zi-host">${APM.ikona(k.ik,spol(k))}<div class="nz">${k.n}</div><div class="df">${k.d}</div><div class="df"><b>${APM.kiedy(k)}</b></div><div class="stopka-karty">${k.faza}</div></div>`;
+  $('#kM').innerHTML=M.map(kk).join(''); $('#kS').innerHTML=S.map(kk).join('');
+}
+</script>
+</body>
+</html>

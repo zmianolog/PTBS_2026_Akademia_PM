@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Akademia Zarządzania Projektami PTBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="wspolne.css">
+<script src="wspolne.js"></script>
+<style>
+
+
+
+
+
+
+
+
+/* sześć pasków; dół każdego paska stoi na linii y=230 */
+.pasek{fill:#1F4460;transform-box:fill-box;transform-origin:center bottom}
+.pasek.miod{fill:#E8B62C}
+.t1{font:800 72px var(--font);fill:#1F4460;letter-spacing:4px}
+.t2{font:600 29px var(--font);fill:#1F4460;letter-spacing:1.6px}
+.ptbs rect{fill:#1F4460} .ptbs text{font:800 22px var(--font);fill:#E8B62C;letter-spacing:6px}
+.kreska{stroke:#E8B62C;stroke-width:4;stroke-linecap:round}
+
+/* wejście: paski wyrastają kolejno od lewej, potem wsuwa się napis */
+.gra .pasek{transform:scaleY(0);animation:rosnij .55s cubic-bezier(.3,1.6,.5,1) forwards, puls 2.4s ease-in-out infinite}
+.gra .pasek:nth-of-type(1){animation-delay:.10s,1.6s}
+.gra .pasek:nth-of-type(2){animation-delay:.22s,1.8s}
+.gra .pasek:nth-of-type(3){animation-delay:.34s,2.0s}
+.gra .pasek:nth-of-type(4){animation-delay:.46s,2.2s}
+.gra .pasek:nth-of-type(5){animation-delay:.58s,2.4s}
+.gra .pasek:nth-of-type(6){animation-delay:.70s,2.6s}
+@keyframes rosnij{to{transform:scaleY(1)}}
+/* stan stały: każdy pasek po kolei wydłuża się w górę i wraca, fala biegnie od lewej do prawej */
+@keyframes puls{0%,100%{transform:scaleY(1)}30%{transform:scaleY(1.12)}60%{transform:scaleY(.94)}}
+.gra .napis{opacity:0;transform:translateX(-16px);animation:wjazd .6s ease-out forwards}
+.gra .n1{animation-delay:.9s}.gra .n2{animation-delay:1.15s}.gra .n3{animation-delay:1.45s}
+.gra .kreska{stroke-dasharray:100;stroke-dashoffset:100;animation:rysuj .6s ease-out 1.4s forwards}
+@keyframes wjazd{to{opacity:1;transform:none}}
+@keyframes rysuj{to{stroke-dashoffset:0}}
+
+@media (prefers-reduced-motion: reduce){
+  .gra .pasek,.gra .napis{animation:none;transform:none;opacity:1}
+  .gra .kreska{animation:none;stroke-dashoffset:0}
+}
+
+.start{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:20px 16px}
+#logo{width:100%;max-width:760px;max-height:34vh;height:auto;overflow:visible}
+.wejscie{width:100%;max-width:420px;background:var(--g);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:12px;color:#fff}
+.wejscie h1{color:#fff;font-size:22px;margin:0} .wejscie p{margin:0;color:#DDE7F0;font-size:15px}
+.wejscie input{font:700 24px var(--font);letter-spacing:4px;text-transform:uppercase;text-align:center;padding:12px;border-radius:8px;border:2px solid #fff;color:var(--g);width:100%}
+.wejscie .zml-btn{width:100%;background:var(--m);border-color:var(--m);color:var(--g)}
+.blad{background:var(--czerwien);color:#fff;border-radius:6px;padding:8px 10px;font-size:14px}
+.podglad{max-width:420px;font-size:13px;color:var(--tekst2);text-align:center}
+.autor{font-size:13px;color:var(--tekst2)}
+</style>
+</head>
+<body>
+<main class="start">
+  <svg id="logo" class="gra" viewBox="0 0 860 260" role="img" aria-labelledby="tyt">
+  <title id="tyt">Akademia Zarządzania Projektami PTBS</title>
+  <g>
+    <rect class="pasek"      x="20"  y="160" width="26" height="70"  rx="6"/>
+    <rect class="pasek"      x="56"  y="135" width="26" height="95"  rx="6"/>
+    <rect class="pasek"      x="92"  y="108" width="26" height="122" rx="6"/>
+    <rect class="pasek"      x="128" y="82"  width="26" height="148" rx="6"/>
+    <rect class="pasek"      x="164" y="56"  width="26" height="174" rx="6"/>
+    <rect class="pasek miod" x="200" y="30"  width="26" height="200" rx="6"/>
+  </g>
+  <g class="napis n1"><text class="t1" x="268" y="116">AKADEMIA</text></g>
+  <g class="napis n2"><text class="t2" x="270" y="162">ZARZĄDZANIA PROJEKTAMI</text></g>
+  <line class="kreska" pathLength="100" x1="272" y1="210" x2="382" y2="210"/>
+  <g class="napis n3 ptbs"><rect x="398" y="192" width="112" height="36" rx="8"/><text x="454" y="218" text-anchor="middle">PTBS</text></g>
+</svg>
+  <form class="wejscie" id="form" autocomplete="off">
+    <h1>Wejdź do Akademii</h1>
+    <p>Wpisz kod uczestnika, który otrzymałeś od prowadzącego.</p>
+    <input id="kod" maxlength="9" placeholder="XXXX-XXXX" aria-label="Kod uczestnika" inputmode="text">
+    <button class="zml-btn" type="submit">Wejdź</button>
+    <div class="blad ukryty" id="blad"></div>
+  </form>
+  <p class="podglad ukryty" id="podglad">Tryb podglądu: strona nie jest jeszcze połączona z bazą. Wpisz kod <b>DEMO-2026</b>.</p>
+  <div class="autor">ZMIANOLOGICA · dr Marcin Żółtak</div>
+</main>
+<script>
+(async()=>{
+  if(APM.kod()){ location.replace('akademia.html'); return; }
+  await APM.init(); if(APM.trybPodgladu()) APM.$('#podglad').classList.remove('ukryty');
+  const pole=APM.$('#kod');
+  pole.addEventListener('input',e=>{let v=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8); if(v.length>4) v=v.slice(0,4)+'-'+v.slice(4); e.target.value=v;});
+  APM.$('#form').addEventListener('submit',async e=>{
+    e.preventDefault(); const k=pole.value.trim(), b=APM.$('#blad'); b.classList.add('ukryty');
+    let ok=null; try{ ok=await APM.sprawdzKod(k); }catch(err){}
+    if(!ok){ b.textContent='Ten kod nie jest aktywny. Sprawdź, czy został wpisany poprawnie, albo skontaktuj się z prowadzącym.'; b.classList.remove('ukryty'); return; }
+    APM.ustawKod(k); location.href='akademia.html';
+  });
+})();
+</script>
+</body>
+</html>
