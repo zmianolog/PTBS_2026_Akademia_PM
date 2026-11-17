@@ -497,7 +497,9 @@ if (APM.wymagajLogowania()) (async () => {
         for (let i = 1; i <= n; i++) { pdf.setPage(i); pdf.setFontSize(8); pdf.setTextColor(90, 104, 115); pdf.text(stopka, 12, 289); pdf.text(`Strona ${i} z ${n}`, 198, 289, { align: 'right' }); }
         pdf.setProperties({ title: nazwa });
         if (window.__pdfTest) { window.__pdfData = pdf.output('datauristring'); return; }
-        location.replace(pdf.output('bloburl', { filename: nazwa }));
+        const url = pdf.output('bloburl', { filename: nazwa });
+        pdf.save(nazwa);
+        $('#pdfInfo').innerHTML = `<div style="text-align:center;max-width:560px;padding:20px"><p style="margin:0 0 14px">Plik <b>${nazwa}</b> został pobrany. Otworzysz go z listy pobranych plików przeglądarki.</p><a class="zml-btn" href="${url}" style="max-width:360px;margin:0 auto">Otwórz PDF w tej karcie</a></div>`;
       } catch (e) { console.error(e); $('#pdfInfo').textContent = 'Nie udało się przygotować pliku PDF. Użyj przycisku „Drukuj lub zapisz PDF”.'; }
     };
     document.head.appendChild(s);
