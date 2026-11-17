@@ -8,10 +8,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="wspolne.css">
 <script src="wspolne.js"></script>
+<script src="program.js"></script>
+<script src="dok_dane.js"></script>
 <script src="dok_definicje.js"></script>
 <style>
-.podglad{background:#FFF7DD;border:2px solid var(--m);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.podglad select{font:600 14px var(--font);padding:6px 8px;border:2px solid var(--ramka);border-radius:8px}
 .glowa-dok{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
 .zespoly{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
 .zespoly a{display:flex;align-items:center;justify-content:center;text-align:center;min-height:46px;padding:4px 10px;border:2px solid var(--g);border-radius:8px;color:var(--g);font:600 14px/1.2 var(--font);text-decoration:none}
@@ -123,44 +123,6 @@ textarea.wej{min-height:78px;resize:vertical}
 <div id="okno"></div>
 <div id="wydruk"></div>
 <script>
-/* ===== warstwa danych dokumentu =====
-   Tryb podglądu: dane w pamięci przeglądarki (localStorage); zmiany z innej karty przeglądarki pojawiają się na bieżąco.
-   Ten sam interfejs zostanie podłączony do Firestore. */
-const DANE = (() => {
-  const kl = id => 'apm_dok_' + id, kh = id => 'apm_dokh_' + id;
-  const nowy = () => ({ pola: {}, kroki: {}, uwagi: {}, edycja: {}, wersja: 0, doAkc: null, akc: null, potw: null });
-  const czytaj = id => { try { return Object.assign(nowy(), JSON.parse(localStorage.getItem(kl(id))) || {}); } catch (e) { return nowy(); } };
-  const pisz = (id, d) => localStorage.setItem(kl(id), JSON.stringify(d));
-  const hist = id => { try { return JSON.parse(localStorage.getItem(kh(id))) || []; } catch (e) { return []; } };
-  function zapiszPole(id, pole, wart, bazaW, ja, wymus) {
-    const d = czytaj(id), stare = d.pola[pole] || { v: null, w: 0 };
-    if (!wymus && (stare.w || 0) !== (bazaW || 0)) return { konflikt: stare };
-    d.wersja++; d.pola[pole] = { v: wart, w: (stare.w || 0) + 1, kto: ja, kiedy: new Date().toISOString(), dw: d.wersja };
-    pisz(id, d);
-    const h = hist(id); h.push({ pole, stara: stare.v, nowa: wart, kto: ja, kiedy: d.pola[pole].kiedy, wersja: d.wersja });
-    localStorage.setItem(kh(id), JSON.stringify(h));
-    return { ok: d.pola[pole] };
-  }
-  function zmien(id, fn) { const d = czytaj(id); fn(d); pisz(id, d); return d; }
-  function sluchaj(id, cb) { window.addEventListener('storage', e => { if (e.key === kl(id)) cb(czytaj(id)); }); }
-  return { czytaj, zapiszPole, zmien, hist, sluchaj };
-})();
-
-/* ===== tożsamość ===== */
-const OSOBY_PODGLADU = [
-  { imie: 'Hanna Bartkowska', rola: 'uczestnik', zespol: 'P1' },
-  { imie: 'Marta Gębka (przykład)', rola: 'uczestnik', zespol: 'P1' },
-  { imie: 'Piotr Szymański', rola: 'uczestnik', zespol: 'P2' },
-  { imie: 'Michał Gadziński', rola: 'uczestnik', zespol: 'P3' },
-  { imie: 'Konrad Gieżek', rola: 'zarzad', zespol: '' },
-  { imie: 'Marcin Żółtak', rola: 'prowadzacy', zespol: '' }
-];
-const PODGLAD = APM.trybPodgladu() || new URLSearchParams(location.search).get('podglad') === '1';
-function ja() {
-  if (PODGLAD) { const i = +(sessionStorage.getItem('apm_podglad_osoba') || 0); return OSOBY_PODGLADU[i] || OSOBY_PODGLADU[0]; }
-  return { imie: localStorage.getItem('apm_imie') || APM.kod(), rola: APM.rola(), zespol: localStorage.getItem('apm_zespol') || '' };
-}
-
 if (APM.wymagajLogowania()) {
   APM.naglowek(); APM.stopka();
   const $ = APM.$, P = new URLSearchParams(location.search), T = P.get('t') || 'T01', DEF = DOKUMENTY[T];
@@ -175,14 +137,10 @@ if (APM.wymagajLogowania()) {
   const wszystkiePola = DEF.sekcje.flatMap(s => (s.pola || []).flatMap(p => p.dod ? [p, p.dod] : [p]));
   const defPola = id => wszystkiePola.find(p => p.id === id);
   const wart = id => { const p = D.pola[id]; if (p) return p.v; const df = defPola(id); if (df && df.dom) return df.dom(ZESP); if (df && df.stale) return df.wiersze.map(w => Object.assign({}, w)); return df && df.typ === 'tabela' ? [] : ''; };
-  const pusty = v => v == null || v === '' || (Array.isArray(v) && !v.some(r => Object.entries(r).some(([k, x]) => x !== '' && x != null && !['km', 'sp'].includes(k))));
+  const pusty = pustaWartosc;
 
   /* ----- tryb podglądu: wybór osoby ----- */
-  if (PODGLAD) {
-    $('#podglad').innerHTML = `<div class="podglad"><b>Tryb podglądu</b><span>Dane zapisują się tylko w tej przeglądarce. Otwórz tę stronę w drugiej karcie jako inna osoba, aby sprawdzić wspólną pracę i konflikty.</span>
-      <label>Osoba: <select id="osoba">${OSOBY_PODGLADU.map((o, i) => `<option value="${i}" ${o.imie === JA.imie ? 'selected' : ''}>${o.imie} · ${o.rola === 'zarzad' ? 'Zarząd' : o.rola === 'prowadzacy' ? 'prowadzący' : 'zespół ' + o.zespol}</option>`).join('')}</select></label></div>`;
-    $('#osoba').addEventListener('change', e => { sessionStorage.setItem('apm_podglad_osoba', e.target.value); const o = OSOBY_PODGLADU[+e.target.value]; location.search = `?t=${T}&z=${o.zespol || ZESP}&podglad=1`; });
-  }
+  if (PODGLAD) panelPodgladu($('#podglad'), o => `?t=${T}&z=${o.zespol || ZESP}&podglad=1`);
   $('#kodDok').textContent = T; $('#tytul').textContent = DEF.nazwa + ' · ' + ZESP; $('#opisDok').textContent = DEF.opis;
   document.title = DEF.nazwa + ' ' + ZESP + ' — Akademia Zarządzania Projektami PTBS';
   if (!EDYTUJE) $('#wyborZesp').innerHTML = `<div class="zespoly">${Object.keys(ZESPOLY).map(z => `<a href="?t=${T}&z=${z}${PODGLAD ? '&podglad=1' : ''}" class="${z === ZESP ? 'wyb' : ''}">${z} · ${ZESPOLY[z].projekt}</a>`).join('')}</div>`;
@@ -196,15 +154,8 @@ if (APM.wymagajLogowania()) {
     return ile === pola.length ? 'w' : ile ? 't' : '';
   }
   const ST = { w: 'wypełniona', t: 'w toku', '': 'do uzupełnienia' };
-  function zmienionePoAkc() { if (!D.akc) return []; return Object.entries(D.pola).filter(([k, p]) => (p.dw || 0) > D.akc.wersja).map(([k]) => k); }
-  function stanDok() {
-    const zm = zmienionePoAkc();
-    if (D.akc && D.akc.decyzja !== 'do poprawy' && zm.length) return ['zm', 'Zmieniona po akceptacji'];
-    if (D.potw) return ['akc', 'Wartość potwierdzona po diagnozie'];
-    if (D.akc) return [D.akc.decyzja === 'do poprawy' ? 'zm' : 'akc', D.akc.decyzja === 'do poprawy' ? 'Do poprawy' : 'Zaakceptowana przez sponsora'];
-    if (D.doAkc) return ['do', 'Przekazana do akceptacji'];
-    return ['', 'Robocza'];
-  }
+  const zmienionePoAkc = () => zmienionePoAkceptacji(D);
+  const stanDok = () => stanDokumentu(D);
   function odswiezStan() {
     const [k, t] = stanDok();
     $('#stanDok').innerHTML = `<span class="stan-dok ${k}">Status: ${t} · wersja ${D.wersja}</span>`;

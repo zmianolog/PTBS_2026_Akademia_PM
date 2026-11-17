@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mój projekt — Akademia Zarządzania Projektami PTBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="wspolne.css">
+<script src="wspolne.js"></script>
+<script src="program.js"></script>
+<script src="dok_dane.js"></script>
+<script src="dok_definicje.js"></script>
+<style>
+.zesp{border:2px solid var(--ramka);border-radius:12px;padding:16px;margin-top:14px}
+.zesp .zg{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.zesp .zk{display:inline-flex;min-width:46px;height:46px;border-radius:10px;background:var(--g);color:#fff;align-items:center;justify-content:center;font-weight:800;font-size:16px;flex:none}
+.zesp .zn{font-weight:700;color:var(--g);font-size:18px;line-height:1.3}
+.osoby{display:grid;gap:6px;font-size:14px;margin:6px 0 2px}
+.osoby div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--ramka);padding:4px 0}
+.osoby span{color:var(--tekst2)}
+.najbl{background:var(--jasny);border-radius:12px;padding:14px 16px;margin-top:14px}
+.najbl b{color:var(--g)}
+.narz{display:grid;gap:10px;margin-top:12px}
+@media (min-width:700px){ .narz.siatka3{grid-template-columns:repeat(3,1fr)} .narz.siatka2{grid-template-columns:repeat(2,1fr)} }
+.nk{border:2px solid var(--ramka);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;background:#fff;height:100%}
+.nk.zabl{background:var(--tlo);opacity:.75}
+.nk .nkg{display:flex;align-items:center;gap:10px}
+.nk .kw{display:inline-flex;width:44px;height:40px;border-radius:9px;border:2px solid var(--g);align-items:center;justify-content:center;flex:none;font:800 14px var(--font);color:var(--g);background:#fff}
+.nk .kw.akt{background:var(--m);border-color:var(--m)}
+.nk .nn{font-weight:700;color:var(--g);font-size:15px;line-height:1.3}
+.nk .no{font-size:13px;color:var(--tekst2);line-height:1.4}
+.nk .stn{display:inline-flex;align-self:flex-start;font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;background:var(--jasny);color:var(--g)}
+.nk .stn.akc{background:#E6F3EA;color:var(--zielen)} .nk .stn.zm{background:#FDECEC;color:var(--czerwien)} .nk .stn.do{background:#FFF4D6;color:var(--mt)} .nk .stn.zab{background:#fff;color:var(--tekst2)}
+.nk .ost{font-size:12px;color:var(--tekst2)}
+.nk .zml-btn{margin-top:auto}
+.kol3{display:grid;gap:16px}
+@media (min-width:1000px){ .kol3{grid-template-columns:repeat(3,1fr)} }
+.kol3 .narz{grid-template-columns:1fr}
+@media (min-width:1000px){ .kol3 .zesp .zg{min-height:78px} }
+</style>
+</head>
+<body>
+<div id="naglowek"></div>
+<main class="wrap">
+  <div id="podglad"></div>
+  <div id="tresc"></div>
+</main>
+<div id="stopka"></div>
+<script>
+if (APM.wymagajLogowania()) {
+  APM.naglowek(); APM.stopka();
+  const $ = APM.$, JA = ja(), UCZ = JA.rola === 'uczestnik';
+  if (PODGLAD) panelPodgladu($('#podglad'), () => '?podglad=1');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const czas = t => { const m = /^(\d{2})\.(\d{2})\.(\d{2})\s+(\d{1,2}):(\d{2})$/.exec((t || '').trim()); return m ? new Date(2000 + +m[3], m[2] - 1, +m[1], +m[4], +m[5]) : null; };
+  const dt = s => s ? new Date(s).toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+  const teraz = new Date();
+  const kolejnosc = Object.keys(PROGRAM.toolkit).sort((a, b) => (PROGRAM.toolkit[a].od || 'D99').localeCompare(PROGRAM.toolkit[b].od || 'D99') || a.localeCompare(b));
+  /* narzędzie jest dostępne od rozpoczęcia spotkania wskazanego w arkuszu programu */
+  const dostepne = t => { const od = PROGRAM.toolkit[t].od, d = czas(TERMINY_WSZYSTKIE[od]); return (d && d <= teraz) || (PODGLAD && od === 'D00'); };
+  function kafel(z, t, maly) {
+    const n = PROGRAM.toolkit[t], dost = dostepne(t), def = DOKUMENTY[t], url = `dokument.html?t=${t}&z=${z}${PODGLAD ? '&podglad=1' : ''}`;
+    let st, kl, ost = '', przycisk = '';
+    const brakOst = '<div class="ost">Brak wpisów w dokumencie</div>';
+    if (!dost) { st = `Dostępne od spotkania ${n.od}`; kl = 'zab'; }
+    else if (!def) { st = 'Wzór w przygotowaniu'; kl = 'zab'; }
+    else {
+      const D = DANE.czytaj(z + '_' + t), [k, s] = stanDokumentu(D), [w, c] = postepDokumentu(def, D);
+      st = `${s} · sekcje wypełnione: ${w} z ${c}`; kl = k;
+      const ostatnia = Object.values(D.pola).sort((a, b) => (b.kiedy || '').localeCompare(a.kiedy || ''))[0];
+      if (ostatnia) ost = `<div class="ost">Ostatnia zmiana: ${esc(ostatnia.kto)}, ${dt(ostatnia.kiedy)}</div>`;
+      if (!ost) ost = brakOst;
+      przycisk = `<a class="zml-btn" href="${url}">${UCZ ? 'Otwórz dokument' : 'Otwórz'}</a>`;
+    }
+    return `<div class="nk ${dost && def ? '' : 'zabl'}"><div class="nkg"><span class="kw ${dost && def ? 'akt' : ''}">${t}</span><div class="nn">${esc(n.n)}</div></div>
+      ${maly ? '' : `<div class="no">${esc(n.o)}</div>`}<span class="stn ${kl}">${st}</span>${ost}${przycisk}</div>`;
+  }
+  function zespol(z) {
+    const e = PROGRAM.zespoly[z];
+    return `<div class="zesp"><div class="zg"><span class="zk">${z}</span><div class="zn">${esc(e.projekt)}</div></div>
+      <div class="osoby">${e.czlonkowie.map(c => `<div><b>${esc(c.imie)}</b><span>${esc(c.rola)}</span></div>`).join('')}<div><b>${esc(e.sponsor)}</b><span>sponsor</span></div></div></div>`;
+  }
+  /* najbliższe spotkanie */
+  const nast = PROGRAM.sesje.find(s => { const d = czas(TERMINY[s.kod]); return d && d >= teraz; });
+  const najbl = nast ? `<div class="najbl"><div><b>Najbliższe spotkanie: ${nast.kod} · ${esc(nast.nazwa)}</b>, ${czas(TERMINY[nast.kod]).toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' })}, godz. ${TERMINY[nast.kod].split(' ')[1]}</div>
+      <div style="margin-top:6px"><b>Przed spotkaniem:</b> ${esc(nast.przed)}</div><div style="margin-top:8px"><a class="zml-btn" style="max-width:360px" href="spotkanie.html?d=${nast.kod}">Otwórz stronę spotkania</a></div></div>` : '';
+  if (UCZ) {
+    const z = JA.zespol;
+    document.title = 'Mój projekt — Akademia Zarządzania Projektami PTBS';
+    $('#tresc').innerHTML = `<span class="nadtytul">Mój projekt</span><h1>${esc(PROGRAM.zespoly[z].projekt)}</h1>
+      <p class="lead">Tu zespół prowadzi dokumenty swojego projektu. Dokument staje się dostępny na spotkaniu, na którym program Akademii wprowadza dane narzędzie. Wszyscy członkowie zespołu pracują na tym samym dokumencie.</p>
+      ${zespol(z)}${najbl}<h2 style="margin-top:22px">Dokumenty projektu</h2><div class="narz siatka3">${kolejnosc.map(t => kafel(z, t)).join('')}</div>`;
+  } else {
+    document.title = 'Projekty — Akademia Zarządzania Projektami PTBS';
+    $('#tresc').innerHTML = `<span class="nadtytul">Projekty</span><h1>Projekty zespołów</h1>
+      <p class="lead">Dokumenty trzech zespołów w jednym widoku. ${JA.rola === 'zarzad' ? 'Sponsor czyta dokumenty, podejmuje decyzję o akceptacji i pobiera je jako PDF.' : 'Prowadzący czyta dokumenty i dodaje uwagi do sekcji.'}</p>
+      ${najbl}<div class="kol3" style="margin-top:14px">${Object.keys(PROGRAM.zespoly).map(z => { const d = kolejnosc.filter(dostepne), r = kolejnosc.length - d.length; return `<div>${zespol(z)}<div class="narz">${d.map(t => kafel(z, t, true)).join('')}</div>${r ? `<p class="pod" style="font-size:13px;color:var(--tekst2);margin-top:8px">Pozostałe dokumenty (${r}) pojawią się na kolejnych spotkaniach.</p>` : ''}</div>`; }).join('')}</div>`;
+  }
+}
+</script>
+</body>
+</html>

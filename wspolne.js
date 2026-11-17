@@ -17,6 +17,7 @@ const MENU = [
   { plik: 'akademia.html', nazwa: 'O Akademii' },
   { plik: 'samoocena.html', nazwa: 'Samoocena kompetencji' },
   { plik: 'programy.html', nazwa: 'Programy szkoleniowe' },
+  { plik: 'projekt.html', nazwa: 'Mój projekt', nazwaR: { zarzad: 'Projekty', prowadzacy: 'Projekty' }, role: ['prowadzacy'] }, /* rola uczestnik i zarzad: po podłączeniu Firebase */
   { plik: 'wyniki.html', nazwa: 'Wyniki grupy', role: ['zarzad'] }
 ];
 
@@ -49,7 +50,7 @@ const APM = (() => {
     $('#naglowek').outerHTML = `<header class="naglowek"><div class="wewn">
       <a class="marka" href="akademia.html">${znak()}<span>Akademia<br><b>Zarządzania Projektami PTBS</b></span></a>
       <button class="menu-btn" id="menuBtn" aria-expanded="false">Menu</button>
-      <nav class="menu" id="menu">${MENU.filter(m=>!m.role||m.role.includes(rola())).map(m=>`<a href="${m.plik}" class="${m.plik===biez?'biezaca':''}">${m.nazwa}</a>`).join('')}</nav>
+      <nav class="menu" id="menu">${MENU.filter(m=>!m.role||m.role.includes(rola())).map(m=>`<a href="${m.plik}" class="${m.plik===biez?'biezaca':''}">${(m.nazwaR&&m.nazwaR[rola()])||m.nazwa}</a>`).join('')}</nav>
     </div></header>`;
     $('#menuBtn').addEventListener('click',()=>{ const m=$('#menu'); m.classList.toggle('otwarte'); $('#menuBtn').setAttribute('aria-expanded',m.classList.contains('otwarte')); });
   }

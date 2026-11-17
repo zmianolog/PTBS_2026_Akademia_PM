@@ -1,11 +1,7 @@
 /* Definicje dokumentów projektowych Akademii. Każdy dokument to lista sekcji, a sekcja to lista pól.
    Typy pól: tekst, obszar, liczba, wybor, tabela, wyliczenie (tylko do odczytu), kroki (sekcja pokazywana krok po kroku). */
-const ZESPOLY = {
-  P1: { projekt: 'Gospodarka środkami trwałymi', lider: 'Hanna Bartkowska' },
-  P2: { projekt: 'PTBS Asystent – wsparcie obsługi korespondencji', lider: 'Piotr Szymański' },
-  P3: { projekt: 'Optymalizacja procesu zamówień', lider: 'Michał Gadziński' }
-};
-const SPONSOR = 'Konrad Gieżek';
+const ZESPOLY = PROGRAM.zespoly;
+const SPONSOR = Object.values(PROGRAM.zespoly)[0].sponsor;
 const STAWKA_GODZ = 60; /* zł za godzinę pracy, do potwierdzenia przez księgowość */
 
 const DOKUMENTY = {
@@ -18,7 +14,7 @@ const DOKUMENTY = {
         { id: 'nazwa_zesp', typ: 'tekst', et: 'Nazwa zespołu', pod: 'Nazwa, pod którą zespół występuje w Akademii.' },
         { id: 'sponsor', typ: 'tekst', et: 'Sponsor', dom: () => SPONSOR },
         { id: 'lider', typ: 'tekst', et: 'Lider projektu', dom: z => ZESPOLY[z].lider },
-        { id: 'czlonkowie', typ: 'obszar', et: 'Członkowie zespołu', pod: 'Imię, nazwisko i dział każdej osoby. Dopisz także osoby spoza stałego składu, które będą pracować przy projekcie.' }
+        { id: 'czlonkowie', typ: 'obszar', et: 'Członkowie zespołu', dom: z => ZESPOLY[z].czlonkowie.map(c => c.imie + ' – ' + c.rola).join('\n'), pod: 'Imię, nazwisko i dział każdej osoby. Dopisz także osoby spoza stałego składu, które będą pracować przy projekcie.' }
       ]},
       { id: 's2', nr: 2, t: 'Problem', pola: [
         { id: 'pr_co', typ: 'obszar', et: 'Co dziś nie działa?', pod: 'Opisz sytuację tak, jak wygląda dziś, bez proponowania rozwiązania.' },
