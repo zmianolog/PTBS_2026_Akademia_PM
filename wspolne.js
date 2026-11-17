@@ -18,7 +18,7 @@ const MENU = [
   { plik: 'samoocena.html', nazwa: 'Samoocena kompetencji' },
   { plik: 'programy.html', nazwa: 'Programy szkoleniowe' },
   { plik: 'projekt.html', nazwa: 'Narzędziownik', nazwaR: { zarzad: 'Projekty', prowadzacy: 'Projekty' } },
-  { plik: 'konsultacje.html', nazwa: 'Konsultacje', role: ['uczestnik', 'prowadzacy'] },
+  { plik: 'konsultacje.html', nazwa: 'Konsultacje', role: ['uczestnik', 'prowadzacy', 'test'] },
   { plik: 'wyniki.html', nazwa: 'Wyniki grupy', role: ['zarzad'] }
 ];
 
