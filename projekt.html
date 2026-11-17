@@ -12,18 +12,38 @@
 <script src="dok_dane.js"></script>
 <script src="dok_definicje.js"></script>
 <style>
-.tp{width:100%;border-collapse:separate;border-spacing:6px;margin-top:10px;table-layout:fixed;min-width:760px}
-.tp th:first-child{width:18%}
+.tp{width:100%;border-collapse:separate;border-spacing:6px;margin-top:6px;table-layout:fixed;min-width:820px}
+.tp th:first-child,.tp td.et{width:19%}
 .tp th{background:var(--g);color:#fff;font-size:14px;font-weight:700;padding:10px;border-radius:8px;text-align:left;vertical-align:top;line-height:1.3}
+.tp th:first-child{background:none}
 .tp th small{display:block;font-weight:500;opacity:.85;font-size:12px}
-.tp td{border:2px solid var(--ramka);border-radius:10px;padding:10px;vertical-align:top}
-.tp td.narz{font-weight:700;color:var(--g);font-size:14px;background:var(--jasny);border-color:var(--jasny)}
-.st{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;background:var(--tlo);color:var(--tekst2);margin-bottom:8px}
+.tp td{border:2px solid var(--ramka);border-radius:10px;padding:8px 10px;vertical-align:top;font-size:14px;line-height:1.45}
+.tp td.v{white-space:pre-wrap}
+.tp td.et{font-weight:700;color:var(--g);background:var(--jasny);border-color:var(--jasny);font-size:13px}
+.tp td.grupa{background:var(--m);border-color:var(--m);color:#1F2A33;font-weight:800;font-size:15px;padding:8px 12px}
+.tp .brak{color:var(--tekst2);font-style:normal;font-size:13px}
+.tp .dec{font-weight:700;color:var(--g);margin-bottom:6px}
+.tp .dec .uw{display:block;font-weight:400;color:var(--tekst)}
+.tp .dec small{display:block;font-weight:500;color:var(--tekst2);font-size:12px}
+.tp .dec-p{display:grid;gap:6px;margin-top:6px}
+.tp textarea{min-height:60px;font:14px var(--font);width:100%;box-sizing:border-box;border:2px solid var(--ramka);border-radius:8px;padding:6px 8px}
+.st{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;background:var(--tlo);color:var(--tekst2)}
 .st.akc{background:#E6F3EA;color:var(--zielen)} .st.zm{background:#FDECEC;color:var(--czerwien)} .st.do{background:#FFF4D6;color:var(--mt)} .st.rob{background:var(--jasny);color:var(--g)}
-.tp .pr{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .tp .zml-btn{min-height:40px;font-size:14px;padding:0 8px;width:100%;min-width:0}
-.tp .pr>*{min-width:0}
+.nagl-p{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.druk-data{display:none}
 .przewin{overflow-x:auto}
+@media print{
+  @page{size:A4 landscape;margin:12mm}
+  header.naglowek,footer.stopka,#podglad,#drukBtn,.bez-druku,.tp textarea,.tp .dec-p{display:none!important}
+  .druk-data{display:block;font-size:9pt;margin:0}
+  .wrap{max-width:none;padding:0}
+  h1{font-size:16pt}
+  .przewin{overflow:visible}
+  .tp{min-width:0;border-spacing:3pt}
+  .tp td,.tp th{font-size:8.5pt;padding:4pt 6pt;border-width:1pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .tp tr{break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -49,17 +69,45 @@ if (APM.wymagajLogowania()) (async () => {
       <div class="nk-siatka">${Object.keys(PROGRAM.toolkit).filter(t => PROGRAM.toolkit[t].od === s.kod).sort().map(t => kafelNarzedzia(t, `dokument.html?t=${t}${pg}`)).join('')}</div>`).join('');
     return;
   }
-  /* Projekty: tabela dla Zarządu i prowadzącego */
+  /* Projekty: jedno zestawienie najważniejszych danych z dokumentów wszystkich zespołów */
   document.title = 'Projekty — Akademia Zarządzania Projektami PTBS';
   const Z = Object.keys(PROGRAM.zespoly), N = Object.keys(PROGRAM.toolkit).filter(narzedzieAktywne).sort((a, b) => PROGRAM.toolkit[a].od.localeCompare(PROGRAM.toolkit[b].od) || a.localeCompare(b));
-  const DOK = {};
-  await Promise.all(Z.flatMap(z => N.map(async t => { try { DOK[z + '_' + t] = await DANE.czytaj(z + '_' + t); } catch (e) { DOK[z + '_' + t] = null; } })));
+  const ZARZ = JA.rola === 'zarzad', DOK = {};
+  const czytaj = async (z, t) => { try { DOK[z + '_' + t] = await DANE.czytaj(z + '_' + t); } catch (e) { DOK[z + '_' + t] = null; } };
+  await Promise.all(Z.flatMap(z => N.map(t => czytaj(z, t))));
   const KL = { akc: 'akc', zm: 'zm', do: 'do', '': 'rob' };
-  const kom = (z, t) => { const D = DOK[z + '_' + t] || { pola: {}, kroki: {}, wersja: 0 };
-    const [k, s] = stanDokumentu(D), u = `dokument.html?t=${t}&z=${z}${pg}`;
-    return `<td><span class="st ${D.wersja ? KL[k] : ''}">${s}</span><div class="pr"><a class="zml-btn" href="${u}">Podgląd</a><a class="zml-btn" href="${u}&druk=1">PDF</a></div></td>`; };
-  $('#tresc').innerHTML = `<h1>Projekty</h1>` + (N.length ? `<div class="przewin"><table class="tp"><tr><th>Narzędzie</th>${Z.map(z => `<th>${z}<small>${esc(PROGRAM.zespoly[z].projekt)}</small></th>`).join('')}</tr>
-    ${N.map(t => `<tr><td class="narz">${t} ${esc(PROGRAM.toolkit[t].n)}</td>${Z.map(z => kom(z, t)).join('')}</tr>`).join('')}</table></div>` : '<p>Żadne narzędzie nie jest jeszcze aktywne.</p>');
+  const dt = s => new Date(s).toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  const dok = (z, t) => DOK[z + '_' + t] || { pola: {}, kroki: {}, wersja: 0 };
+  const wart = (z, t) => id => { const D = dok(z, t); if (D.pola[id]) return D.pola[id].v; const p = DOKUMENTY[t].sekcje.flatMap(s => s.pola || []).find(p => p.id === id); return p && p.dom && p.typ !== 'tabela' ? p.dom(z) : ''; };
+  const pusto = '<span class="brak">nie uzupełniono</span>';
+  function decyzja(z, t) {
+    const D = dok(z, t), ID = z + '_' + t; let h = '';
+    if (D.akc) h += `<div class="dec">${esc(D.akc.decyzja)}${D.akc.uwagi ? `<span class="uw">Uwagi: ${esc(D.akc.uwagi)}</span>` : ''}<small>${esc(D.akc.kto)}, ${dt(D.akc.kiedy)}</small></div>`;
+    if (D.potw) h += `<div class="dec">Wartość potwierdzona po diagnozie (KM1)<small>${esc(D.potw.kto)}, ${dt(D.potw.kiedy)}</small></div>`;
+    const czeka = D.doAkc && (!D.akc || D.doAkc.kiedy > D.akc.kiedy);
+    if (!D.akc && !czeka) h += '<span class="brak">brak decyzji</span>';
+    if (czeka && !ZARZ) h += '<span class="brak">czeka na decyzję sponsora</span>';
+    if (ZARZ && czeka) h += `<textarea class="wej" id="uw-${ID}" placeholder="Uwagi (nieobowiązkowe)"></textarea><div class="dec-p">
+      <button class="zml-btn" data-dec="${ID}|akceptuję">Akceptuję</button><button class="zml-btn" data-dec="${ID}|akceptuję z uwagami">Akceptuję z uwagami</button><button class="zml-btn" data-dec="${ID}|do poprawy">Do poprawy</button></div>`;
+    if (ZARZ && !czeka && D.akc && D.akc.decyzja !== 'do poprawy' && !D.potw && t === 'T01') h += `<div class="dec-p"><button class="zml-btn" data-potw="${ID}">Potwierdzam wartość po diagnozie (KM1)</button></div>`;
+    return h;
+  }
+  function rysuj() {
+    const blok = t => { const def = DOKUMENTY[t] || {}, Zs = def.zestawienie || [];
+      return `<tr><td class="grupa" colspan="${Z.length + 1}">${t} ${esc(PROGRAM.toolkit[t].n)}</td></tr>
+        <tr><td class="et">Status</td>${Z.map(z => { const D = dok(z, t), [k, st] = stanDokumentu(D); return `<td><span class="st ${D.wersja ? KL[k] : ''}">${st}</span>${D.wersja && D.zm ? '' : ''}</td>`; }).join('')}</tr>
+        ${Zs.map(([et, f]) => `<tr><td class="et">${et}</td>${Z.map(z => { const v = f(wart(z, t)); return `<td class="v">${v ? esc(v) : pusto}</td>`; }).join('')}</tr>`).join('')}
+        <tr><td class="et">Decyzja sponsora</td>${Z.map(z => `<td>${decyzja(z, t)}</td>`).join('')}</tr>
+        <tr class="bez-druku"><td class="et"></td>${Z.map(z => `<td><a class="zml-btn maly" href="dokument.html?t=${t}&z=${z}${pg}&druk=1">Pełna ${t === 'T01' ? 'karta' : 'treść'} (PDF)</a></td>`).join('')}</tr>`; };
+    $('#tresc').innerHTML = `<div class="nagl-p"><h1>Projekty</h1><button class="zml-btn" id="drukBtn" style="max-width:320px">Drukuj lub zapisz PDF</button></div>
+      <p class="druk-data">Stan na ${dt(new Date().toISOString())}</p>` + (N.length ? `<div class="przewin"><table class="tp"><tr><th></th>${Z.map(z => `<th>${z}<small>${esc(PROGRAM.zespoly[z].projekt)}</small></th>`).join('')}</tr>${N.map(blok).join('')}</table></div>` : '<p>Żadne narzędzie nie jest jeszcze aktywne.</p>');
+    $('#drukBtn').addEventListener('click', () => window.print());
+    document.querySelectorAll('[data-dec]').forEach(b => b.addEventListener('click', async () => { const [ID, dec] = b.dataset.dec.split('|'), uw = ($('#uw-' + ID) || {}).value || '';
+      DOK[ID] = await DANE.zmien(ID, d => { d.akc = { decyzja: dec, uwagi: uw.trim(), kto: JA.imie, kiedy: new Date().toISOString(), wersja: d.wersja }; }); rysuj(); }));
+    document.querySelectorAll('[data-potw]').forEach(b => b.addEventListener('click', async () => { const ID = b.dataset.potw;
+      DOK[ID] = await DANE.zmien(ID, d => { d.potw = { kto: JA.imie, kiedy: new Date().toISOString(), uwagi: '' }; }); rysuj(); }));
+  }
+  rysuj();
 })();
 </script>
 </body>

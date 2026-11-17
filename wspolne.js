@@ -103,7 +103,7 @@ const APM = (() => {
   }
   const kiedy = k => (k.wiod.length?'Uczymy się: '+k.wiod.join(', '):'')+(k.wsp.length?(k.wiod.length?' · ':'')+'ćwiczymy także: '+k.wsp.join(', '):'');
   function ustawKod(k,r,d){ try{ localStorage.setItem('apm_kod',k); localStorage.setItem('apm_rola',r||'uczestnik'); localStorage.setItem('apm_imie',(d&&d.imie)||''); localStorage.setItem('apm_zespol',(d&&d.zespol)||''); }catch(e){} }
-  function rola(){ try{ return localStorage.getItem('apm_rola')||'uczestnik'; }catch(e){ return 'uczestnik'; } }
+  function rola(){ try{ const pr = podglad() && sessionStorage.getItem('apm_podglad_rola'); return pr || localStorage.getItem('apm_rola')||'uczestnik'; }catch(e){ return 'uczestnik'; } }
   const grafEtapy = (sel) => {
     const el=typeof sel==='string'?document.querySelector(sel):sel; if(!el) return;
     const E=ETAPY_PROJ.filter(e=>e.sp.length), kom=(k,e,typ)=>k[typ].filter(d=>e.sp.includes(d));
