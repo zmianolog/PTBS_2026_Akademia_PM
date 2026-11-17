@@ -103,3 +103,20 @@ p{margin:0 0 12px}
   .menu-btn{display:none} .menu{display:flex;position:static;flex-direction:row;border:0;padding:0;gap:8px} .menu a{width:150px;flex:none}
   .marka{font-size:15px} }
 @media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
+
+/* Kompetencje w etapach projektu */
+.ge-wrap{overflow-x:auto;margin-top:10px}
+.ge{display:grid;gap:4px;min-width:760px}
+.ge-h{background:var(--g);color:#fff;font-weight:700;font-size:14px;line-height:1.25;border-radius:8px;padding:10px 8px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px}
+.ge-h small{font-weight:500;font-size:12px;opacity:.85}
+.ge-h0{text-align:left;align-items:flex-start;justify-content:flex-end}
+.ge-nr{display:inline-flex;width:22px;height:22px;border-radius:50%;background:var(--m);color:var(--g);align-items:center;justify-content:center;font-size:12px;margin-bottom:2px}
+.ge-gr{grid-column:1/-1;font-weight:700;color:var(--g);font-size:14px;padding:10px 2px 2px;border-bottom:2px solid var(--m)}
+.ge-k{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--tekst);padding:4px 0}
+.ge-k .ikona{width:34px;height:34px;flex:none}
+.ge-p{border-radius:8px;background:var(--jasny);min-height:40px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;text-align:center;padding:4px}
+.ge-p.w{background:var(--g);color:#fff}
+.ge-p.s{background:#F3D27A;color:var(--g)}
+.ge-leg{display:flex;flex-wrap:wrap;gap:18px;margin-top:10px;font-size:13px;color:var(--tekst2);align-items:center}
+.ge-leg span{display:flex;align-items:center;gap:8px}
+.ge-leg i.ge-p{width:28px;min-height:18px;height:18px;display:inline-block}

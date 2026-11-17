@@ -137,7 +137,11 @@ if(APM.wymagajLogowania()) (async()=>{
       g+=`<g class="ik ${k.k[0]==='S'?'spol':''}" tabindex="0" role="button" data-i="${i}" aria-label="${k.n}"><circle cx="${x}" cy="${y}" r="28"/><svg class="zi zi-r-${ic.r}" x="${x-15}" y="${y-15}" width="30" height="30" viewBox="0 0 24 24">${ic.s}</svg></g>`; });
     $(cel).innerHTML=`<div class="sekcja" style="margin-top:24px"><h2>Twój profil na początku Akademii</h2>
       <p class="lead">Każda oś wykresu to jedna kompetencja. Im dalej od środka sięga pole, tym wyżej oceniłeś swoje działanie w tej kompetencji (od 1 do 4). Kliknij ikonę, aby zobaczyć opis kompetencji i swoją ocenę. Białe ikony to kompetencje merytoryczne, granatowe to społeczne.</p>
-      <div class="radar-uklad"><svg class="radar" viewBox="-20 -20 640 640" role="img" aria-label="Profil samooceny">${g}</svg><div class="opis-k" id="opisK"></div></div></div>`;
+      <div class="radar-uklad"><svg class="radar" viewBox="-20 -20 640 640" role="img" aria-label="Profil samooceny">${g}</svg><div class="opis-k" id="opisK"></div></div></div>
+      <div class="sekcja" style="margin-top:24px"><h2>Kiedy rozwijamy te kompetencje</h2>
+      <p class="lead">Wykres pokazuje, w których etapach projektu pracujemy z każdą kompetencją. Ciemne pole oznacza kompetencję wiodącą w etapie, złote pole kompetencję wspierającą. W polach są kody spotkań.</p>
+      <div id="grafEt"></div></div>`;
+    APM.grafEtapy('#grafEt');
     const pokazK=i=>{ const k=KOMPETENCJE[i], v=ST.samo[k.k];
       $(cel).querySelectorAll('.ik').forEach(e=>e.classList.toggle('wyb',+e.dataset.i===i));
       $('#opisK').innerHTML=`<div class="nz">${k.n}</div><div style="font-size:13px;color:var(--tekst2)">${k.k[0]==='M'?'Kompetencja merytoryczna · '+k.faza:'Kompetencja społeczna · przez cały projekt'}</div>

@@ -48,11 +48,17 @@
 
   <section class="sekcja">
     <h2>Czego się uczymy</h2>
-    <p class="lead">Program rozwija dwanaście kompetencji lidera projektu. Sześć kompetencji merytorycznych odpowiada kolejnym fazom projektu. Model opiera się na standardzie zarządzania projektami PMI (PMBOK Guide, wydanie ósme) i jest rozszerzony o wdrożenie rozwiązania w Spółce. Sześć kompetencji społecznych dotyczy pracy z ludźmi przez cały czas trwania projektu.</p>
-    <div class="grupa-tyt">Kompetencje merytoryczne — kolejne fazy projektu</div>
+    <p class="lead">Program rozwija dwanaście kompetencji lidera projektu. Sześć kompetencji merytorycznych dotyczy działań w kolejnych etapach projektu. Model opiera się na standardzie zarządzania projektami PMI (PMBOK Guide, wydanie ósme) i jest rozszerzony o wdrożenie rozwiązania w Spółce. Sześć kompetencji społecznych dotyczy pracy z ludźmi przez cały czas trwania projektu.</p>
+    <div class="grupa-tyt">Kompetencje merytoryczne — etapy projektu</div>
     <div class="siatka k3" id="kM"></div>
     <div class="grupa-tyt">Kompetencje społeczne — przez cały projekt</div>
     <div class="siatka k3" id="kS"></div>
+  </section>
+
+  <section class="sekcja">
+    <h2>Kompetencje w etapach projektu</h2>
+    <p class="lead">Wykres pokazuje, w których etapach projektu pracujemy z każdą z dwunastu kompetencji. Ciemne pole oznacza, że kompetencja jest wiodąca na co najmniej jednym spotkaniu etapu, złote pole, że ją ćwiczymy jako wspierającą. Etap 6 „Działanie i korzyści” zaczyna się po zakończeniu Akademii, dlatego nie ma go na wykresie.</p>
+    <div id="grafEtapy"></div>
   </section>
 
   <section class="sekcja ramka-info">
@@ -81,15 +87,11 @@ if(APM.wymagajLogowania()){
    ['Przegląd','Na następnym spotkaniu zespoły pokazują, co zrobiły w projektach, i poprawiają to, co wymaga zmiany.'],
    ['Kolejna część szkolenia','Po przeglądzie zaczyna się kolejna część szkolenia, poświęcona następnemu etapowi projektu.']];
   $('#petla').innerHTML=P.map((p,i)=>`<div class="karta"><span class="nr">${i+1}</span><div class="nz">${p[0]}</div><div class="df">${p[1]}</div></div>`).join('');
-  const E=[["Uruchomienie","D00–D02","Zespół ustala ze sponsorem problem, cel, rezultat i szacunkową wartość projektu, rozpoznaje interesariuszy, dobiera członków zespołu i dzieli role.","Karta projektu, mapa interesariuszy, macierz odpowiedzialności.","Sponsor akceptuje kartę projektu (D02)"],
-   ["Diagnoza","D03–D06","Zespół planuje diagnozę, zbiera dane o stanie obecnym z udziałem interesariuszy i sprawdza na danych, jak duża jest strata.","Plan diagnozy, ramowy plan projektu, rejestr ryzyk, diagnoza stanu obecnego.","KM1 · Diagnoza gotowa, sponsor potwierdza wartość projektu (D06)"],
-   ["Koncepcja rozwiązania","D07–D08","Zespół uzupełnia plan na podstawie diagnozy, opracowuje warianty rozwiązania, ocenia ich ryzyka i przygotowuje decyzję sponsora.","Pełny plan projektu, porównanie wariantów, zatwierdzona koncepcja.","KM2 · Sponsor zatwierdza koncepcję (D08)"],
-   ["Przygotowanie wdrożenia","D09–D10","Zespół uzgadnia rozwiązanie z działami, których ono dotyczy, pracuje z oporem wobec zmiany i przygotowuje pilotaż.","Plan pilotażu, rozwiązanie gotowe do pilotażu.","KM3 · Gotowość do pilotażu (D10), KM4 · Pilotaż uruchomiony"],
-   ["Wdrożenie","D11–D13","Zespół uruchamia pilotaż i poprawia rozwiązanie, aż użytkownicy zaczną z niego korzystać, a następnie odbiera rezultat i przekazuje rozwiązanie właścicielowi w Spółce.","Ocena pilotażu, dokument zamknięcia z planem pomiaru korzyści, wnioski, prezentacja dla Zarządu.","Przekazanie rozwiązania właścicielowi (D13)"],
-   ["Działanie i korzyści","po Akademii","Rozwiązanie działa w codziennej pracy. Właściciel rozwiązania mierzy korzyści i porównuje je z wartością zapisaną w karcie projektu.","Pomiar korzyści według planu pomiaru.","Korzyści potwierdzone pomiarem"]];
-  $('#etapy').innerHTML=E.map((e,i)=>`<div class="karta"><span class="nr">${i+1}</span><div class="nz">${e[0]}</div><div class="df"><b>Spotkania:</b> ${e[1]}</div><div class="df"><b>Zespół:</b> ${e[2]}</div><div class="df"><b>Powstaje:</b> ${e[3]}</div><div class="stopka-karty">${e[4]}</div></div>`).join('');
+  const E=[["Uruchomienie", "D00–D02", "Zespół ustala ze sponsorem problem, cel, rezultat i szacunkową wartość projektu, rozpoznaje interesariuszy, dobiera członków zespołu i dzieli role.", "Karta projektu, mapa interesariuszy, macierz odpowiedzialności", "Akceptacja karty projektu przez sponsora (D02)", "T01 Karta projektu, T02 Mapa interesariuszy ze sposobem zaangażowania, T03 Macierz odpowiedzialności, T04 Plan projektu"], ["Diagnoza", "D03–D06", "Zespół planuje diagnozę, zbiera dane o stanie obecnym z udziałem interesariuszy i sprawdza na danych, jak duża jest strata.", "Plan diagnozy, ramowy plan projektu, rejestr ryzyk, diagnoza stanu obecnego", "KM1 · Diagnoza gotowa, sponsor potwierdza wartość projektu (D06)", "T12 Plan diagnozy i zbierania danych, T05 Rejestr ryzyk i rejestr problemów, T06 Standard prowadzenia spotkań projektowych, T07 Raport statusu projektu"], ["Koncepcja rozwiązania", "D07–D08", "Zespół uzupełnia plan na podstawie diagnozy, opracowuje warianty rozwiązania, ocenia ich ryzyka i przygotowuje decyzję sponsora.", "Pełny plan projektu, porównanie wariantów, zatwierdzona koncepcja", "KM2 · Sponsor zatwierdza koncepcję rozwiązania (D08)", "T13 Opis koncepcji i porównanie wariantów, T08 Rejestr decyzji i zmian"], ["Przygotowanie wdrożenia", "D09–D10", "Zespół uzgadnia rozwiązanie z działami, których dotyczy, pracuje z oporem i przygotowuje pilotaż.", "Plan pilotażu, rozwiązanie gotowe do pilotażu", "KM3 · Gotowość do pilotażu (D10); KM4 · Pilotaż uruchomiony po D10", "T09 Raport dla sponsora lub Zarządu, T10 Dokument zamknięcia projektu z planem wdrożenia"], ["Wdrożenie", "D11–D13", "Zespół uruchamia pilotaż i poprawia rozwiązanie, aż użytkownicy zaczną z niego korzystać; odbiera rezultat i przekazuje rozwiązanie właścicielowi.", "Ocena pilotażu, dokument zamknięcia z planem pomiaru korzyści, wnioski, prezentacja dla Zarządu", "Przekazanie rozwiązania właścicielowi (D13)", "T14 Plan pomiaru korzyści, T11 Lessons learned"], ["Działanie i korzyści", "po Akademii", "Rozwiązanie działa w codziennej pracy; właściciel mierzy korzyści i porównuje je z wartością z karty projektu.", "Pomiar korzyści według planu pomiaru", "Korzyści potwierdzone pomiarem", ""]];
+  $('#etapy').innerHTML=E.map((e,i)=>`<div class="karta"><span class="nr">${i+1}</span><div class="nz">${e[0]}</div><div class="df"><b>Spotkania:</b> ${e[1]}</div><div class="df"><b>Zespół:</b> ${e[2]}</div><div class="df"><b>Powstaje:</b> ${e[3]}.</div>${e[5]?`<div class="df"><b>Nowe narzędzia:</b> ${e[5]}.</div>`:''}<div class="stopka-karty">${e[4]}</div></div>`).join('');
   const kk=k=>`<div class="karta zi-host">${APM.ikona(k.ik,spol(k))}<div class="nz">${k.n}</div><div class="df">${k.d}</div><div class="df"><b>${APM.kiedy(k)}</b></div><div class="stopka-karty">${k.faza}</div></div>`;
   $('#kM').innerHTML=M.map(kk).join(''); $('#kS').innerHTML=S.map(kk).join('');
+  APM.grafEtapy('#grafEtapy');
 }
 </script>
 </body>
