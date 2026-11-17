@@ -99,9 +99,8 @@ p{margin:0 0 12px}
 .stan.do{background:#FBF1D6;color:var(--mt)} .stan.ok{background:#E3F1E8;color:var(--zielen)}
 /* szersze ekrany */
 @media (min-width:640px){ .wrap{padding:28px 24px 50px} h1{font-size:30px} .siatka.k2,.siatka.k3,.siatka.k6{grid-template-columns:repeat(2,1fr)} .przyciski{grid-template-columns:repeat(auto-fit,minmax(240px,max-content))} .zml-btn{width:auto;min-width:240px}}
-@media (min-width:1000px){ .siatka.k3{grid-template-columns:repeat(3,1fr)} .siatka.k6{grid-template-columns:repeat(3,1fr)}
-  .menu-btn{display:none} .menu{display:flex;position:static;flex-direction:row;border:0;padding:0;gap:8px} .menu a{width:150px;flex:none}
-  .marka{font-size:15px} }
+@media (min-width:1000px){ .siatka.k3{grid-template-columns:repeat(3,1fr)} .siatka.k6{grid-template-columns:repeat(3,1fr)} .marka{font-size:15px} }
+@media (min-width:1180px){ .menu-btn{display:none} .menu{display:flex;position:static;flex-direction:row;border:0;padding:0;gap:8px} .menu a{width:128px;flex:none;font-size:14px} }
 @media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
 
 /* Kompetencje w etapach projektu */
@@ -162,3 +161,4 @@ p{margin:0 0 12px}
 .przewodnik-dymek.akt{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){.przewodnik .oddech,.przewodnik .puls{animation:none}.przewodnik .puls{opacity:0}}
 .naglowek .marka{margin-right:auto}
+.naglowek .marka span{white-space:nowrap}

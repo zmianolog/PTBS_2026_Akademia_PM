@@ -86,6 +86,7 @@
 </main>
 <script>
 (async()=>{
+  if(new URLSearchParams(location.search).get('wyloguj')==='1'){ APM.wyloguj(); return; }
   if(APM.kod()){ location.replace('akademia.html'); return; }
   await APM.init();
   const pole=APM.$('#kod');

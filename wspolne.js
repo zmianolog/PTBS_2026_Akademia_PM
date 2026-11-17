@@ -48,7 +48,12 @@ const APM = (() => {
   const ikona = (id, klasaTla) => { const i=IKONY[id]; return `<span class="ikona ${klasaTla||''}"><svg class="zi zi-r-${i.r} zi-m-najazd" viewBox="0 0 24 24">${i.s}</svg></span>`; };
   const znak = () => `<svg class="znak" viewBox="0 0 34 34" aria-hidden="true">${[0,1,2,3,4,5].map(i=>`<rect x="${1+i*5.5}" y="${30-(8+i*4.4)}" width="4" height="${8+i*4.4}" rx="1.2"/>`).join('')}</svg>`;
   function kod(){ try{ return localStorage.getItem('apm_kod'); }catch(e){ return null; } }
-  function wyloguj(){ try{ ['apm_kod','apm_rola','apm_imie','apm_zespol','apm_podglad'].forEach(k=>localStorage.removeItem(k)); }catch(e){} location.href='index.html'; }
+  /* wylogowanie: usuwa kod, rolę, podgląd i logowanie do bazy z tej przeglądarki */
+  async function wyloguj(){
+    try{ Object.keys(localStorage).filter(k=>k.startsWith('apm_')&&k!=='apm_konsultacje').forEach(k=>localStorage.removeItem(k)); Object.keys(sessionStorage).filter(k=>k.startsWith('apm_')).forEach(k=>sessionStorage.removeItem(k)); }catch(e){}
+    try{ if(auth&&au) await au.signOut(auth); }catch(e){}
+    location.href='index.html';
+  }
   /* każda strona poza startową wymaga zapisanego kodu */
   function wymagajLogowania(){ if(!kod()){ location.replace('index.html'); return false; } return true; }
   /* tryb podglądu dokumentów: włączany adresem z ?podglad=1, wyłączany adresem z ?podglad=0 */
@@ -61,6 +66,8 @@ const APM = (() => {
       <nav class="menu" id="menu">${MENU.filter(m=>!m.role||m.role.includes(rola())||(m.podglad&&podglad())).map(m=>`<a href="${m.plik}${m.podglad&&podglad()?'?podglad=1':''}" class="${m.plik===biez?'biezaca':''}">${(m.nazwaR&&m.nazwaR[rola()])||m.nazwa}</a>`).join('')}</nav>
       ${przewodnikBtn()}
     </div></header>`;
+    $('#menu').insertAdjacentHTML('beforeend','<a href="index.html?wyloguj=1" id="wylogujMenu">Wyloguj</a>');
+    $('#wylogujMenu').addEventListener('click',e=>{ e.preventDefault(); wyloguj(); });
     $('#przewodnikBtn').addEventListener('click',()=>{ const d=$('#przewodnikDymek'); d.classList.add('akt'); clearTimeout(d._t); d._t=setTimeout(()=>d.classList.remove('akt'),2600); });
     (function mrugaj(){ setTimeout(()=>{ const o=document.querySelector('#przewodnikBtn .oczy'); if(o){ o.classList.add('mrug'); setTimeout(()=>o.classList.remove('mrug'),140); } mrugaj(); }, 2200+Math.random()*3800); })();
     $('#menuBtn').addEventListener('click',()=>{ const m=$('#menu'); m.classList.toggle('otwarte'); $('#menuBtn').setAttribute('aria-expanded',m.classList.contains('otwarte')); });
