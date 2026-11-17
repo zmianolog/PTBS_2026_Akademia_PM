@@ -50,8 +50,10 @@ const APM = (() => {
   function kod(){ try{ return localStorage.getItem('apm_kod'); }catch(e){ return null; } }
   /* wylogowanie: usuwa kod, rolę, podgląd i logowanie do bazy z tej przeglądarki */
   async function wyloguj(){
-    try{ Object.keys(localStorage).filter(k=>k.startsWith('apm_')&&k!=='apm_konsultacje').forEach(k=>localStorage.removeItem(k)); Object.keys(sessionStorage).filter(k=>k.startsWith('apm_')).forEach(k=>sessionStorage.removeItem(k)); }catch(e){}
-    try{ if(auth&&au) await au.signOut(auth); }catch(e){}
+    const czysc=()=>{ try{ Object.keys(localStorage).filter(k=>k.startsWith('apm_')&&k!=='apm_konsultacje').forEach(k=>localStorage.removeItem(k)); Object.keys(sessionStorage).filter(k=>k.startsWith('apm_')).forEach(k=>sessionStorage.removeItem(k)); }catch(e){} };
+    czysc();
+    try{ if(FIREBASE_CONFIG){ await init(); if(auth&&au) await au.signOut(auth); } }catch(e){}
+    czysc();
     location.href='index.html';
   }
   /* każda strona poza startową wymaga zapisanego kodu */
@@ -97,7 +99,9 @@ const APM = (() => {
     fs=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
     db=fs.getFirestore(app); auth=au.getAuth(app);
     const u=await new Promise(r=>{ const off=au.onAuthStateChanged(auth,x=>{ off(); r(x); }); });
-    if(u&&!u.isAnonymous&&u.email===PROWADZACY_EMAIL){
+    const kk=kod(), naProw=location.pathname.endsWith('prowadzacy.html');
+    /* kod wpisany na stronie logowania ma pierwszeństwo przed kontem Google prowadzącego (poza stroną prowadzącego) */
+    if(u&&!u.isAnonymous&&u.email===PROWADZACY_EMAIL&&(naProw||!kk||kk==='PROWADZACY')){
       /* prowadzący zalogowany kontem Google na stronie prowadzącego */
       try{ localStorage.setItem('apm_rola','prowadzacy'); localStorage.setItem('apm_imie','Marcin Żółtak'); localStorage.setItem('apm_zespol',''); }catch(e){}
       return true;
