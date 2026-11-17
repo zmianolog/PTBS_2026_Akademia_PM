@@ -191,72 +191,86 @@ const PROGRAM = {
   "T01": {
    "n": "Karta projektu",
    "o": "Cel, rezultaty, kryteria sukcesu, zakres i granice, sponsor, warunki zakończenia.",
-   "od": "D00"
+   "od": "D00",
+   "ik": "dokument"
   },
   "T02": {
    "n": "Mapa interesariuszy ze sposobem zaangażowania",
    "o": "Kto ma wpływ i interes w projekcie; kogo zespół pyta, kogo informuje, kto współdecyduje.",
-   "od": "D01"
+   "od": "D01",
+   "ik": "siec-relacji"
   },
   "T03": {
    "n": "Macierz odpowiedzialności",
    "o": "Kto wykonuje, kto zatwierdza, kogo się konsultuje i kogo informuje przy każdym zadaniu.",
-   "od": "D02"
+   "od": "D02",
+   "ik": "macierz"
   },
   "T04": {
    "n": "Plan projektu",
    "o": "Podział prac (WBS), harmonogram, kamienie milowe, zasoby, budżet, zaangażowanie pracowników.",
-   "od": "D02"
+   "od": "D02",
+   "ik": "termin"
   },
   "T05": {
    "n": "Rejestr ryzyk i rejestr problemów",
    "o": "Ryzyka z oceną prawdopodobieństwa i wpływu, reakcje, właściciele; problemy, które już wystąpiły.",
-   "od": "D03"
+   "od": "D03",
+   "ik": "ryzyko"
   },
   "T06": {
    "n": "Standard prowadzenia spotkań projektowych",
    "o": "Przygotowanie spotkania, zapis ustaleń, kontrola wykonania zadań.",
-   "od": "D04"
+   "od": "D04",
+   "ik": "spotkanie"
   },
   "T07": {
    "n": "Raport statusu projektu",
    "o": "Postęp względem planu, odchylenia i ich przyczyny, stan kamieni milowych.",
-   "od": "D06"
+   "od": "D06",
+   "ik": "wykres-slupkowy"
   },
   "T08": {
    "n": "Rejestr decyzji i zmian",
    "o": "Decyzje projektowe i zmiany z analizą wpływu na zakres, czas i budżet.",
-   "od": "D08"
+   "od": "D08",
+   "ik": "decyzja"
   },
   "T09": {
    "n": "Raport dla sponsora lub Zarządu",
    "o": "Stan projektu, sprawy do decyzji, eskalowane problemy.",
-   "od": "D10"
+   "od": "D10",
+   "ik": "raport"
   },
   "T10": {
    "n": "Dokument zamknięcia projektu z planem wdrożenia",
    "o": "Odbiór rezultatu, ocena osiągnięcia celu, plan pilotażu i dalszego wdrożenia, właściciel wdrożenia.",
-   "od": "D10"
+   "od": "D10",
+   "ik": "checklista"
   },
   "T11": {
    "n": "Lessons learned",
    "o": "Wnioski z przebiegu projektu na kolejne projekty Spółki.",
-   "od": "D12"
+   "od": "D12",
+   "ik": "refleksja"
   },
   "T12": {
    "n": "Plan diagnozy i zbierania danych",
    "o": "Jakie dane zespół zbiera, z jakich źródeł, kto je zbiera i do kiedy; wynik diagnozy stanu obecnego.",
-   "od": "D03"
+   "od": "D03",
+   "ik": "notatka"
   },
   "T13": {
    "n": "Opis koncepcji i porównanie wariantów",
    "o": "Warianty rozwiązania porównane według uzgodnionych kryteriów, z oceną kosztu, korzyści i ryzyka.",
-   "od": "D07"
+   "od": "D07",
+   "ik": "kompromis"
   },
   "T14": {
    "n": "Plan pomiaru korzyści",
    "o": "Mierniki korzyści, sposób i terminy pomiaru po wdrożeniu, właściciel pomiaru.",
-   "od": "D11"
+   "od": "D11",
+   "ik": "pomiar"
   }
  },
  "zespoly": {

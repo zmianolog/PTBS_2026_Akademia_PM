@@ -124,3 +124,19 @@ p{margin:0 0 12px}
 /* panel trybu podglądu */
 .podglad{background:#FFF7DD;border:2px solid var(--m);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .podglad select{font:600 14px var(--font);padding:6px 8px;border:2px solid var(--ramka);border-radius:8px}
+
+/* narzędziownik: kafelki narzędzi */
+.nk-siatka{display:grid;gap:10px;margin-top:10px}
+@media (min-width:700px){ .nk-siatka{grid-template-columns:repeat(2,1fr)} }
+@media (min-width:1000px){ .nk-siatka{grid-template-columns:repeat(3,1fr)} }
+.nk{display:flex;gap:12px;align-items:flex-start;border:2px solid var(--ramka);border-radius:12px;padding:14px;background:var(--tlo);color:var(--tekst2);text-decoration:none;height:100%}
+.nk .nk-ik{display:inline-flex;width:44px;height:44px;border-radius:10px;align-items:center;justify-content:center;flex:none;background:#fff;border:2px solid var(--ramka);--zi-rozmiar:26px;--zi-linia:#9AA5AE;--zi-akcent:#C9D3DC}
+.nk .nk-t{display:flex;flex-direction:column;gap:4px;line-height:1.35}
+.nk .nk-t b{font-size:15px}
+.nk .nk-t small{font-size:13px}
+.nk.akt{background:var(--g);border-color:var(--g);color:#fff;cursor:pointer}
+.nk.akt:hover{background:var(--g2);border-color:var(--g2)}
+.nk.akt .nk-ik{background:#fff;border-color:#fff;--zi-linia:var(--zml-granat);--zi-akcent:var(--zml-miod)}
+.nk.akt small{color:#DCE6EE}
+.nk-grupa{font-weight:700;color:var(--g);font-size:17px;margin-top:22px;padding-bottom:6px;border-bottom:2px solid var(--m)}
+.nk-grupa small{font-weight:600;color:var(--tekst2);font-size:14px;margin-left:8px}

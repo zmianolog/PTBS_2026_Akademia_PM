@@ -8,6 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="wspolne.css">
 <script src="wspolne.js"></script>
+<script src="program.js"></script>
+<script src="dok_dane.js"></script>
+<script src="dok_definicje.js"></script>
 <style>
 .gl{display:flex;align-items:center;gap:14px;margin:6px 0}
 .gl .kd{width:64px;height:64px;border-radius:12px;background:var(--g);color:#fff;font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;flex:none}
@@ -17,7 +20,7 @@
 .km{display:flex;align-items:flex-start;gap:10px;margin-top:10px;font-weight:700;color:var(--g);font-size:14px;line-height:1.35}
 .km span{display:block;font-weight:400;color:var(--tekst2)}
 .km i{flex:none;margin-top:3px;width:12px;height:12px;transform:rotate(45deg);background:var(--m);border:2px solid var(--g);border-radius:2px}
-.zakladki{position:sticky;top:62px;z-index:5;background:#fff;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:18px 0 6px;padding:8px 0;border-bottom:2px solid var(--ramka)}
+.zakladki{position:sticky;top:62px;z-index:5;background:#fff;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:18px 0 6px;padding:8px 0;border-bottom:2px solid var(--ramka)}
 .zakladki button{min-height:48px;border:2px solid var(--g);border-radius:8px;background:#fff;color:var(--g);font:600 12px/1.2 var(--font);cursor:pointer;padding:4px 2px;hyphens:manual}
 .zakladki button.akt{background:var(--g);color:#fff}
 .blok{margin-top:18px}
@@ -79,20 +82,17 @@ if(APM.wymagajLogowania()){
   const mat=ML.length?GR.filter(g=>ML.some(m=>m.r===g)).map(g=>`<div class="blok"><h3>${g}</h3><div class="lista2">${ML.filter(m=>m.r===g).map(poz).join('')}</div></div>`).join('')
     :'<div class="blok"><h3>Materiały ze spotkania</h3><div class="lista2"><div class="poz"><span class="zkod">'+zi('materialy')+'</span><div><div class="nzk">Prezentacja do spotkania</div><div class="df">Prezentacja, którą prowadzący pokazuje na spotkaniu; uczestnicy mogą do niej wracać po spotkaniu.</div><span class="niedost">Materiał pojawi się w dniu spotkania</span></div></div></div></div>';
   /* Zadania */
-  const Z=SPOT.zadania[s.kod].length?SPOT.zadania[s.kod]:[
-    [`Z${nr}A`,'Zadanie na spotkaniu','Zadanie wykonywane podczas warsztatu na dokumentach własnego projektu.',''],
-    [`Z${nr}B`,'Praca w projekcie po spotkaniu',s.po+(nast?` Dokumenty zespół przekazuje prowadzącemu najpóźniej dwa dni robocze przed spotkaniem ${nast.kod}.`:''),'']];
-  const zad=`<div class="blok"><h3>Przed spotkaniem</h3><div class="poz"><span class="zkod">${zi('notatka')}</span><div><div class="df">${s.przed}</div></div></div></div>
-    <div class="blok"><h3>Zadania</h3><div class="lista2">${Z.map(z=>`<div class="poz"><span class="zkod">${z[0]}</span><div><div class="nzk">${z[1]}</div><div class="df">${z[2]}</div>
-    ${z[3]?`<div class="akcja"><a class="zml-btn" href="${z[3]}">Przejdź do zadania</a></div>`:(z[0].endsWith('A')?'<span class="niedost">Zadanie zostanie udostępnione na spotkaniu</span>':'')}</div></div>`).join('')}</div></div>`;
-  /* Wzory */
-  const wz=(t,nowe)=>{const c=IKONY[TK[t].ik]; return `<div class="poz"><span class="kw ${nowe?'nowe':''}"><svg class="zi zi-r-${c.r}" viewBox="0 0 24 24">${c.s}</svg></span><div><div class="rodz">${nowe?'wprowadzamy':'używamy dalej'}</div><div class="nzk">${t} ${TK[t].n}</div><div class="df">${TK[t].o}</div><span class="niedost">Wzór do pobrania pojawi się przed spotkaniem</span></div></div>`;};
-  const wzory=s.tn.length+s.tu.length?`<div class="blok"><h3>Wzory z Toolkitu</h3><div class="lista2">${s.tn.map(t=>wz(t,1)).join('')}${s.tu.map(t=>wz(t,0)).join('')}</div></div>`:'<div class="blok"><p>Na tym spotkaniu nie korzystamy z wzorów Toolkitu.</p></div>';
-  const ZAK=[['wprowadzenie','Wprowa&shy;dzenie',wpr],['materialy','Materiały',mat],['zadania','Zadania',zad],['wzory','Wzory T',wzory]];
+  const Z=SPOT.zadania[s.kod]||[];
+  const zad=Z.length?`<div class="blok"><div class="lista2">${Z.map(z=>`<div class="poz"><span class="zkod">${z[0]}</span><div><div class="nzk">${z[1]}</div><div class="df">${z[2]}</div>
+    ${z[3]?`<div class="akcja"><a class="zml-btn" href="${z[3]}">Przejdź do zadania</a></div>`:''}</div></div>`).join('')}</div></div>`:'<div class="blok"><p>Zadania pojawią się na spotkaniu.</p></div>';
+  /* Narzędziownik: narzędzia przypisane do spotkania */
+  const UCZ=APM.rola()==='uczestnik';
+  const NT=[...s.tn,...s.tu];
+  const narz=NT.length?`<div class="nk-siatka">${NT.map(t=>kafelNarzedzia(t,UCZ?`dokument.html?t=${t}`:'projekt.html')).join('')}</div>`:'<div class="blok"><p>Na tym spotkaniu nie pracujemy z narzędziami.</p></div>';
+  const ZAK=[['materialy','Materiały szkoleniowe',mat],['zadania','Zadania',zad],['narzedziownik','Narzędziownik',narz]];
   $('#tresc').innerHTML=`<span class="nadtytul">${SPOT.etapy[s.etap]}</span>
     <div class="gl"><span class="kd">${s.kod}</span><h1>${s.nazwa}</h1></div>
     <div class="meta"><span>Termin: <b>${data(s.kod)}</b></span><span>Miejsce: <b>PTBS, Poznań</b></span></div>
-    ${zn.map(z=>`<div class="km"><i></i><div>${z[1]}<span>${z[2]}</span></div></div>`).join('')}
     <nav class="zakladki">${ZAK.map(z=>`<button data-z="${z[0]}">${z[1]}</button>`).join('')}</nav>
     ${ZAK.map(z=>`<section id="z-${z[0]}" class="ukryty">${z[2]}</section>`).join('')}
     <div class="nawig">${pop?`<a class="zml-btn" href="spotkanie.html?d=${pop.kod}">← ${pop.kod} ${pop.nazwa}</a>`:'<span></span>'}
@@ -100,7 +100,7 @@ if(APM.wymagajLogowania()){
       ${nast?`<a class="zml-btn" href="spotkanie.html?d=${nast.kod}">${nast.kod} ${nast.nazwa} →</a>`:'<span></span>'}</div>`;
   const pokaz=z=>{ ZAK.forEach(x=>{ $('#z-'+x[0]).classList.toggle('ukryty',x[0]!==z); }); document.querySelectorAll('.zakladki button').forEach(b=>b.classList.toggle('akt',b.dataset.z===z)); history.replaceState(null,'',`?d=${s.kod}#${z}`); };
   document.querySelectorAll('.zakladki button').forEach(b=>b.addEventListener('click',()=>pokaz(b.dataset.z)));
-  pokaz(ZAK.some(x=>x[0]===location.hash.slice(1))?location.hash.slice(1):'wprowadzenie');
+  pokaz(ZAK.some(x=>x[0]===location.hash.slice(1))?location.hash.slice(1):'materialy');
 }
 </script>
 </body>

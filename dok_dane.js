@@ -108,3 +108,16 @@ function postepDokumentu(def, D) {
   const pelna = s => s.pola.filter(p => p.typ !== 'wyliczenie' && !p.dom).every(p => (s.kroki && D.kroki[p.id] === 'pom') || !pustaWartosc(wart(p.id)));
   return [sek.filter(pelna).length, sek.length];
 }
+
+/* ===== narzędziownik: dostępność i kafelek narzędzia ===== */
+function czasTerminu(t) { const m = /^(\d{2})\.(\d{2})\.(\d{2})\s+(\d{1,2}):(\d{2})$/.exec((t || '').trim()); return m ? new Date(2000 + +m[3], m[2] - 1, +m[1], +m[4], +m[5]) : null; }
+/* narzędzie jest aktywne od rozpoczęcia spotkania wskazanego w arkuszu programu i tylko wtedy, gdy ma gotowy wzór */
+function narzedzieAktywne(t) {
+  const od = PROGRAM.toolkit[t].od, d = czasTerminu(TERMINY_WSZYSTKIE[od]);
+  return !!DOKUMENTY[t] && ((d && d <= new Date()) || (PODGLAD && od === 'D00'));
+}
+function kafelNarzedzia(t, url) {
+  const n = PROGRAM.toolkit[t], akt = narzedzieAktywne(t), ik = IKONY[n.ik] || IKONY.dokument;
+  const tresc = `<span class="nk-ik"><svg class="zi zi-r-${ik.r}" viewBox="0 0 24 24">${ik.s}</svg></span><span class="nk-t"><b>${t} ${n.n}</b><small>${n.o}</small></span>`;
+  return akt ? `<a class="nk akt" href="${url}">${tresc}</a>` : `<div class="nk" title="Narzędzie będzie aktywne od spotkania ${n.od}">${tresc}</div>`;
+}

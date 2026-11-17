@@ -17,7 +17,7 @@ const MENU = [
   { plik: 'akademia.html', nazwa: 'O Akademii' },
   { plik: 'samoocena.html', nazwa: 'Samoocena kompetencji' },
   { plik: 'programy.html', nazwa: 'Programy szkoleniowe' },
-  { plik: 'projekt.html', nazwa: 'Mój projekt', nazwaR: { zarzad: 'Projekty', prowadzacy: 'Projekty' } },
+  { plik: 'projekt.html', nazwa: 'Narzędziownik', nazwaR: { zarzad: 'Projekty', prowadzacy: 'Projekty' } },
   { plik: 'wyniki.html', nazwa: 'Wyniki grupy', role: ['zarzad'] }
 ];
 

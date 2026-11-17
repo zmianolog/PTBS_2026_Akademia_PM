@@ -60,8 +60,34 @@ textarea.wej{min-height:78px;resize:vertical}
 .uwaga.ok{background:var(--tlo);color:var(--tekst2)}
 .uwaga small{display:block;color:var(--tekst2);font-size:12px}
 .akc-dec{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
-.zapis-stan{position:fixed;right:16px;bottom:16px;background:var(--g);color:#fff;font:600 13px var(--font);padding:8px 14px;border-radius:8px;opacity:0;transition:opacity .3s;z-index:30}
-.zapis-stan.pok{opacity:1}
+.zapis-stan{position:fixed;right:18px;top:78px;display:flex;align-items:center;gap:12px;background:var(--zielen);color:#fff;font:700 17px var(--font);padding:12px 20px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .3s;z-index:30}
+.zapis-stan.pok{opacity:1;animation:zs-puls .7s ease-in-out 2}
+.zapis-stan.blad{background:var(--czerwien);opacity:1;animation:zs-puls 1.2s ease-in-out infinite}
+.zs-ik{width:30px;height:30px;border-radius:50%;background:#fff;position:relative;flex:none}
+.zs-ik::after{content:"";position:absolute;left:10px;top:6px;width:8px;height:14px;border:solid var(--zielen);border-width:0 3px 3px 0;transform:rotate(45deg)}
+.zapis-stan.blad .zs-ik::after{content:"!";border:0;transform:none;left:0;right:0;top:2px;width:auto;height:auto;text-align:center;color:var(--czerwien);font:800 20px var(--font)}
+@keyframes zs-puls{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+#podgladDok{border:2px solid var(--ramka);border-radius:12px;padding:20px;margin-top:14px;font-size:15px;line-height:1.5}
+#podgladDok .w-gl{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--g);padding-bottom:8px;margin-bottom:12px}
+#podgladDok .w-gl img{height:44px}
+#podgladDok .w-gl .w-ak{font-size:13px;color:var(--tekst2);text-align:right}
+#podgladDok .w-gl .w-ak b{color:var(--g)}
+#podgladDok h1{font-size:22px}
+#podgladDok .w-meta{width:100%;border-collapse:collapse;margin:6px 0 14px;font-size:14px}
+#podgladDok .w-meta td{border:1px solid var(--ramka);padding:5px 8px}
+#podgladDok .w-meta td:nth-child(odd){background:var(--jasny);font-weight:700;color:var(--g);width:18%}
+#podgladDok .w-sek{margin-top:16px}
+#podgladDok .w-sek h2{font-size:16px;color:#fff;background:var(--g);padding:6px 10px;border-radius:6px;margin:0 0 8px}
+#podgladDok .w-pole{margin:0 0 10px}
+#podgladDok .w-et{font-weight:700;color:var(--g);font-size:14px}
+#podgladDok .w-v{white-space:pre-wrap}
+#podgladDok .w-brak{color:var(--czerwien)}
+#podgladDok .w-pom{color:var(--tekst2)}
+#podgladDok .w-tab{width:100%;border-collapse:collapse;font-size:14px;margin-top:4px}
+#podgladDok .w-tab th{background:var(--jasny);color:var(--g);text-align:left;border:1px solid var(--ramka);padding:5px 6px}
+#podgladDok .w-tab td{border:1px solid var(--ramka);padding:5px 6px;vertical-align:top;white-space:pre-wrap}
+#podgladDok .w-tab td.l{text-align:right;white-space:nowrap}
+#podgladDok .w-suma{font-weight:700;color:var(--g);margin-top:4px}
 .okno-tlo{position:fixed;inset:0;background:rgba(20,30,40,.55);z-index:40;display:flex;align-items:center;justify-content:center;padding:16px}
 .okno{background:#fff;border-radius:14px;max-width:980px;width:100%;max-height:90vh;overflow:auto;padding:18px}
 .okno .dwie{display:grid;gap:12px}
@@ -111,15 +137,11 @@ textarea.wej{min-height:78px;resize:vertical}
     <div><span class="nadtytul" id="kodDok">T01</span><h1 id="tytul">Dokument</h1></div>
     <div id="stanDok"></div>
   </div>
-  <p class="lead" id="opisDok"></p>
-  <div id="wyborZesp"></div>
-  <div class="pasek" id="pasek"></div>
-  <div class="leg-pasek"><span><i style="background:var(--g)"></i>sekcja wypełniona</span><span><i style="background:#F3D27A"></i>w toku</span><span><i></i>do uzupełnienia</span></div>
   <div class="przyciski" style="grid-template-columns:1fr 1fr;max-width:640px"><button class="zml-btn" id="drukBtn">Drukuj lub zapisz PDF</button><button class="zml-btn" id="rejBtn">Rejestr zmian</button></div>
   <div id="tresc"></div>
 </main>
 <div id="stopka"></div>
-<div class="zapis-stan" id="zapisStan">Zapisano</div>
+<div class="zapis-stan" id="zapisStan"><span class="zs-ik"></span><span id="zapisTekst">Dane zapisane</span></div>
 <div id="okno"></div>
 <div id="wydruk"></div>
 <script>
@@ -143,9 +165,9 @@ if (APM.wymagajLogowania()) (async () => {
 
   /* ----- tryb podglądu: wybór osoby ----- */
   if (PODGLAD) panelPodgladu($('#podglad'), o => `?t=${T}&z=${o.zespol || ZESP}&podglad=1`);
-  $('#kodDok').textContent = T; $('#tytul').textContent = DEF.nazwa + ' · ' + ZESP; $('#opisDok').textContent = DEF.opis;
+  $('#kodDok').textContent = T; $('#tytul').textContent = DEF.nazwa + ' · ' + ZESP;
   document.title = DEF.nazwa + ' ' + ZESP + ' — Akademia Zarządzania Projektami PTBS';
-  if (!EDYTUJE) $('#wyborZesp').innerHTML = `<div class="zespoly">${Object.keys(ZESPOLY).map(z => `<a href="?t=${T}&z=${z}${PODGLAD ? '&podglad=1' : ''}" class="${z === ZESP ? 'wyb' : ''}">${z} · ${ZESPOLY[z].projekt}</a>`).join('')}</div>`;
+  if (false) $('#wyborZesp').innerHTML = `<div class="zespoly">${Object.keys(ZESPOLY).map(z => `<a href="?t=${T}&z=${z}${PODGLAD ? '&podglad=1' : ''}" class="${z === ZESP ? 'wyb' : ''}">${z} · ${ZESPOLY[z].projekt}</a>`).join('')}</div>`;
 
   /* ----- stan sekcji i dokumentu ----- */
   const krokZrobiony = id => id === 'w6' ? krokZrobiony('w5') : (D.kroki[id] === 'pom' || !pusty(wart(id)));
@@ -161,7 +183,7 @@ if (APM.wymagajLogowania()) (async () => {
   function odswiezStan() {
     const [k, t] = stanDok();
     $('#stanDok').innerHTML = `<span class="stan-dok ${k}">Status: ${t} · wersja ${D.wersja}</span>`;
-    $('#pasek').innerHTML = DEF.sekcje.map(s => `<a href="#${s.id}" class="${stanSekcji(s)}" title="${s.nr}. ${s.t}: ${ST[stanSekcji(s)]}">${s.nr}</a>`).join('');
+    if ($('#pasek')) $('#pasek').innerHTML = DEF.sekcje.map(s => `<a href="#${s.id}" class="${stanSekcji(s)}" title="${s.nr}. ${s.t}: ${ST[stanSekcji(s)]}">${s.nr}</a>`).join('');
     DEF.sekcje.forEach(s => { const e = document.querySelector(`#${s.id} .st`); if (e) { const st = stanSekcji(s); e.className = 'st ' + st; e.textContent = ST[st]; } });
   }
 
@@ -194,6 +216,7 @@ if (APM.wymagajLogowania()) (async () => {
       <div>Korzyść netto I roku, tylko oszczędności twarde<b>${zl(S.tw - S.bud)}</b></div><div>Korzyść netto I roku, twarde i miękkie<b>${zl(S.tw + S.mi - S.bud)}</b></div></div>`;
   }
   function metaPola(id) {
+    return '';
     const p = D.pola[id], inni = Object.values(D.edycja || {}).filter(e => e && e.pole === id && e.kto !== JA.imie && e.do > Date.now()), inny = inni.length, e = { kto: inni.map(x => x.kto).join(', ') };
     return `${inny ? `<span class="edytuje">edytuje: ${esc(e.kto)}</span>` : ''}<div class="meta">${p ? `<span>Ostatnia zmiana: ${esc(p.kto)}, ${dt(p.kiedy)}</span>` : (defPola(id) && defPola(id).dom ? '<span>Wartość wpisana z programu Akademii; zespół może ją zmienić</span>' : '<span>Pole jeszcze niewypełnione</span>')}${p ? `<button data-hist="${id}">Historia zmian</button>` : ''}</div>`;
   }
@@ -225,6 +248,7 @@ if (APM.wymagajLogowania()) (async () => {
     return h;
   }
   function rysuj() {
+    if (!EDYTUJE) { rysujPodglad(); return; }
     const dis = !EDYTUJE;
     $('#tresc').innerHTML = DEF.sekcje.map(s => {
       let b;
@@ -240,14 +264,25 @@ if (APM.wymagajLogowania()) (async () => {
           return h;
         }).join('') + (widoczny ? '' : '<p class="pod" style="margin:0;font-size:13px;color:var(--tekst2)">Kolejny krok pojawi się po wypełnieniu albo pominięciu bieżącego.</p>');
       } else b = s.pola.map(p => pole(p, dis)).join('');
-      return `<section class="sek" id="${s.id}"><div class="sg"><span class="nr">${s.nr}</span><h2 style="margin:0;font-size:18px">${s.t}</h2><span class="st"></span></div><div class="sb">${b}${s.akceptacja ? '' : uwagiSekcji(s)}</div></section>`;
+      return `<section class="sek" id="${s.id}"><div class="sg"><span class="nr">${s.nr}</span><h2 style="margin:0;font-size:18px">${s.t}</h2></div><div class="sb">${b}${s.akceptacja ? '' : uwagiSekcji(s)}</div></section>`;
     }).join('');
+    odswiezStan(); podepnij();
+  }
+
+  function rysujPodglad() {
+    $('#tresc').innerHTML = `<div id="podgladDok">${budujWydruk(true)}</div>` + (JA.rola === 'zarzad' && DEF.sekcje.some(s => s.akceptacja) ? `<section class="sek" style="margin-top:16px"><div class="sg"><h2 style="margin:0;font-size:18px">Decyzja sponsora</h2></div><div class="sb">${sekcjaAkc()}</div></section>` : '');
     odswiezStan(); podepnij();
   }
 
   /* ----- zapis ----- */
   let tz = null;
-  const pokazZapis = (t, blad) => { const e = $('#zapisStan'); e.textContent = t; e.style.background = blad ? 'var(--czerwien)' : ''; e.classList.add('pok'); clearTimeout(tz); tz = setTimeout(() => e.classList.remove('pok'), blad ? 6000 : 1600); };
+  const pokazZapis = (t, blad) => {
+    const e = $('#zapisStan'), g = new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+    $('#zapisTekst').textContent = blad ? 'Dane nie zostały zapisane. Sprawdź połączenie z internetem.' : `${t}, godz. ${g}`;
+    clearTimeout(tz); e.classList.remove('pok', 'blad'); void e.offsetWidth;
+    if (blad) { e.classList.add('blad'); return; }
+    e.classList.add('pok'); tz = setTimeout(() => e.classList.remove('pok'), 3500);
+  };
   function wartoscZDom(id) {
     const df = defPola(id);
     if (df.typ === 'tabela') {
@@ -261,11 +296,11 @@ if (APM.wymagajLogowania()) (async () => {
     const L = lok[id] || (lok[id] = {}); clearTimeout(L.timer);
     const v = wartosc !== undefined ? wartosc : wartoscZDom(id);
     const bazaW = L.bazaW !== undefined ? L.bazaW : ((D.pola[id] || {}).w || 0);
-    let r; try { r = await DANE.zapiszPole(ID, id, v, bazaW, JA.imie, wymus); } catch (e) { console.warn(e); pokazZapis('Nie zapisano: brak połączenia albo uprawnień', true); return; }
+    let r; try { r = await DANE.zapiszPole(ID, id, v, bazaW, JA.imie, wymus); } catch (e) { console.warn(e); pokazZapis('', true); return; }
     if (r.konflikt) { konflikt(id, v, r.konflikt); return; }
     L.bazaW = r.ok.w; L.brudny = false; D = r.D;
     $(`[data-meta="${id}"]`) && ($(`[data-meta="${id}"]`).innerHTML = metaPola(id)); $(`[data-nowsza="${id}"]`) && ($(`[data-nowsza="${id}"]`).innerHTML = '');
-    pokazZapis('Zapisano'); odswiezZalezne(id);
+    pokazZapis('Dane zapisane'); odswiezZalezne(id);
   }
   function odswiezZalezne(id) {
     const df = defPola(id);
@@ -276,6 +311,7 @@ if (APM.wymagajLogowania()) (async () => {
     odswiezStan();
   }
   function ustawEdycje(id, on) {
+    return;
     if (!EDYTUJE) return;
     DANE.edycja(ID, id, JA.imie, on);
   }
@@ -313,7 +349,7 @@ if (APM.wymagajLogowania()) (async () => {
       <div class="dwie"><div class="wer"><h3>Twoja wersja</h3>${pokazW(id, moja)}</div><div class="wer"><h3>Wersja zapisana przez: ${esc(zapisana.kto)}</h3>${pokazW(id, zapisana.v)}</div></div>
       ${tekst ? `<div class="pole" style="margin-top:12px"><div class="et">Połączona wersja</div><textarea class="wej" id="polacz" style="min-height:120px">${esc(zapisana.v || '')}\n${esc(moja || '')}</textarea></div>` : ''}
       <div class="akcje"><button class="zml-btn" id="kMoja">Zostaw moją wersję</button><button class="zml-btn" id="kIch">Zostaw zapisaną wersję</button>${tekst ? '<button class="zml-btn" id="kPol">Zapisz połączoną wersję</button>' : ''}</div></div></div>`;
-    const dalej = async v => { zamknijOkno(); D = await DANE.czytaj(ID); lok[id] = { bazaW: (D.pola[id] || {}).w || 0 }; if (v !== undefined) { const r = await DANE.zapiszPole(ID, id, v, lok[id].bazaW, JA.imie, true); lok[id].bazaW = r.ok.w; D = r.D; } rysuj(); pokazZapis('Zapisano'); };
+    const dalej = async v => { zamknijOkno(); D = await DANE.czytaj(ID); lok[id] = { bazaW: (D.pola[id] || {}).w || 0 }; if (v !== undefined) { const r = await DANE.zapiszPole(ID, id, v, lok[id].bazaW, JA.imie, true); lok[id].bazaW = r.ok.w; D = r.D; } rysuj(); pokazZapis('Dane zapisane'); };
     $('#kMoja').onclick = () => dalej(moja);
     $('#kIch').onclick = async () => { await DANE.dopiszHist(ID, { pole: id, stara: zapisana.v ?? null, nowa: moja, kto: JA.imie, opis: 'wersja niewybrana w oknie konfliktu, niezapisana w polu', wersja: D.wersja }); dalej(); };
     if (tekst) $('#kPol').onclick = () => dalej($('#polacz').value);
@@ -341,6 +377,7 @@ if (APM.wymagajLogowania()) (async () => {
 
   /* ----- zmiany innych osób ----- */
   const naZmiane = nowe => {
+    if (!EDYTUJE) { D = nowe; if (!(document.activeElement && document.activeElement.closest('.wej'))) rysujPodglad(); return; }
     const stare = D; D = nowe;
     Object.keys(D.pola).forEach(id => {
       const L = lok[id] || {}, zm = !stare.pola[id] || stare.pola[id].w !== D.pola[id].w;
@@ -355,7 +392,7 @@ if (APM.wymagajLogowania()) (async () => {
   setInterval(() => document.querySelectorAll('[data-meta]').forEach(e => e.innerHTML = metaPola(e.dataset.meta)), 15000);
 
   /* ----- wydruk ----- */
-  function wydruk() {
+  function budujWydruk(ekran) {
     const [, st] = stanDok(), brak = '<span class="w-brak">do uzupełnienia</span>';
     const wP = p => {
       if (p.typ === 'wyliczenie') { const S = sumy(); return `<div class="w-pole"><div class="w-et">${p.et}</div><table class="w-tab"><tr><th>Strata rocznie</th><th>Ramowy budżet</th><th>Korzyść netto I roku (twarde)</th><th>Korzyść netto I roku (twarde i miękkie)</th></tr><tr><td class="l">${zl(S.strata)}</td><td class="l">${zl(S.bud)}</td><td class="l">${zl(S.tw - S.bud)}</td><td class="l">${zl(S.tw + S.mi - S.bud)}</td></tr></table></div>`; }
@@ -371,14 +408,17 @@ if (APM.wymagajLogowania()) (async () => {
     };
     const wS = s => {
       if (s.akceptacja) return `<div class="w-sek"><h2>${s.nr}. ${s.t}</h2>${D.akc ? `<div class="w-pole"><div class="w-et">Decyzja sponsora</div><div>${esc(D.akc.decyzja)} · ${esc(D.akc.kto)}, ${dt(D.akc.kiedy)} · wersja ${D.akc.wersja}${D.akc.uwagi ? '<br>Uwagi: ' + esc(D.akc.uwagi) : ''}</div></div>` : `<div class="w-pole">${brak}</div>`}${D.potw ? `<div class="w-pole"><div class="w-et">Potwierdzenie wartości po diagnozie (KM1)</div><div>${esc(D.potw.kto)}, ${dt(D.potw.kiedy)}${D.potw.uwagi ? '<br>Uwagi: ' + esc(D.potw.uwagi) : ''}</div></div>` : ''}</div>`;
-      return `<div class="w-sek"><h2>${s.nr}. ${s.t}</h2>${s.pola.map(wP).join('')}</div>`;
+      return `<div class="w-sek"><h2>${s.nr}. ${s.t}</h2>${s.pola.map(wP).join('')}${ekran && JA.rola === 'prowadzacy' ? uwagiSekcji(s) : ''}</div>`;
     };
-    $('#wydruk').innerHTML = `<div class="w-gl"><img src="logo_ptbs.png" alt="PTBS"><div class="w-ak"><b>Akademia Zarządzania Projektami PTBS</b><br>${T} · ${DEF.nazwa}</div></div>
+    return `<div class="w-gl"><img src="logo_ptbs.png" alt="PTBS"><div class="w-ak"><b>Akademia Zarządzania Projektami PTBS</b><br>${T} · ${DEF.nazwa}</div></div>
       <h1>${DEF.nazwa}: ${esc(wart('nazwa_proj') || ZESPOLY[ZESP].projekt)}</h1>
       <table class="w-meta"><tr><td>Zespół</td><td>${ZESP}${wart('nazwa_zesp') ? ' · ' + esc(wart('nazwa_zesp')) : ''}</td><td>Status</td><td>${st}</td></tr>
       <tr><td>Wersja</td><td>${D.wersja}</td><td>Data wydruku</td><td>${dt(new Date().toISOString())}</td></tr></table>
-      ${DEF.sekcje.map(wS).join('')}
-      `;
+      ${DEF.sekcje.map(wS).join('')}`;
+  }
+  function wydruk() {
+    const [, st] = stanDok();
+    $('#wydruk').innerHTML = budujWydruk(false);
     let ps=document.getElementById('stylDruku'); if(!ps){ ps=document.createElement('style'); ps.id='stylDruku'; document.head.appendChild(ps); }
     ps.textContent=`@page{@bottom-left{content:"${T} ${DEF.nazwa} · ${ZESP} · wersja ${D.wersja} · ${st} · wydruk ${dt(new Date().toISOString())}";font:8pt Montserrat,Arial,sans-serif;color:#5A6873}}`;
   }
@@ -387,6 +427,7 @@ if (APM.wymagajLogowania()) (async () => {
 
   rysuj();
   DANE.otworz(ID, naZmiane);
+  if (P.get('druk') === '1') setTimeout(() => { wydruk(); window.print(); }, 400);
 })();
 </script>
 </body>
