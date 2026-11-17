@@ -59,9 +59,9 @@ textarea.wej{min-height:78px;resize:vertical}
 .etw .ec span{font-size:12px;color:var(--tekst2)}
 .etw.nowy-et{border-top:2px solid var(--ramka);padding-top:6px}
 .etw button{min-height:46px;border:2px solid var(--g);background:var(--g);border-radius:8px;cursor:pointer;font:700 18px var(--font);color:#fff}
-.macierz{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;margin-top:14px}
+.macierz{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:6px;margin-top:14px}
 .macierz .mo{font-size:12px;font-weight:700;color:var(--tekst2);display:flex;align-items:center;justify-content:center;text-align:center}
-.macierz .mp{border:2px solid var(--ramka);border-radius:10px;padding:10px 12px;min-height:110px}
+.macierz .mp{border:2px solid var(--ramka);border-radius:10px;padding:10px 12px;min-height:90px}
 .macierz .mp b{display:block;color:var(--g);margin-bottom:4px}
 .macierz .mp div{font-size:14px}
 .btn-maly{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 22px;border:2px solid var(--g);border-radius:8px;background:var(--g);color:#fff;font:600 15px/1.2 var(--font);cursor:pointer}
@@ -227,10 +227,10 @@ if (APM.wymagajLogowania()) (async () => {
     return h + '</div>';
   }
   function macierzHtml(w) {
-    const pole = x => { const L = w.filter(r => r.wpl === x.wpl && r.zai === x.zai && String(r.kto || '').trim()); return `<div class="mp"><b>${x.n}</b>${L.map(r => `<div>${esc(r.kto)}</div>`).join('') || '<div style="color:var(--tekst2)">—</div>'}</div>`; };
-    const W = WSPOLPRACA;
-    return `<div class="macierz"><div class="mo"></div><div class="mo">Zainteresowanie niskie</div><div class="mo">Zainteresowanie wysokie</div>
-      <div class="mo">Wpływ<br>wysoki</div>${pole(W[1])}${pole(W[0])}<div class="mo">Wpływ<br>niski</div>${pole(W[3])}${pole(W[2])}</div>`;
+    const pole = (wpl, zai) => { const x = WSPOLPRACA.find(k => k.wpl === wpl && k.zai === zai), L = w.filter(r => r.wpl === wpl && r.zai === zai && String(r.kto || '').trim());
+      return `<div class="mp"><b>${x.n}</b>${L.map(r => `<div>${esc(r.kto)}</div>`).join('') || '<div style="color:var(--tekst2)">—</div>'}</div>`; };
+    return `<div class="macierz"><div class="mo"></div>${POZ_ZAI.map(z => `<div class="mo">Zainteresowanie ${z}</div>`).join('')}
+      ${POZ_WPL.slice().reverse().map(p => `<div class="mo">Wpływ<br>${p}</div>${POZ_ZAI.map(z => pole(p, z)).join('')}`).join('')}</div>`;
   }
   function etapyHtml(p, dis) {
     const v = wart(p.id) || {};

@@ -50,11 +50,11 @@ const BRAK_DANYCH = [
 ];
 
 /* sposób współpracy z interesariuszem wynika z wpływu i zainteresowania */
+const POZ_WPL = ['niski', 'przeciętny', 'wysoki'], POZ_ZAI = ['niskie', 'przeciętne', 'wysokie'];
 const WSPOLPRACA = [
-  { wpl: 'wysoki', zai: 'wysokie', n: 'ścisła współpraca', o: 'udział w decyzjach i stały kontakt' },
-  { wpl: 'wysoki', zai: 'niskie', n: 'uzgadnianie decyzji', o: 'kontakt przy decyzjach, które go dotyczą' },
-  { wpl: 'niski', zai: 'wysokie', n: 'regularne informowanie', o: 'informacja o postępach i zmianach' },
-  { wpl: 'niski', zai: 'niskie', n: 'obserwowanie', o: 'kontakt, gdy zmieni się jego sytuacja' }
+  { wpl: 'wysoki', zai: 'niskie', n: 'uzgadnianie decyzji' }, { wpl: 'wysoki', zai: 'przeciętne', n: 'ścisła współpraca' }, { wpl: 'wysoki', zai: 'wysokie', n: 'ścisła współpraca' },
+  { wpl: 'przeciętny', zai: 'niskie', n: 'uzgadnianie decyzji' }, { wpl: 'przeciętny', zai: 'przeciętne', n: 'regularne informowanie' }, { wpl: 'przeciętny', zai: 'wysokie', n: 'ścisła współpraca' },
+  { wpl: 'niski', zai: 'niskie', n: 'obserwowanie' }, { wpl: 'niski', zai: 'przeciętne', n: 'obserwowanie' }, { wpl: 'niski', zai: 'wysokie', n: 'regularne informowanie' }
 ];
 const sposobWspolpracy = r => { const w = WSPOLPRACA.find(x => x.wpl === r.wpl && x.zai === r.zai); return w ? w.n : ''; };
 const wlascicielProcesu = z => { const c = ZESPOLY[z].czlonkowie.find(c => /właściciel/i.test(c.rola)); return c ? c.imie : ''; };
@@ -218,12 +218,12 @@ const DOKUMENTY = {
         { id: 'inter', typ: 'tabela', et: 'Interesariusze projektu', macierz: true,
           kol: [ { id: 'kto', t: 'Interesariusz', typ: 'obszar', s: 1.5 },
                  { id: 'ocz', t: 'Czego oczekuje lub czego się obawia', typ: 'obszar', s: 2.4 },
-                 { id: 'wpl', t: 'Wpływ na projekt', typ: 'wybor', op: ['niski', 'wysoki'], s: .9 },
-                 { id: 'zai', t: 'Zainteresowanie projektem', typ: 'wybor', op: ['niskie', 'wysokie'], s: .9 },
+                 { id: 'wpl', t: 'Wpływ na projekt', typ: 'wybor', op: POZ_WPL, s: .9 },
+                 { id: 'zai', t: 'Zainteresowanie projektem', typ: 'wybor', op: POZ_ZAI, s: .9 },
                  { id: 'spos', t: 'Sposób współpracy', typ: 'auto', f: sposobWspolpracy, s: 1.2 } ],
           dom: z => [ { kto: 'Sponsor (' + SPONSOR + ')', ocz: '', wpl: '', zai: '' }, { kto: 'Właściciel procesu (' + wlascicielProcesu(z) + ')', ocz: '', wpl: '', zai: '' } ],
           wyj: { po: 'Analiza pokazuje, kto może wpłynąć na projekt albo kogo projekt dotyczy, i jak zespół będzie z każdą z tych osób lub grup współpracował. Pełniejszą analizę zespół zrobi w narzędziu T02 na D02.',
-            jak: 'Wpływ oznacza, czy interesariusz może zatrzymać, opóźnić albo zmienić projekt, na przykład przez decyzję, budżet albo odmowę współpracy. Zainteresowanie oznacza, jak bardzo projekt zmienia jego pracę lub sytuację. Sposób współpracy strona przypisuje sama: wysoki wpływ i wysokie zainteresowanie – ścisła współpraca; wysoki wpływ i niskie zainteresowanie – uzgadnianie decyzji; niski wpływ i wysokie zainteresowanie – regularne informowanie; niski wpływ i niskie zainteresowanie – obserwowanie.',
+            jak: 'Wpływ oznacza, czy interesariusz może zatrzymać, opóźnić albo zmienić projekt, na przykład przez decyzję, budżet albo odmowę współpracy. Zainteresowanie oznacza, jak bardzo projekt zmienia jego pracę lub sytuację. Oba oceniacie w trzech poziomach: niski, przeciętny, wysoki. Sposób współpracy strona przypisuje sama: ścisła współpraca, gdy wpływ jest wysoki, a zainteresowanie co najmniej przeciętne, albo gdy wpływ jest przeciętny, a zainteresowanie wysokie; uzgadnianie decyzji, gdy wpływ jest wysoki lub przeciętny, a zainteresowanie niskie; regularne informowanie, gdy wpływ i zainteresowanie są przeciętne albo gdy wpływ jest niski, a zainteresowanie wysokie; obserwowanie, gdy wpływ jest niski, a zainteresowanie niskie lub przeciętne.',
             opis: 'Pytania pomocnicze: kto podejmuje decyzje w sprawie projektu? Czyja praca się zmieni? Kto dostarcza dane albo zasoby? Kto może opóźnić wdrożenie? Kogo dotyczą skutki problemu?',
             p1: 'Administratorzy budynków · obawiają się dodatkowej pracy przy nowym formularzu · wpływ wysoki · zainteresowanie wysokie · ścisła współpraca',
             p2: 'Firmy wykonujące naprawy · oczekują jasnych zleceń z opisem awarii · wpływ niski · zainteresowanie wysokie · regularne informowanie',
