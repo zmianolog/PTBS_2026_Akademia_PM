@@ -45,20 +45,25 @@ textarea.wej{min-height:78px;resize:vertical}
 .tab textarea.wej{min-height:44px}
 .tab .staly{font-size:14px;font-weight:600;padding:8px 2px}
 .tab .usun{min-height:46px;border:2px solid var(--g);background:var(--g);border-radius:8px;cursor:pointer;font:600 15px var(--font);color:#fff}
-.tab .suma{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:baseline;background:var(--g);color:#fff;border-radius:10px;padding:12px 16px;margin-top:8px;font-size:15px}
-.tab .suma b{font-size:22px;font-weight:800}
-.tab .suma span{opacity:.9}
+.tab .suma{display:flex;justify-content:flex-end;margin-top:8px}
+.tab .suma-k{display:inline-flex;flex-wrap:wrap;align-items:baseline;justify-content:flex-end;gap:4px 18px;background:var(--g);color:#fff;border-radius:10px;padding:10px 16px;font-size:15px}
+.tab .suma-k b{font-size:20px;font-weight:800}
+.tab .suma-k span{opacity:.9}
+.tab .auto{padding:10px 4px;font-weight:700;color:var(--g);font-size:14px}
 .et-w{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .et-w .wy-btn{margin-left:auto;flex:0 0 auto;min-width:190px}
-.etap{border:2px solid var(--ramka);border-radius:10px;padding:12px;margin-top:10px}
-.etap .eg{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-bottom:8px}
-.etap .eg b{color:var(--g);font-size:16px}
-.etap .eg span{font-size:13px;color:var(--tekst2)}
-.etap .ekm{font-size:13px;font-weight:700;color:var(--mt);background:#FFF4D6;border-radius:6px;padding:3px 8px;display:inline-block;margin-bottom:8px}
-.dz{display:grid;grid-template-columns:28px 1fr 46px 46px 46px;gap:6px;align-items:start;margin-top:6px}
-.dz .nrd{font-weight:700;color:var(--g);padding-top:10px;text-align:right}
-.dz button{min-height:46px;border:2px solid var(--g);background:var(--g);border-radius:8px;cursor:pointer;font:700 16px var(--font);color:#fff}
-.dz button:disabled{opacity:.35;cursor:default}
+.etw{display:grid;grid-template-columns:1.1fr 3fr 46px 46px;gap:6px;align-items:start;margin-top:6px}
+.etw.th{font-size:12px;font-weight:700;color:var(--tekst2);margin-top:10px}
+.etw .ec{padding:8px 4px;line-height:1.3}
+.etw .ec b{color:var(--g);display:block}
+.etw .ec span{font-size:12px;color:var(--tekst2)}
+.etw.nowy-et{border-top:2px solid var(--ramka);padding-top:6px}
+.etw button{min-height:46px;border:2px solid var(--g);background:var(--g);border-radius:8px;cursor:pointer;font:700 18px var(--font);color:#fff}
+.macierz{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;margin-top:14px}
+.macierz .mo{font-size:12px;font-weight:700;color:var(--tekst2);display:flex;align-items:center;justify-content:center;text-align:center}
+.macierz .mp{border:2px solid var(--ramka);border-radius:10px;padding:10px 12px;min-height:110px}
+.macierz .mp b{display:block;color:var(--g);margin-bottom:4px}
+.macierz .mp div{font-size:14px}
 .btn-maly{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 22px;border:2px solid var(--g);border-radius:8px;background:var(--g);color:#fff;font:600 15px/1.2 var(--font);cursor:pointer}
 .btn-maly:hover{background:var(--g2);border-color:var(--g2)}
 .btn-maly:disabled{opacity:.4;cursor:not-allowed}
@@ -100,7 +105,7 @@ textarea.wej{min-height:78px;resize:vertical}
 #podgladDok .w-tab th{background:var(--jasny);color:var(--g);text-align:left;border:1px solid var(--ramka);padding:5px 6px}
 #podgladDok .w-tab td{border:1px solid var(--ramka);padding:5px 6px;vertical-align:top;white-space:pre-wrap}
 #podgladDok .w-tab td.l{text-align:right;white-space:nowrap}
-#podgladDok .w-suma{font-weight:700;color:#fff;background:var(--g);border-radius:8px;padding:8px 12px;margin-top:6px;display:inline-block;font-size:15px}
+#podgladDok .w-suma{font-weight:700;color:#fff;background:var(--g);border-radius:8px;padding:8px 12px;margin-top:6px;display:table;margin-left:auto;font-size:15px}
 .okno-tlo{position:fixed;inset:0;background:rgba(20,30,40,.55);z-index:40;display:flex;align-items:center;justify-content:center;padding:16px}
 .okno{background:#fff;border-radius:14px;max-width:980px;width:100%;max-height:90vh;overflow:auto;padding:18px}
 .okno .dwie{display:grid;gap:12px}
@@ -135,10 +140,11 @@ textarea.wej{min-height:78px;resize:vertical}
   .w-brak{color:#C8202E;font-style:normal}
   .w-pom{color:#5A6873}
   .w-tab{width:100%;border-collapse:collapse;font-size:8.8pt;margin-top:2pt}
+  .macierz{gap:4pt;margin-top:6pt;break-inside:avoid} .macierz .mp{min-height:44pt;padding:4pt 6pt;border-width:1pt;border-radius:3pt} .macierz .mp b,.macierz .mp div{font-size:8.8pt} .macierz .mo{font-size:8pt}
   .w-tab th{background:#F0F6FB;color:#1F4460;text-align:left;border:0.75pt solid #C9D3DC;padding:3pt 4pt}
   .w-tab td{border:0.75pt solid #C9D3DC;padding:3pt 4pt;vertical-align:top;white-space:pre-wrap}
   .w-tab td.l{text-align:right;white-space:nowrap}
-  .w-suma{font-weight:700;color:#1F4460;margin-top:3pt;border:1.2pt solid #1F4460;border-radius:3pt;padding:3pt 6pt;display:inline-block}
+  .w-suma{font-weight:700;color:#1F4460;margin-top:3pt;border:1.2pt solid #1F4460;border-radius:3pt;padding:3pt 6pt;display:table;margin-left:auto}
 }
 </style>
 </head>
@@ -186,7 +192,7 @@ if (APM.wymagajLogowania()) (async () => {
   const krokZrobiony = id => id === 'w6' ? krokZrobiony('w5') : (D.kroki[id] === 'pom' || !pusty(wart(id)));
   function stanSekcji(s) {
     if (s.akceptacja) return D.akc && D.akc.decyzja !== 'do poprawy' ? 'w' : D.doAkc ? 't' : '';
-    const pola = s.pola.filter(p => p.typ !== 'wyliczenie' && !(p.dom));
+    const pola = s.pola.filter(p => p.typ !== 'wyliczenie' && !(p.dom && p.typ !== 'tabela'));
     const ile = pola.filter(p => s.kroki ? krokZrobiony(p.id) : !pusty(wart(p.id))).length;
     return ile === pola.length ? 'w' : ile ? 't' : '';
   }
@@ -211,20 +217,27 @@ if (APM.wymagajLogowania()) (async () => {
   function tabela(p, dis) {
     const w = wart(p.id), szer = p.kol.map(c => c.s + 'fr').join(' ') + (p.stale || dis ? '' : ' 44px');
     let h = `<div class="tab" data-tab="${p.id}"><div class="tw th" style="grid-template-columns:${szer}">${p.kol.map(c => `<span>${c.t}</span>`).join('')}${p.stale || dis ? '' : '<span></span>'}</div>`;
-    w.forEach((r, i) => { h += `<div class="tw" style="grid-template-columns:${szer}">${p.kol.map(c => c.typ === 'staly' ? `<div class="staly">${esc(r[c.id])}</div>` : wejscie(c, r[c.id] ?? '', dis, `${p.id}|${i}|${c.id}`)).join('')}${p.stale || dis ? '' : `<button class="usun" data-usun="${p.id}|${i}" title="Usuń wiersz">×</button>`}</div>`; });
+    w.forEach((r, i) => { h += `<div class="tw" style="grid-template-columns:${szer}">${p.kol.map(c => c.typ === 'auto' ? `<div class="auto" data-auto="${p.id}|${i}">${esc(c.f(r))}</div>` : c.typ === 'staly' ? `<div class="staly">${esc(r[c.id])}</div>` : wejscie(c, r[c.id] ?? '', dis, `${p.id}|${i}|${c.id}`)).join('')}${p.stale || dis ? '' : `<button class="usun" data-usun="${p.id}|${i}" title="Usuń wiersz">×</button>`}</div>`; });
     if (!p.stale && !dis && !(p.max && w.length >= p.max)) h += `<div><button class="btn-maly" data-dodaj="${p.id}">Dodaj wiersz</button></div>`;
     if (p.suma) {
       const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0);
-      h += `<div class="suma"><span>${p.sumaEt || 'Razem'}:</span> <b>${zl(s())} rocznie</b>${p.sumaWg ? `<span>oszczędności twarde: ${zl(s('twarda'))}</span><span>miękkie: ${zl(s('miękka'))}</span>` : ''}</div>`;
+      h += `<div class="suma"><div class="suma-k"><span>${p.sumaEt || 'Razem'}:</span><b>${zl(s())} rocznie</b>${p.sumaWg ? `<span>oszczędności twarde: ${zl(s('twarda'))}</span><span>miękkie: ${zl(s('miękka'))}</span>` : ''}</div></div>`;
     }
+    if (p.macierz) h += macierzHtml(w);
     return h + '</div>';
+  }
+  function macierzHtml(w) {
+    const pole = x => { const L = w.filter(r => r.wpl === x.wpl && r.zai === x.zai && String(r.kto || '').trim()); return `<div class="mp"><b>${x.n}</b>${L.map(r => `<div>${esc(r.kto)}</div>`).join('') || '<div style="color:var(--tekst2)">—</div>'}</div>`; };
+    const W = WSPOLPRACA;
+    return `<div class="macierz"><div class="mo"></div><div class="mo">Zainteresowanie niskie</div><div class="mo">Zainteresowanie wysokie</div>
+      <div class="mo">Wpływ<br>wysoki</div>${pole(W[1])}${pole(W[0])}<div class="mo">Wpływ<br>niski</div>${pole(W[3])}${pole(W[2])}</div>`;
   }
   function etapyHtml(p, dis) {
     const v = wart(p.id) || {};
-    return ETAPY_KARTY.map(e => { const L = v[e.id] || [];
-      return `<div class="etap"><div class="eg"><b>${e.n}</b><span>${e.sp}</span></div><div class="ekm">${e.km}</div>
-        ${L.map((x, i) => `<div class="dz"><span class="nrd">${i + 1}.</span>${wejscie({ typ: 'obszar' }, x.t || '', dis, `${p.id}|${e.id}|${i}`)}${dis ? '' : `<button data-egora="${e.id}|${i}" title="W górę" ${i ? '' : 'disabled'}>↑</button><button data-edol="${e.id}|${i}" title="W dół" ${i < L.length - 1 ? '' : 'disabled'}>↓</button><button data-eusun="${e.id}|${i}" title="Usuń działanie">×</button>`}</div>`).join('')}
-        ${dis ? '' : `<div style="margin-top:8px"><button class="btn-maly" data-edod="${e.id}">+ Dodaj działanie</button></div>`}</div>`; }).join('');
+    let h = `<div class="etw th"><span>Etap projektu</span><span>Działanie</span>${dis ? '' : '<span></span><span></span>'}</div>`;
+    ETAPY_KARTY.forEach(e => { const L = (v[e.id] && v[e.id].length) ? v[e.id] : [{ t: '' }];
+      L.forEach((x, i) => { h += `<div class="etw${i ? '' : ' nowy-et'}"${dis ? ' style="grid-template-columns:1.1fr 3fr"' : ''}><div class="ec"><b>${e.n}</b><span>${e.sp} · ${e.km}</span></div>${wejscie({ typ: 'obszar' }, x.t || '', dis, `${p.id}|${e.id}|${i}`)}${dis ? '' : `<button data-eplus="${e.id}|${i}" title="Dodaj działanie w tym etapie">+</button>${L.length > 1 ? `<button data-eusun="${e.id}|${i}" title="Usuń wiersz">×</button>` : '<span></span>'}`}</div>`; }); });
+    return h;
   }
   function sumy() {
     const t = id => (wart(id) || []), s = (id, f) => t(id).filter(f || (() => 1)).reduce((a, r) => a + (+r.kw || 0), 0);
@@ -329,6 +342,9 @@ if (APM.wymagajLogowania()) (async () => {
   }
   function odswiezZalezne(id) {
     const df = defPola(id);
+    if (df && df.typ === 'tabela' && df.macierz) { const box = $(`[data-in="${id}"]`), w = wart(id) || [], kA = df.kol.find(c => c.typ === 'auto');
+      box.querySelectorAll('[data-auto]').forEach(el => { const i = +el.dataset.auto.split('|')[1]; el.textContent = w[i] ? kA.f(w[i]) : ''; });
+      const m = box.querySelector('.macierz'); if (m) { const t = document.createElement('div'); t.innerHTML = macierzHtml(w); m.replaceWith(t.firstElementChild); } }
     if (df && df.typ === 'tabela' && df.suma) { const box = $(`[data-in="${id}"]`); const f = document.activeElement && box.contains(document.activeElement); if (!f) { box.innerHTML = tabela(df, !EDYTUJE); podepnijPola(box); } else { const s = box.querySelector('.suma'); if (s) { const t = document.createElement('div'); t.innerHTML = tabela(df, !EDYTUJE); s.replaceWith(t.querySelector('.suma')); } } }
     const wy = document.querySelector('[data-wyl]'); if (wy) wy.innerHTML = wyliczenie();
     const sek = DEF.sekcje.find(s => s.kroki && s.pola.some(p => p.id === id || (p.dod && p.dod.id === id)));
@@ -354,10 +370,8 @@ if (APM.wymagajLogowania()) (async () => {
     root.querySelectorAll('[data-hist]').forEach(b => b.addEventListener('click', () => historia(b.dataset.hist)));
     root.querySelectorAll('[data-wyj]').forEach(b => b.addEventListener('click', () => { const w = $('#wy-' + b.dataset.wyj), o = w.classList.toggle('ukryty'); b.setAttribute('aria-expanded', String(!o)); b.textContent = o ? 'Wyjaśnienie' : 'Zwiń wyjaśnienie'; }));
     const etapZmien = async (fn) => { const id = 'etapy', v = wartoscZDom(id); fn(v); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, v); const box = $(`[data-in="${id}"]`); box.innerHTML = etapyHtml(defPola(id), false); podepnijPola(box); };
-    root.querySelectorAll('[data-edod]').forEach(b => b.addEventListener('click', () => etapZmien(v => { (v[b.dataset.edod] = v[b.dataset.edod] || []).push({ t: '' }); })));
+    root.querySelectorAll('[data-eplus]').forEach(b => b.addEventListener('click', () => { const [e, i] = b.dataset.eplus.split('|'); etapZmien(v => { v[e] = v[e] && v[e].length ? v[e] : [{ t: '' }]; v[e].splice(+i + 1, 0, { t: '' }); }); }));
     root.querySelectorAll('[data-eusun]').forEach(b => b.addEventListener('click', () => { const [e, i] = b.dataset.eusun.split('|'); etapZmien(v => v[e].splice(+i, 1)); }));
-    root.querySelectorAll('[data-egora]').forEach(b => b.addEventListener('click', () => { const [e, i] = b.dataset.egora.split('|'); etapZmien(v => { const L = v[e]; [L[+i - 1], L[+i]] = [L[+i], L[+i - 1]]; }); }));
-    root.querySelectorAll('[data-edol]').forEach(b => b.addEventListener('click', () => { const [e, i] = b.dataset.edol.split('|'); etapZmien(v => { const L = v[e]; [L[+i + 1], L[+i]] = [L[+i], L[+i + 1]]; }); }));
   }
   const poleZOpt = el => el && el.dataset && el.dataset.p ? poleZ(el) : null;
   function podepnij() {
@@ -432,12 +446,13 @@ if (APM.wymagajLogowania()) (async () => {
       const v = wart(p.id);
       let t;
       if (p.typ === 'etapy') {
-        t = pusty(v) ? brak : ETAPY_KARTY.map(e => { const L = ((v || {})[e.id] || []).filter(x => String(x.t || '').trim());
-          return `<div class="w-pole"><div class="w-et">${e.n} (${e.sp}) · ${e.km}</div>${L.length ? `<ol style="margin:2px 0 0;padding-left:20px">${L.map(x => `<li>${esc(x.t)}</li>`).join('')}</ol>` : '<div class="w-pom">brak działań</div>'}</div>`; }).join('');
+        t = pusty(v) ? brak : `<table class="w-tab"><tr><th style="width:30%">Etap projektu</th><th>Działanie</th></tr>${ETAPY_KARTY.map(e => { const L = ((v || {})[e.id] || []).filter(x => String(x.t || '').trim()); const n = Math.max(L.length, 1);
+          return (L.length ? L : [{ t: '' }]).map((x, i) => `<tr>${i ? '' : `<td rowspan="${n}"><b>${e.n}</b><br><span style="font-size:.85em">${e.sp} · ${e.km}</span></td>`}<td>${x.t ? esc(x.t) : '<span class="w-brak">brak działań</span>'}</td></tr>`).join(''); }).join('')}</table>`;
       } else if (p.typ === 'tabela') {
         const w = (v || []).filter(r => p.stale || !pusty([r]));
-        t = w.length ? `<table class="w-tab"><tr>${p.kol.map(c => `<th>${c.t}</th>`).join('')}</tr>${w.map(r => `<tr>${p.kol.map(c => `<td class="${c.typ === 'liczba' ? 'l' : ''}">${c.typ === 'liczba' && r[c.id] !== '' && r[c.id] != null ? zl(r[c.id]) : esc(r[c.id] ?? '')}</td>`).join('')}</tr>`).join('')}</table>` : brak;
+        t = w.length ? `<table class="w-tab"><tr>${p.kol.map(c => `<th>${c.t}</th>`).join('')}</tr>${w.map(r => `<tr>${p.kol.map(c => c.typ === 'auto' ? `<td>${esc(c.f(r))}</td>` : `<td class="${c.typ === 'liczba' ? 'l' : ''}">${c.typ === 'liczba' && r[c.id] !== '' && r[c.id] != null ? zl(r[c.id]) : esc(r[c.id] ?? '')}</td>`).join('')}</tr>`).join('')}</table>` : brak;
         if (w.length && p.suma) { const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0); t += `<div class="w-suma">${p.sumaEt || 'Razem'}: ${zl(s())} rocznie${p.sumaWg ? ` · twarde: ${zl(s('twarda'))} · miękkie: ${zl(s('miękka'))}` : ''}</div>`; }
+        if (p.macierz && w.length) t += macierzHtml(w);
       } else t = pusty(v) ? brak : `<div class="w-v">${esc(v)}</div>`;
       return `<div class="w-pole"><div class="w-et">${p.et}</div>${t}</div>` + (p.dod ? wP(p.dod) : '');
     };

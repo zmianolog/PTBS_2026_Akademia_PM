@@ -135,6 +135,7 @@ function htmlWyjasnienia(w) {
     <div class="wy-b"><b>Skąd wziąć dane w PTBS</b><ul>${ZRODLA.map(z => `<li><b>${e(z[0])}:</b> ${e(z[1])}.</li>`).join('')}</ul></div>
     <div class="wy-b"><b>Gdy danych brakuje</b><ul>${BRAK_DANYCH.map(x => `<li>${e(x)}</li>`).join('')}</ul></div>`;
   else h += b('Skąd dane', w.skad);
+  if (w.etapy) h += ETAPY_KARTY.map(x => `<div class="wy-b"><b>${e(x.n)} (${e(x.sp)})</b><div>${e(x.co)}</div><div><b>Kończy się:</b> ${e(x.km)}.</div><div><b>Przykładowe działania:</b> ${x.pr.map(e).join('; ')}.</div></div>`).join('');
   h += b('Przykład 1', w.p1) + b('Przykład 2', w.p2) + b('Najczęstszy błąd', w.blad);
   return h;
 }
