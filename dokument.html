@@ -115,7 +115,7 @@ textarea.wej{min-height:78px;resize:vertical}
   <div id="wyborZesp"></div>
   <div class="pasek" id="pasek"></div>
   <div class="leg-pasek"><span><i style="background:var(--g)"></i>sekcja wypełniona</span><span><i style="background:#F3D27A"></i>w toku</span><span><i></i>do uzupełnienia</span></div>
-  <div class="przyciski" style="grid-template-columns:1fr;max-width:420px"><button class="zml-btn" id="drukBtn">Drukuj lub zapisz PDF</button></div>
+  <div class="przyciski" style="grid-template-columns:1fr 1fr;max-width:640px"><button class="zml-btn" id="drukBtn">Drukuj lub zapisz PDF</button><button class="zml-btn" id="rejBtn">Rejestr zmian</button></div>
   <div id="tresc"></div>
 </main>
 <div id="stopka"></div>
@@ -123,13 +123,15 @@ textarea.wej{min-height:78px;resize:vertical}
 <div id="okno"></div>
 <div id="wydruk"></div>
 <script>
-if (APM.wymagajLogowania()) {
+if (APM.wymagajLogowania()) (async () => {
   APM.naglowek(); APM.stopka();
+  if (!PODGLAD) await APM.init();
   const $ = APM.$, P = new URLSearchParams(location.search), T = P.get('t') || 'T01', DEF = DOKUMENTY[T];
   const JA = ja(), EDYTUJE = JA.rola === 'uczestnik';
   const ZESP = EDYTUJE ? JA.zespol : (P.get('z') || 'P1');
   const ID = ZESP + '_' + T;
-  let D = DANE.czytaj(ID);
+  if (!ZESP) { $('#tresc').innerHTML = '<div class="uwaga">Twój kod nie jest jeszcze przypisany do zespołu. Skontaktuj się z prowadzącym.</div>'; return; }
+  let D = await DANE.czytaj(ID);
   const lok = {}; /* stan lokalny pól: bazaW, brudny, timer */
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const zl = n => (Math.round(+n || 0)).toLocaleString('pl-PL') + ' zł';
@@ -192,7 +194,7 @@ if (APM.wymagajLogowania()) {
       <div>Korzyść netto I roku, tylko oszczędności twarde<b>${zl(S.tw - S.bud)}</b></div><div>Korzyść netto I roku, twarde i miękkie<b>${zl(S.tw + S.mi - S.bud)}</b></div></div>`;
   }
   function metaPola(id) {
-    const p = D.pola[id], e = D.edycja[id], inny = e && e.kto !== JA.imie && e.do > Date.now();
+    const p = D.pola[id], inni = Object.values(D.edycja || {}).filter(e => e && e.pole === id && e.kto !== JA.imie && e.do > Date.now()), inny = inni.length, e = { kto: inni.map(x => x.kto).join(', ') };
     return `${inny ? `<span class="edytuje">edytuje: ${esc(e.kto)}</span>` : ''}<div class="meta">${p ? `<span>Ostatnia zmiana: ${esc(p.kto)}, ${dt(p.kiedy)}</span>` : (defPola(id) && defPola(id).dom ? '<span>Wartość wpisana z programu Akademii; zespół może ją zmienić</span>' : '<span>Pole jeszcze niewypełnione</span>')}${p ? `<button data-hist="${id}">Historia zmian</button>` : ''}</div>`;
   }
   function pole(p, dis) {
@@ -213,9 +215,10 @@ if (APM.wymagajLogowania()) {
     if (D.akc) h += `<div class="uwaga ${D.akc.decyzja === 'do poprawy' ? '' : 'ok'}"><b>Decyzja sponsora: ${esc(D.akc.decyzja)}</b> (wersja ${D.akc.wersja})${D.akc.uwagi ? '<br>' + esc(D.akc.uwagi) : ''}<small>${esc(D.akc.kto)}, ${dt(D.akc.kiedy)}</small></div>`;
     if (zm.length && D.akc) h += `<div class="nowsza">Po akceptacji zespół zmienił pola: ${zm.map(k => (defPola(k) || { et: k }).et).join('; ')}.</div>`;
     if (D.potw) h += `<div class="uwaga ok"><b>Wartość projektu potwierdzona po diagnozie (KM1)</b>${D.potw.uwagi ? '<br>' + esc(D.potw.uwagi) : ''}<small>${esc(D.potw.kto)}, ${dt(D.potw.kiedy)}</small></div>`;
-    if (!D.akc && D.doAkc) h += `<div class="uwaga">Zespół przekazał kartę do akceptacji: ${esc(D.doAkc.kto)}, ${dt(D.doAkc.kiedy)}.</div>`;
+    const ponowne = D.akc && D.doAkc && D.doAkc.kiedy > D.akc.kiedy;
+    if ((!D.akc && D.doAkc) || ponowne) h += `<div class="uwaga">Zespół przekazał kartę ${ponowne ? 'ponownie ' : ''}do akceptacji: ${esc(D.doAkc.kto)}, ${dt(D.doAkc.kiedy)}.</div>`;
     if (!D.akc && !D.doAkc && !zar) h += '<p style="margin:0">Karta jest robocza. Gdy zespół uzna ją za gotową, przekazuje ją sponsorowi do akceptacji.</p>';
-    if (EDYTUJE && (!D.doAkc || (D.akc && (D.akc.decyzja === 'do poprawy' || zm.length)))) h += `<div><button class="zml-btn" style="max-width:420px" id="doAkcBtn">Przekaż kartę do akceptacji</button></div>`;
+    if (EDYTUJE && (!D.doAkc || (D.akc && !ponowne && (D.akc.decyzja === 'do poprawy' || zm.length)))) h += `<div><button class="zml-btn" style="max-width:420px" id="doAkcBtn">Przekaż kartę do akceptacji</button></div>`;
     if (zar) h += `<div class="pole"><div class="et">Decyzja sponsora</div><textarea class="wej" id="akcUw" placeholder="Uwagi sponsora (nieobowiązkowe)"></textarea>
       <div class="akc-dec"><button class="zml-btn" data-dec="akceptuję">Akceptuję</button><button class="zml-btn" data-dec="akceptuję z uwagami">Akceptuję z uwagami</button><button class="zml-btn" data-dec="do poprawy">Do poprawy</button></div>
       ${D.akc && D.akc.decyzja !== 'do poprawy' && !D.potw ? `<div class="akc-dec" style="grid-template-columns:1fr"><button class="zml-btn" id="potwBtn">Potwierdzam wartość projektu po diagnozie (KM1)</button></div>` : ''}</div>`;
@@ -244,7 +247,7 @@ if (APM.wymagajLogowania()) {
 
   /* ----- zapis ----- */
   let tz = null;
-  const pokazZapis = t => { const e = $('#zapisStan'); e.textContent = t; e.classList.add('pok'); clearTimeout(tz); tz = setTimeout(() => e.classList.remove('pok'), 1600); };
+  const pokazZapis = (t, blad) => { const e = $('#zapisStan'); e.textContent = t; e.style.background = blad ? 'var(--czerwien)' : ''; e.classList.add('pok'); clearTimeout(tz); tz = setTimeout(() => e.classList.remove('pok'), blad ? 6000 : 1600); };
   function wartoscZDom(id) {
     const df = defPola(id);
     if (df.typ === 'tabela') {
@@ -254,13 +257,13 @@ if (APM.wymagajLogowania()) {
     }
     const el = document.querySelector(`[data-p="${id}"]`); return df.typ === 'liczba' ? (el.value === '' ? '' : +el.value) : el.value;
   }
-  function zapisz(id, wymus, wartosc) {
+  async function zapisz(id, wymus, wartosc) {
     const L = lok[id] || (lok[id] = {}); clearTimeout(L.timer);
     const v = wartosc !== undefined ? wartosc : wartoscZDom(id);
     const bazaW = L.bazaW !== undefined ? L.bazaW : ((D.pola[id] || {}).w || 0);
-    const r = DANE.zapiszPole(ID, id, v, bazaW, JA.imie, wymus);
+    let r; try { r = await DANE.zapiszPole(ID, id, v, bazaW, JA.imie, wymus); } catch (e) { console.warn(e); pokazZapis('Nie zapisano: brak połączenia albo uprawnień', true); return; }
     if (r.konflikt) { konflikt(id, v, r.konflikt); return; }
-    L.bazaW = r.ok.w; L.brudny = false; D = DANE.czytaj(ID);
+    L.bazaW = r.ok.w; L.brudny = false; D = r.D;
     $(`[data-meta="${id}"]`) && ($(`[data-meta="${id}"]`).innerHTML = metaPola(id)); $(`[data-nowsza="${id}"]`) && ($(`[data-nowsza="${id}"]`).innerHTML = '');
     pokazZapis('Zapisano'); odswiezZalezne(id);
   }
@@ -274,7 +277,7 @@ if (APM.wymagajLogowania()) {
   }
   function ustawEdycje(id, on) {
     if (!EDYTUJE) return;
-    D = DANE.zmien(ID, d => { if (on) d.edycja[id] = { kto: JA.imie, do: Date.now() + 120000 }; else if (d.edycja[id] && d.edycja[id].kto === JA.imie) delete d.edycja[id]; });
+    DANE.edycja(ID, id, JA.imie, on);
   }
   const poleZ = el => el.dataset.p.split('|')[0];
   function podepnijPola(root) {
@@ -285,19 +288,19 @@ if (APM.wymagajLogowania()) {
       el.addEventListener('change', () => { if (el.tagName === 'SELECT') { (lok[id] || (lok[id] = {})).brudny = true; zapisz(id); } });
       el.addEventListener('blur', () => { const L = lok[id] || {}; setTimeout(() => { if (!document.activeElement || poleZOpt(document.activeElement) !== id) { if (L.brudny) zapisz(id); ustawEdycje(id, false); } }, 50); });
     });
-    root.querySelectorAll('[data-dodaj]').forEach(b => b.addEventListener('click', () => { const id = b.dataset.dodaj, w = wartoscZDom(id); w.push({}); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
-    root.querySelectorAll('[data-usun]').forEach(b => b.addEventListener('click', () => { const [id, i] = b.dataset.usun.split('|'); const w = wartoscZDom(id); w.splice(+i, 1); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
+    root.querySelectorAll('[data-dodaj]').forEach(b => b.addEventListener('click', async () => { const id = b.dataset.dodaj, w = wartoscZDom(id); w.push({}); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
+    root.querySelectorAll('[data-usun]').forEach(b => b.addEventListener('click', async () => { const [id, i] = b.dataset.usun.split('|'); const w = wartoscZDom(id); w.splice(+i, 1); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
     root.querySelectorAll('[data-hist]').forEach(b => b.addEventListener('click', () => historia(b.dataset.hist)));
   }
   const poleZOpt = el => el && el.dataset && el.dataset.p ? poleZ(el) : null;
   function podepnij() {
     podepnijPola(document);
-    document.querySelectorAll('[data-krok]').forEach(b => b.addEventListener('click', () => { const id = b.dataset.krok; D = DANE.zmien(ID, d => { if (d.kroki[id] === 'pom') delete d.kroki[id]; else d.kroki[id] = 'pom'; d.wersja++; }); rysuj(); }));
-    document.querySelectorAll('[data-nu]').forEach(b => b.addEventListener('click', () => { const s = b.dataset.nu, t = $('#nu-' + s).value.trim(); if (!t) return; D = DANE.zmien(ID, d => { (d.uwagi[s] = d.uwagi[s] || []).push({ t, kto: JA.imie, kiedy: new Date().toISOString(), ok: false }); }); rysuj(); }));
-    document.querySelectorAll('[data-uwz]').forEach(b => b.addEventListener('click', () => { const [s, i] = b.dataset.uwz.split('|'); D = DANE.zmien(ID, d => { d.uwagi[s][+i].ok = true; }); rysuj(); }));
-    const da = $('#doAkcBtn'); if (da) da.addEventListener('click', () => { D = DANE.zmien(ID, d => { d.doAkc = { kto: JA.imie, kiedy: new Date().toISOString() }; if (d.akc && (d.akc.decyzja === 'do poprawy' || Object.values(d.pola).some(p => (p.dw || 0) > d.akc.wersja))) d.akc = null; }); rysuj(); });
-    document.querySelectorAll('[data-dec]').forEach(b => b.addEventListener('click', () => { const uw = $('#akcUw').value.trim(); D = DANE.zmien(ID, d => { d.akc = { decyzja: b.dataset.dec, uwagi: uw, kto: JA.imie, kiedy: new Date().toISOString(), wersja: d.wersja }; }); rysuj(); }));
-    const pb = $('#potwBtn'); if (pb) pb.addEventListener('click', () => { const uw = $('#akcUw').value.trim(); D = DANE.zmien(ID, d => { d.potw = { uwagi: uw, kto: JA.imie, kiedy: new Date().toISOString(), wersja: d.wersja }; }); rysuj(); });
+    document.querySelectorAll('[data-krok]').forEach(b => b.addEventListener('click', async () => { const id = b.dataset.krok; D = await DANE.zmien(ID, d => { if (d.kroki[id] === 'pom') delete d.kroki[id]; else d.kroki[id] = 'pom'; d.wersja++; }); rysuj(); }));
+    document.querySelectorAll('[data-nu]').forEach(b => b.addEventListener('click', async () => { const s = b.dataset.nu, t = $('#nu-' + s).value.trim(); if (!t) return; D = await DANE.zmien(ID, d => { (d.uwagi[s] = d.uwagi[s] || []).push({ t, kto: JA.imie, kiedy: new Date().toISOString(), ok: false }); }); rysuj(); }));
+    document.querySelectorAll('[data-uwz]').forEach(b => b.addEventListener('click', async () => { const [s, i] = b.dataset.uwz.split('|'); D = await DANE.zmien(ID, d => { d.uwagi[s][+i].ok = true; }); rysuj(); }));
+    const da = $('#doAkcBtn'); if (da) da.addEventListener('click', async () => { D = await DANE.zmien(ID, d => { d.doAkc = { kto: JA.imie, kiedy: new Date().toISOString() }; }); rysuj(); });
+    document.querySelectorAll('[data-dec]').forEach(b => b.addEventListener('click', async () => { const uw = $('#akcUw').value.trim(); D = await DANE.zmien(ID, d => { d.akc = { decyzja: b.dataset.dec, uwagi: uw, kto: JA.imie, kiedy: new Date().toISOString(), wersja: d.wersja }; }); rysuj(); }));
+    const pb = $('#potwBtn'); if (pb) pb.addEventListener('click', async () => { const uw = $('#akcUw').value.trim(); D = await DANE.zmien(ID, d => { d.potw = { uwagi: uw, kto: JA.imie, kiedy: new Date().toISOString(), wersja: d.wersja }; }); rysuj(); });
   }
 
   /* ----- konflikt i historia ----- */
@@ -310,22 +313,34 @@ if (APM.wymagajLogowania()) {
       <div class="dwie"><div class="wer"><h3>Twoja wersja</h3>${pokazW(id, moja)}</div><div class="wer"><h3>Wersja zapisana przez: ${esc(zapisana.kto)}</h3>${pokazW(id, zapisana.v)}</div></div>
       ${tekst ? `<div class="pole" style="margin-top:12px"><div class="et">Połączona wersja</div><textarea class="wej" id="polacz" style="min-height:120px">${esc(zapisana.v || '')}\n${esc(moja || '')}</textarea></div>` : ''}
       <div class="akcje"><button class="zml-btn" id="kMoja">Zostaw moją wersję</button><button class="zml-btn" id="kIch">Zostaw zapisaną wersję</button>${tekst ? '<button class="zml-btn" id="kPol">Zapisz połączoną wersję</button>' : ''}</div></div></div>`;
-    const dalej = v => { zamknijOkno(); D = DANE.czytaj(ID); lok[id] = { bazaW: (D.pola[id] || {}).w || 0 }; if (v !== undefined) { const r = DANE.zapiszPole(ID, id, v, lok[id].bazaW, JA.imie, true); lok[id].bazaW = r.ok.w; } D = DANE.czytaj(ID); rysuj(); pokazZapis('Zapisano'); };
-    $('#kMoja').onclick = () => { DANE.zapiszPole(ID, id, moja, 0, JA.imie + ' (wersja niewybrana)', true); dalej(moja); };
-    $('#kIch').onclick = () => { const h = DANE.hist(ID); h.push({ pole: id, stara: moja, nowa: zapisana.v, kto: JA.imie + ' (wersja niewybrana)', kiedy: new Date().toISOString(), wersja: D.wersja }); localStorage.setItem('apm_dokh_' + ID, JSON.stringify(h)); dalej(); };
+    const dalej = async v => { zamknijOkno(); D = await DANE.czytaj(ID); lok[id] = { bazaW: (D.pola[id] || {}).w || 0 }; if (v !== undefined) { const r = await DANE.zapiszPole(ID, id, v, lok[id].bazaW, JA.imie, true); lok[id].bazaW = r.ok.w; D = r.D; } rysuj(); pokazZapis('Zapisano'); };
+    $('#kMoja').onclick = () => dalej(moja);
+    $('#kIch').onclick = async () => { await DANE.dopiszHist(ID, { pole: id, stara: zapisana.v ?? null, nowa: moja, kto: JA.imie, opis: 'wersja niewybrana w oknie konfliktu, niezapisana w polu', wersja: D.wersja }); dalej(); };
     if (tekst) $('#kPol').onclick = () => dalej($('#polacz').value);
   }
-  function historia(id) {
-    const df = defPola(id), H = DANE.hist(ID).filter(h => h.pole === id).reverse();
+  async function historia(id) {
+    const df = defPola(id), H = (await DANE.hist(ID)).filter(h => h.pole === id).reverse();
     $('#okno').innerHTML = `<div class="okno-tlo"><div class="okno"><h2>Historia zmian: ${esc(df.et)}</h2>
-      ${H.map((h, i) => `<div class="hist"><small>${esc(h.kto)}, ${dt(h.kiedy)} · wersja dokumentu ${h.wersja}</small><pre>${pokazW(id, h.nowa)}</pre>${EDYTUJE && i > 0 ? `<button class="btn-maly" data-przywroc="${i}">Przywróć tę wersję</button>` : ''}</div>`).join('') || '<p>Brak zmian.</p>'}
+      ${H.map((h, i) => `<div class="hist"><small>${esc(h.kto)}, ${dt(h.kiedy)} · wersja dokumentu ${h.wersja}${h.opis ? ' · ' + esc(h.opis) : ''}</small><pre>${pokazW(id, h.nowa)}</pre>${EDYTUJE && i > 0 && !h.opis ? `<button class="btn-maly" data-przywroc="${i}">Przywróć tę wersję</button>` : ''}</div>`).join('') || '<p>Brak zmian.</p>'}
       <div class="akcje" style="grid-template-columns:1fr"><button class="zml-btn" id="hZamknij">Zamknij</button></div></div></div>`;
     $('#hZamknij').onclick = zamknijOkno;
-    document.querySelectorAll('[data-przywroc]').forEach(b => b.onclick = () => { const h = H[+b.dataset.przywroc]; D = DANE.czytaj(ID); DANE.zapiszPole(ID, id, h.nowa, 0, JA.imie, true); D = DANE.czytaj(ID); zamknijOkno(); rysuj(); pokazZapis('Przywrócono wersję'); });
+    document.querySelectorAll('[data-przywroc]').forEach(b => b.onclick = async () => { const h = H[+b.dataset.przywroc]; const r = await DANE.zapiszPole(ID, id, h.nowa, 0, JA.imie, true); D = r.D; zamknijOkno(); rysuj(); pokazZapis('Przywrócono wersję'); });
   }
 
+  async function rejestr() {
+    const H = (await DANE.hist(ID)).slice().reverse();
+    const nazwa = id => (defPola(id) || { et: id }).et;
+    $('#okno').innerHTML = `<div class="okno-tlo"><div class="okno"><h2>Rejestr zmian dokumentu</h2>
+      <p>Wszystkie zmiany pól od najnowszej. Wpisów nie można poprawić ani usunąć.</p>
+      ${H.map(h => `<div class="hist"><small>${dt(h.kiedy)} · ${esc(h.kto)} · wersja ${h.wersja}${h.opis ? ' · ' + esc(h.opis) : ''}</small><div style="font-weight:700;color:var(--g)">${esc(nazwa(h.pole))}</div>
+        <div class="dwie" style="display:grid;gap:8px;grid-template-columns:1fr 1fr"><pre>Było: ${pokazW(h.pole, h.stara)}</pre><pre>Jest: ${pokazW(h.pole, h.nowa)}</pre></div></div>`).join('') || '<p>Brak zmian.</p>'}
+      <div class="akcje" style="grid-template-columns:1fr"><button class="zml-btn" id="rZamknij">Zamknij</button></div></div></div>`;
+    $('#rZamknij').onclick = zamknijOkno;
+  }
+  $('#rejBtn').addEventListener('click', rejestr);
+
   /* ----- zmiany innych osób ----- */
-  DANE.sluchaj(ID, nowe => {
+  const naZmiane = nowe => {
     const stare = D; D = nowe;
     Object.keys(D.pola).forEach(id => {
       const L = lok[id] || {}, zm = !stare.pola[id] || stare.pola[id].w !== D.pola[id].w;
@@ -336,12 +351,11 @@ if (APM.wymagajLogowania()) {
     document.querySelectorAll('[data-meta]').forEach(e => e.innerHTML = metaPola(e.dataset.meta));
     const ak = JSON.stringify([stare.akc, stare.doAkc, stare.potw, stare.uwagi, stare.kroki]) !== JSON.stringify([D.akc, D.doAkc, D.potw, D.uwagi, D.kroki]);
     if (ak && !(document.activeElement && document.activeElement.closest('.wej'))) rysuj(); else { const wy = document.querySelector('[data-wyl]'); if (wy) wy.innerHTML = wyliczenie(); odswiezStan(); }
-  });
+  };
   setInterval(() => document.querySelectorAll('[data-meta]').forEach(e => e.innerHTML = metaPola(e.dataset.meta)), 15000);
 
   /* ----- wydruk ----- */
   function wydruk() {
-    D = DANE.czytaj(ID);
     const [, st] = stanDok(), brak = '<span class="w-brak">do uzupełnienia</span>';
     const wP = p => {
       if (p.typ === 'wyliczenie') { const S = sumy(); return `<div class="w-pole"><div class="w-et">${p.et}</div><table class="w-tab"><tr><th>Strata rocznie</th><th>Ramowy budżet</th><th>Korzyść netto I roku (twarde)</th><th>Korzyść netto I roku (twarde i miękkie)</th></tr><tr><td class="l">${zl(S.strata)}</td><td class="l">${zl(S.bud)}</td><td class="l">${zl(S.tw - S.bud)}</td><td class="l">${zl(S.tw + S.mi - S.bud)}</td></tr></table></div>`; }
@@ -372,7 +386,8 @@ if (APM.wymagajLogowania()) {
   $('#drukBtn').addEventListener('click', () => { wydruk(); setTimeout(() => window.print(), 50); });
 
   rysuj();
-}
+  DANE.otworz(ID, naZmiane);
+})();
 </script>
 </body>
 </html>

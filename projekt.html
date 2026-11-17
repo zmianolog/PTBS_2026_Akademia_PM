@@ -48,9 +48,12 @@
 </main>
 <div id="stopka"></div>
 <script>
-if (APM.wymagajLogowania()) {
+if (APM.wymagajLogowania()) (async () => {
   APM.naglowek(); APM.stopka();
+  if (!PODGLAD) await APM.init();
   const $ = APM.$, JA = ja(), UCZ = JA.rola === 'uczestnik';
+  if (UCZ && !JA.zespol) { $('#tresc').innerHTML = '<h1>Mój projekt</h1><p class="lead">Twój kod nie jest jeszcze przypisany do zespołu. Skontaktuj się z prowadzącym.</p>'; return; }
+  const DOK = {};
   if (PODGLAD) panelPodgladu($('#podglad'), () => '?podglad=1');
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const czas = t => { const m = /^(\d{2})\.(\d{2})\.(\d{2})\s+(\d{1,2}):(\d{2})$/.exec((t || '').trim()); return m ? new Date(2000 + +m[3], m[2] - 1, +m[1], +m[4], +m[5]) : null; };
@@ -66,7 +69,7 @@ if (APM.wymagajLogowania()) {
     if (!dost) { st = `Dostępne od spotkania ${n.od}`; kl = 'zab'; }
     else if (!def) { st = 'Wzór w przygotowaniu'; kl = 'zab'; }
     else {
-      const D = DANE.czytaj(z + '_' + t), [k, s] = stanDokumentu(D), [w, c] = postepDokumentu(def, D);
+      const D = DOK[z + '_' + t], [k, s] = stanDokumentu(D), [w, c] = postepDokumentu(def, D);
       st = `${s} · sekcje wypełnione: ${w} z ${c}`; kl = k;
       const ostatnia = Object.values(D.pola).sort((a, b) => (b.kiedy || '').localeCompare(a.kiedy || ''))[0];
       if (ostatnia) ost = `<div class="ost">Ostatnia zmiana: ${esc(ostatnia.kto)}, ${dt(ostatnia.kiedy)}</div>`;
@@ -85,6 +88,8 @@ if (APM.wymagajLogowania()) {
   const nast = PROGRAM.sesje.find(s => { const d = czas(TERMINY[s.kod]); return d && d >= teraz; });
   const najbl = nast ? `<div class="najbl"><div><b>Najbliższe spotkanie: ${nast.kod} · ${esc(nast.nazwa)}</b>, ${czas(TERMINY[nast.kod]).toLocaleDateString('pl-PL', { weekday: 'long', day: 'numeric', month: 'long' })}, godz. ${TERMINY[nast.kod].split(' ')[1]}</div>
       <div style="margin-top:6px"><b>Przed spotkaniem:</b> ${esc(nast.przed)}</div><div style="margin-top:8px"><a class="zml-btn" style="max-width:360px" href="spotkanie.html?d=${nast.kod}">Otwórz stronę spotkania</a></div></div>` : '';
+  const zesp = UCZ ? [JA.zespol] : Object.keys(PROGRAM.zespoly);
+  await Promise.all(zesp.flatMap(z => kolejnosc.filter(t => dostepne(t) && DOKUMENTY[t]).map(async t => { try { DOK[z + '_' + t] = await DANE.czytaj(z + '_' + t); } catch (e) { DOK[z + '_' + t] = { pola: {}, kroki: {}, wersja: 0 }; } })));
   if (UCZ) {
     const z = JA.zespol;
     document.title = 'Mój projekt — Akademia Zarządzania Projektami PTBS';
@@ -97,7 +102,7 @@ if (APM.wymagajLogowania()) {
       <p class="lead">Dokumenty trzech zespołów w jednym widoku. ${JA.rola === 'zarzad' ? 'Sponsor czyta dokumenty, podejmuje decyzję o akceptacji i pobiera je jako PDF.' : 'Prowadzący czyta dokumenty i dodaje uwagi do sekcji.'}</p>
       ${najbl}<div class="kol3" style="margin-top:14px">${Object.keys(PROGRAM.zespoly).map(z => { const d = kolejnosc.filter(dostepne), r = kolejnosc.length - d.length; return `<div>${zespol(z)}<div class="narz">${d.map(t => kafel(z, t, true)).join('')}</div>${r ? `<p class="pod" style="font-size:13px;color:var(--tekst2);margin-top:8px">Pozostałe dokumenty (${r}) pojawią się na kolejnych spotkaniach.</p>` : ''}</div>`; }).join('')}</div>`;
   }
-}
+})();
 </script>
 </body>
 </html>

@@ -1,31 +1,80 @@
 /* Wspólna warstwa danych dokumentów projektowych i tożsamość użytkownika. */
-/* ===== warstwa danych dokumentu =====
-   Tryb podglądu: dane w pamięci przeglądarki (localStorage); zmiany z innej karty przeglądarki pojawiają się na bieżąco.
-   Ten sam interfejs zostanie podłączony do Firestore. */
+/* ===== warstwa danych dokumentów =====
+   Dwa tryby z tym samym interfejsem (wszystkie operacje są asynchroniczne):
+   - Firebase: dokumenty w kolekcji „dokumenty”, historia zmian w podkolekcji „historia” (tylko dopisywanie);
+   - podgląd: dane w pamięci tej przeglądarki (localStorage), zmiany z innych kart przeglądarki pojawiają się na bieżąco. */
+const PODGLAD = APM.trybPodgladu() || APM.podglad();
 const DANE = (() => {
-  const kl = id => 'apm_dok_' + id, kh = id => 'apm_dokh_' + id;
   const nowy = () => ({ pola: {}, kroki: {}, uwagi: {}, edycja: {}, wersja: 0, doAkc: null, akc: null, potw: null });
-  const czytaj = id => { try { return Object.assign(nowy(), JSON.parse(localStorage.getItem(kl(id))) || {}); } catch (e) { return nowy(); } };
-  const pisz = (id, d) => localStorage.setItem(kl(id), JSON.stringify(d));
-  const hist = id => { try { return JSON.parse(localStorage.getItem(kh(id))) || []; } catch (e) { return []; } };
-  function zapiszPole(id, pole, wart, bazaW, ja, wymus) {
-    const d = czytaj(id), stare = d.pola[pole] || { v: null, w: 0 };
-    if (!wymus && (stare.w || 0) !== (bazaW || 0)) return { konflikt: stare };
-    d.wersja++; d.pola[pole] = { v: wart, w: (stare.w || 0) + 1, kto: ja, kiedy: new Date().toISOString(), dw: d.wersja };
-    pisz(id, d);
-    const h = hist(id); h.push({ pole, stara: stare.v, nowa: wart, kto: ja, kiedy: d.pola[pole].kiedy, wersja: d.wersja });
-    localStorage.setItem(kh(id), JSON.stringify(h));
-    return { ok: d.pola[pole] };
+  const norm = d => Object.assign(nowy(), d || {});
+  const kopia = o => JSON.parse(JSON.stringify(o));
+  const teraz = () => new Date().toISOString();
+  const klE = (pole, kto) => pole + '__' + String(kto).normalize('NFD').replace(/[^A-Za-z0-9]/g, '_');
+  if (PODGLAD) {
+    const kl = id => 'apm_dok_' + id, kh = id => 'apm_dokh_' + id, sl = {};
+    const czyt = id => { try { return norm(JSON.parse(localStorage.getItem(kl(id)))); } catch (e) { return nowy(); } };
+    const pisz = (id, d) => { localStorage.setItem(kl(id), JSON.stringify(d)); (sl[id] || []).forEach(cb => cb(czyt(id))); };
+    const hist = id => { try { return JSON.parse(localStorage.getItem(kh(id))) || []; } catch (e) { return []; } };
+    const dopisz = (id, w) => { const h = hist(id); h.push(w); localStorage.setItem(kh(id), JSON.stringify(h)); };
+    window.addEventListener('storage', e => { Object.keys(sl).forEach(id => { if (e.key === kl(id)) sl[id].forEach(cb => cb(czyt(id))); }); });
+    return {
+      tryb: 'podglad',
+      czytaj: async id => czyt(id),
+      otworz: (id, cb) => { (sl[id] = sl[id] || []).push(cb); cb(czyt(id)); },
+      async zapiszPole(id, pole, wart, bazaW, kto, wymus) {
+        const d = czyt(id), stare = d.pola[pole] || { v: null, w: 0 };
+        if (!wymus && (stare.w || 0) !== (bazaW || 0)) return { konflikt: stare };
+        d.wersja++; d.pola[pole] = { v: wart, w: (stare.w || 0) + 1, kto, kiedy: teraz(), dw: d.wersja };
+        dopisz(id, { pole, stara: stare.v ?? null, nowa: wart, kto, kiedy: d.pola[pole].kiedy, wersja: d.wersja });
+        pisz(id, d); return { ok: d.pola[pole], D: d };
+      },
+      async zmien(id, fn) { const d = czyt(id); fn(d); pisz(id, d); return d; },
+      async edycja(id, pole, kto, on) { const d = czyt(id), k = klE(pole, kto); if (on) d.edycja[k] = { pole, kto, do: Date.now() + 120000 }; else delete d.edycja[k]; pisz(id, d); },
+      hist: async id => hist(id),
+      async dopiszHist(id, w) { dopisz(id, Object.assign({ kiedy: teraz() }, w)); }
+    };
   }
-  function zmien(id, fn) { const d = czytaj(id); fn(d); pisz(id, d); return d; }
-  function sluchaj(id, cb) { window.addEventListener('storage', e => { if (e.key === kl(id)) cb(czytaj(id)); }); }
-  return { czytaj, zapiszPole, zmien, hist, sluchaj };
+  let B = null;
+  const start = async () => { if (!B) { await APM.init(); B = APM.baza(); } return B; };
+  const ref = id => B.fs.doc(B.db, 'dokumenty', id);
+  const histRef = id => B.fs.collection(B.db, 'dokumenty', id, 'historia');
+  return {
+    tryb: 'firebase',
+    async czytaj(id) { await start(); const s = await B.fs.getDoc(ref(id)); return norm(s.exists() ? s.data() : null); },
+    async otworz(id, cb) { await start(); B.fs.onSnapshot(ref(id), s => cb(norm(s.exists() ? s.data() : null)), e => console.warn('APM: odczyt dokumentu', e)); },
+    async zapiszPole(id, pole, wart, bazaW, kto, wymus) {
+      await start();
+      return B.fs.runTransaction(B.db, async tx => {
+        const s = await tx.get(ref(id)), d = norm(s.exists() ? s.data() : null), stare = d.pola[pole] || { v: null, w: 0 };
+        if (!wymus && (stare.w || 0) !== (bazaW || 0)) return { konflikt: stare };
+        const nw = (d.wersja || 0) + 1, p = { v: wart, w: (stare.w || 0) + 1, kto, kiedy: teraz(), dw: nw };
+        if (s.exists()) tx.update(ref(id), { ['pola.' + pole]: p, wersja: nw });
+        else { d.pola[pole] = p; d.wersja = nw; tx.set(ref(id), d); }
+        tx.set(B.fs.doc(histRef(id)), { pole, stara: stare.v ?? null, nowa: wart, kto, kiedy: p.kiedy, wersja: nw });
+        d.pola[pole] = p; d.wersja = nw; return { ok: p, D: d };
+      });
+    },
+    async zmien(id, fn) {
+      await start();
+      return B.fs.runTransaction(B.db, async tx => {
+        const s = await tx.get(ref(id)), d = norm(s.exists() ? s.data() : null), n = kopia(d); fn(n);
+        if (!s.exists()) { tx.set(ref(id), n); return n; }
+        const zm = {}; Object.keys(n).forEach(k => { if (JSON.stringify(n[k]) !== JSON.stringify(d[k])) zm[k] = n[k]; });
+        if (Object.keys(zm).length) tx.update(ref(id), zm); return n;
+      });
+    },
+    async edycja(id, pole, kto, on) {
+      await start();
+      try { await B.fs.updateDoc(ref(id), { ['edycja.' + klE(pole, kto)]: on ? { pole, kto, do: Date.now() + 120000 } : B.fs.deleteField() }); } catch (e) { /* dokument jeszcze nie istnieje */ }
+    },
+    async hist(id) { await start(); const s = await B.fs.getDocs(B.fs.query(histRef(id), B.fs.orderBy('kiedy'))); return s.docs.map(x => x.data()); },
+    async dopiszHist(id, w) { await start(); await B.fs.addDoc(histRef(id), Object.assign({ kiedy: teraz() }, w)); }
+  };
 })();
 
 /* ===== tożsamość ===== */
 const OSOBY_PODGLADU = Object.entries(PROGRAM.zespoly).flatMap(([z, e]) => e.czlonkowie.map(c => ({ imie: c.imie, rola: 'uczestnik', zespol: z })))
   .concat([{ imie: 'Konrad Gieżek', rola: 'zarzad', zespol: '' }, { imie: 'Marcin Żółtak', rola: 'prowadzacy', zespol: '' }]);
-const PODGLAD = APM.trybPodgladu() || new URLSearchParams(location.search).get('podglad') === '1';
 function ja() {
   if (PODGLAD) { const i = +(sessionStorage.getItem('apm_podglad_osoba') || 0); return OSOBY_PODGLADU[i] || OSOBY_PODGLADU[0]; }
   return { imie: localStorage.getItem('apm_imie') || APM.kod(), rola: APM.rola(), zespol: localStorage.getItem('apm_zespol') || '' };
@@ -36,7 +85,7 @@ function ja() {
 function panelPodgladu(el, parametry) {
   const JA = ja();
   el.innerHTML = `<div class="podglad"><b>Tryb podglądu</b><span>Dane zapisują się tylko w tej przeglądarce. Otwórz tę stronę w drugiej karcie jako inna osoba, aby sprawdzić wspólną pracę.</span>
-    <label>Osoba: <select id="osobaPodgladu">${OSOBY_PODGLADU.map((o, i) => `<option value="${i}" ${o.imie === JA.imie ? 'selected' : ''}>${o.imie} · ${o.rola === 'zarzad' ? 'Zarząd' : o.rola === 'prowadzacy' ? 'prowadzący' : 'zespół ' + o.zespol}</option>`).join('')}</select></label></div>`;
+    <a href="akademia.html?podglad=0" style="margin-left:auto;font-weight:600;color:var(--g)">Wyłącz podgląd</a><label>Osoba: <select id="osobaPodgladu">${OSOBY_PODGLADU.map((o, i) => `<option value="${i}" ${o.imie === JA.imie ? 'selected' : ''}>${o.imie} · ${o.rola === 'zarzad' ? 'Zarząd' : o.rola === 'prowadzacy' ? 'prowadzący' : 'zespół ' + o.zespol}</option>`).join('')}</select></label></div>`;
   el.querySelector('#osobaPodgladu').addEventListener('change', e => { sessionStorage.setItem('apm_podglad_osoba', e.target.value); const o = OSOBY_PODGLADU[+e.target.value]; location.search = parametry(o); });
 }
 
@@ -45,6 +94,7 @@ function pustaWartosc(v) { return v == null || v === '' || (Array.isArray(v) && 
 function zmienionePoAkceptacji(D) { if (!D.akc) return []; return Object.entries(D.pola).filter(([k, p]) => (p.dw || 0) > D.akc.wersja).map(([k]) => k); }
 function stanDokumentu(D) {
   const zm = zmienionePoAkceptacji(D);
+  if (D.akc && D.doAkc && D.doAkc.kiedy > D.akc.kiedy) return ['do', 'Przekazana ponownie do akceptacji'];
   if (D.akc && D.akc.decyzja !== 'do poprawy' && zm.length) return ['zm', 'Zmieniona po akceptacji'];
   if (D.potw) return ['akc', 'Wartość potwierdzona po diagnozie'];
   if (D.akc) return [D.akc.decyzja === 'do poprawy' ? 'zm' : 'akc', D.akc.decyzja === 'do poprawy' ? 'Do poprawy' : 'Zaakceptowana przez sponsora'];

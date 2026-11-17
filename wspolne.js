@@ -17,7 +17,7 @@ const MENU = [
   { plik: 'akademia.html', nazwa: 'O Akademii' },
   { plik: 'samoocena.html', nazwa: 'Samoocena kompetencji' },
   { plik: 'programy.html', nazwa: 'Programy szkoleniowe' },
-  { plik: 'projekt.html', nazwa: 'Mój projekt', nazwaR: { zarzad: 'Projekty', prowadzacy: 'Projekty' }, role: ['prowadzacy'] }, /* rola uczestnik i zarzad: po podłączeniu Firebase */
+  { plik: 'projekt.html', nazwa: 'Mój projekt', nazwaR: { zarzad: 'Projekty', prowadzacy: 'Projekty' } },
   { plik: 'wyniki.html', nazwa: 'Wyniki grupy', role: ['zarzad'] }
 ];
 
@@ -42,15 +42,17 @@ const APM = (() => {
   const ikona = (id, klasaTla) => { const i=IKONY[id]; return `<span class="ikona ${klasaTla||''}"><svg class="zi zi-r-${i.r} zi-m-najazd" viewBox="0 0 24 24">${i.s}</svg></span>`; };
   const znak = () => `<svg class="znak" viewBox="0 0 34 34" aria-hidden="true">${[0,1,2,3,4,5].map(i=>`<rect x="${1+i*5.5}" y="${30-(8+i*4.4)}" width="4" height="${8+i*4.4}" rx="1.2"/>`).join('')}</svg>`;
   function kod(){ try{ return localStorage.getItem('apm_kod'); }catch(e){ return null; } }
-  function wyloguj(){ try{ localStorage.removeItem('apm_kod'); localStorage.removeItem('apm_rola'); }catch(e){} location.href='index.html'; }
+  function wyloguj(){ try{ ['apm_kod','apm_rola','apm_imie','apm_zespol','apm_podglad'].forEach(k=>localStorage.removeItem(k)); }catch(e){} location.href='index.html'; }
   /* każda strona poza startową wymaga zapisanego kodu */
   function wymagajLogowania(){ if(!kod()){ location.replace('index.html'); return false; } return true; }
+  /* tryb podglądu dokumentów: włączany adresem z ?podglad=1, wyłączany adresem z ?podglad=0 */
+  function podglad(){ try{ const p=new URLSearchParams(location.search).get('podglad'); if(p==='1') localStorage.setItem('apm_podglad','1'); if(p==='0') localStorage.removeItem('apm_podglad'); return localStorage.getItem('apm_podglad')==='1'; }catch(e){ return false; } }
   function naglowek(){
     const biez = location.pathname.split('/').pop() || 'index.html';
     $('#naglowek').outerHTML = `<header class="naglowek"><div class="wewn">
       <a class="marka" href="akademia.html">${znak()}<span>Akademia<br><b>Zarządzania Projektami PTBS</b></span></a>
       <button class="menu-btn" id="menuBtn" aria-expanded="false">Menu</button>
-      <nav class="menu" id="menu">${MENU.filter(m=>!m.role||m.role.includes(rola())).map(m=>`<a href="${m.plik}" class="${m.plik===biez?'biezaca':''}">${(m.nazwaR&&m.nazwaR[rola()])||m.nazwa}</a>`).join('')}</nav>
+      <nav class="menu" id="menu">${MENU.filter(m=>!m.role||m.role.includes(rola())||(m.podglad&&podglad())).map(m=>`<a href="${m.plik}${m.podglad&&podglad()?'?podglad=1':''}" class="${m.plik===biez?'biezaca':''}">${(m.nazwaR&&m.nazwaR[rola()])||m.nazwa}</a>`).join('')}</nav>
     </div></header>`;
     $('#menuBtn').addEventListener('click',()=>{ const m=$('#menu'); m.classList.toggle('otwarte'); $('#menuBtn').setAttribute('aria-expanded',m.classList.contains('otwarte')); });
   }
@@ -59,14 +61,33 @@ const APM = (() => {
     $('#wyloguj').addEventListener('click',wyloguj);
   }
   /* ===== baza danych ===== */
-  let db=null, fs=null;
-  async function init(){
+  let db=null, fs=null, auth=null, au=null, gotowe=null;
+  const PROWADZACY_EMAIL='marcin.zoltak@zmianologi.ca';
+  function init(){ return gotowe||(gotowe=(async()=>{
     if(!FIREBASE_CONFIG) return false;
     const app=(await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js')).initializeApp(FIREBASE_CONFIG);
-    const au=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+    au=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     fs=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-    db=fs.getFirestore(app); await au.signInAnonymously(au.getAuth(app)); return true;
-  }
+    db=fs.getFirestore(app); auth=au.getAuth(app);
+    const u=await new Promise(r=>{ const off=au.onAuthStateChanged(auth,x=>{ off(); r(x); }); });
+    if(u&&!u.isAnonymous&&u.email===PROWADZACY_EMAIL){
+      /* prowadzący zalogowany kontem Google na stronie prowadzącego */
+      try{ localStorage.setItem('apm_rola','prowadzacy'); localStorage.setItem('apm_imie','Marcin Żółtak'); localStorage.setItem('apm_zespol',''); }catch(e){}
+      return true;
+    }
+    if(u&&!u.isAnonymous) await au.signOut(auth);
+    if(!auth.currentUser) await au.signInAnonymously(auth);
+    /* powiązanie anonimowego logowania z kodem: reguły bazy sprawdzają na tej podstawie osobę, zespół i rolę */
+    const k=kod();
+    if(k&&k!=='PROWADZACY'){ try{
+      const s=await fs.getDoc(fs.doc(db,'kody',k));
+      if(s.exists()&&s.data().aktywny){ const d=s.data();
+        localStorage.setItem('apm_rola',d.rola||'uczestnik'); localStorage.setItem('apm_imie',d.imie||''); localStorage.setItem('apm_zespol',d.zespol||'');
+        await fs.setDoc(fs.doc(db,'uzytkownicy',auth.currentUser.uid),{kod:k,kiedy:new Date().toISOString()}); }
+    }catch(e){ console.warn('APM: powiązanie kodu',e); } }
+    return true;
+  })()); }
+  const baza=()=>({db,fs,auth});
   async function sprawdzKod(k){
     if(!db) return k==='DEMO-2026' ? {aktywny:true,rola:'uczestnik'} : null;
     const s=await fs.getDoc(fs.doc(db,'kody',k)); return s.exists()&&s.data().aktywny ? s.data() : null;
@@ -81,7 +102,7 @@ const APM = (() => {
     await fs.setDoc(fs.doc(db,zbior,id),dane);
   }
   const kiedy = k => (k.wiod.length?'Uczymy się: '+k.wiod.join(', '):'')+(k.wsp.length?(k.wiod.length?' · ':'')+'ćwiczymy także: '+k.wsp.join(', '):'');
-  function ustawKod(k,r){ try{ localStorage.setItem('apm_kod',k); localStorage.setItem('apm_rola',r||'uczestnik'); }catch(e){} }
+  function ustawKod(k,r,d){ try{ localStorage.setItem('apm_kod',k); localStorage.setItem('apm_rola',r||'uczestnik'); localStorage.setItem('apm_imie',(d&&d.imie)||''); localStorage.setItem('apm_zespol',(d&&d.zespol)||''); }catch(e){} }
   function rola(){ try{ return localStorage.getItem('apm_rola')||'uczestnik'; }catch(e){ return 'uczestnik'; } }
   const grafEtapy = (sel) => {
     const el=typeof sel==='string'?document.querySelector(sel):sel; if(!el) return;
@@ -95,5 +116,5 @@ const APM = (() => {
       ${gr('Kompetencje merytoryczne',KOMPETENCJE.filter(k=>k.k[0]==='M'))}${gr('Kompetencje społeczne',KOMPETENCJE.filter(k=>k.k[0]==='S'))}
     </div></div><div class="ge-leg"><span><i class="ge-p w"></i>kompetencja wiodąca w etapie</span><span><i class="ge-p s"></i>kompetencja wspierająca</span><span>W polach: spotkania, na których pracujemy z kompetencją.</span></div>`;
   };
-  return { $, rola, kiedy, grafEtapy, ikona, znak, kod, ustawKod, wyloguj, wymagajLogowania, naglowek, stopka, init, sprawdzKod, wczytaj, zapisz, trybPodgladu:()=>!FIREBASE_CONFIG };
+  return { $, baza, podglad, rola, kiedy, grafEtapy, ikona, znak, kod, ustawKod, wyloguj, wymagajLogowania, naglowek, stopka, init, sprawdzKod, wczytaj, zapisz, trybPodgladu:()=>!FIREBASE_CONFIG };
 })();

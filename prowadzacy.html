@@ -46,12 +46,19 @@
       <h3 style="margin-top:22px">Dodaj własny kod</h3>
       <p>Kod w formacie XXXX-XXXX, na przykład GREAT-BOSS albo DEMO-2026 (kod testowy).</p>
       <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-        <input class="pole" id="wlasny" maxlength="9" placeholder="XXXX-XXXX" style="width:150px;text-transform:uppercase">
+        <input class="pole" id="wlasny" maxlength="10" placeholder="XXXX-XXXX" style="width:150px;text-transform:uppercase">
         <select class="pole" id="rola" style="width:170px"><option value="zarzad">Zarząd</option><option value="uczestnik">uczestnik</option><option value="test">test</option></select>
       </div>
       <div class="przyciski"><button class="zml-btn" id="dodaj">Dodaj kod</button></div>
       <div id="msgKody"></div>
       <div class="przewijana"><table class="tab" id="tabKody"></table></div>
+    </section>
+    <section class="sekcja">
+      <h2>Zespoły i osoby przypisane do kodów</h2>
+      <p>Wklej trzy kolumny z arkusza uczestników: kod, imię i nazwisko, zespół (P1, P2, P3 albo „Grupa 1”, „Grupa 2”, „Grupa 3”). Kolumny skopiowane z Excela są rozdzielone tabulatorem; możesz też rozdzielić je średnikiem. Kod Zarządu wklej bez zespołu, na przykład: GREAT-BOSS;Konrad Gieżek;</p>
+      <textarea class="pole" id="przypisz" style="width:100%;min-height:150px;font-family:inherit" placeholder="4ZSC-3VB2&#9;Hanna Bartkowska&#9;Grupa 1 – Gospodarka środkami trwałymi"></textarea>
+      <div class="przyciski"><button class="zml-btn" id="przypiszBtn">Zapisz przypisania</button><a class="zml-btn" id="doProjektow" href="projekt.html">Przejdź do projektów zespołów</a></div>
+      <div id="msgPrzyp"></div>
     </section>
     <section class="sekcja">
       <h2>Samoocena kompetencji — wyniki</h2>
@@ -95,8 +102,8 @@ const csv=(nazwa,wiersze)=>{ const t='﻿'+wiersze.map(w=>w.map(x=>`"${String(x?
   async function wczytajKody(){
     const s=await fs.getDocs(fs.collection(db,'kody'));
     KODY=s.docs.map(d=>({kod:d.id,...d.data()})).sort((a,b)=>(a.utworzono||'').localeCompare(b.utworzono||'')||a.kod.localeCompare(b.kod));
-    $('#tabKody').innerHTML='<tr><th>Lp.</th><th>Kod</th><th>Rola</th><th>Grupa</th><th>Aktywny</th><th>Zmień</th></tr>'+
-      KODY.map((k,i)=>`<tr><td>${i+1}</td><td class="l ${k.aktywny?'':'nieakt'}">${k.kod}</td><td>${k.rola||''}</td><td>${k.grupa||''}</td><td>${k.aktywny?'tak':'nie'}</td>
+    $('#tabKody').innerHTML='<tr><th>Lp.</th><th>Kod</th><th>Rola</th><th>Imię i nazwisko</th><th>Zespół</th><th>Aktywny</th><th>Zmień</th></tr>'+
+      KODY.map((k,i)=>`<tr><td>${i+1}</td><td class="l ${k.aktywny?'':'nieakt'}">${k.kod}</td><td>${k.rola||''}</td><td>${k.imie||''}</td><td>${k.zespol||''}</td><td>${k.aktywny?'tak':'nie'}</td>
         <td><button class="link" data-k="${k.kod}">${k.aktywny?'Wyłącz':'Włącz'}</button></td></tr>`).join('');
     $('#tabKody').querySelectorAll('[data-k]').forEach(b=>b.addEventListener('click',async()=>{
       const k=KODY.find(x=>x.kod===b.dataset.k); await fs.updateDoc(fs.doc(db,'kody',k.kod),{aktywny:!k.aktywny}); wczytajKody(); }));
@@ -106,13 +113,23 @@ const csv=(nazwa,wiersze)=>{ const t='﻿'+wiersze.map(w=>w.map(x=>`"${String(x?
     let dod=0; while(dod<n){ const k=nowyKod(); if(ist.has(k)) continue; ist.add(k); b.set(fs.doc(db,'kody',k),{aktywny:true,rola:'uczestnik',grupa:'',utworzono:t}); dod++; }
     try{ await b.commit(); msg('#msgKody',`Dodano ${n} nowych kodów.`); wczytajKody(); }catch(e){ msg('#msgKody','Zapis nie powiódł się: '+e.code,true); }
   });
-  $('#wlasny').addEventListener('input',e=>{let v=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8); if(v.length>4) v=v.slice(0,4)+'-'+v.slice(4); e.target.value=v;});
+  $('#wlasny').addEventListener('input',e=>{let v=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,9); if(v.length===9) v=v.slice(0,5)+'-'+v.slice(5); else if(v.length>4) v=v.slice(0,4)+'-'+v.slice(4); e.target.value=v;});
   $('#dodaj').addEventListener('click',async()=>{
     const k=$('#wlasny').value.trim(), rola=$('#rola').value;
-    if(!/^[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(k)){ msg('#msgKody','Kod musi mieć format XXXX-XXXX (litery i cyfry).',true); return; }
+    if(!/^[A-Z0-9]{4,5}-[A-Z0-9]{4}$/.test(k)){ msg('#msgKody','Kod musi mieć format XXXX-XXXX albo XXXXX-XXXX (litery i cyfry).',true); return; }
     try{ await fs.setDoc(fs.doc(db,'kody',k),{aktywny:true,rola,grupa:'',utworzono:new Date().toISOString()}); msg('#msgKody',`Kod ${k} (${rola}) jest aktywny.`); $('#wlasny').value=''; wczytajKody(); }
     catch(e){ msg('#msgKody','Zapis nie powiódł się: '+e.code,true); }
   });
+  $('#przypiszBtn').addEventListener('click',async()=>{
+    const wiersze=$('#przypisz').value.split(/\r?\n/).map(w=>w.split(/\t|;/).map(x=>x.trim())).filter(w=>w[0]);
+    const zesp=t=>{ const m=/P([123])/.exec(t||'')||/Grupa\s*([123])/i.exec(t||''); return m?'P'+m[1]:''; };
+    const ist=new Set(KODY.map(k=>k.kod)), brak=wiersze.filter(w=>!ist.has(w[0].toUpperCase())).map(w=>w[0]);
+    if(brak.length){ msg('#msgPrzyp','Tych kodów nie ma w bazie: '+brak.join(', ')+'. Nic nie zapisano.',true); return; }
+    const b=fs.writeBatch(db); wiersze.forEach(w=>b.update(fs.doc(db,'kody',w[0].toUpperCase()),{imie:w[1]||'',zespol:zesp(w[2])}));
+    try{ await b.commit(); msg('#msgPrzyp',`Zapisano przypisania: ${wiersze.length}. Uczestnicy zobaczą swój zespół po ponownym otwarciu strony.`); $('#przypisz').value=''; wczytajKody(); }
+    catch(e){ msg('#msgPrzyp','Zapis nie powiódł się: '+e.code,true); }
+  });
+  $('#doProjektow').addEventListener('click',()=>{ try{ if(!localStorage.getItem('apm_kod')) localStorage.setItem('apm_kod','PROWADZACY'); }catch(e){} });
   $('#csvKody').addEventListener('click',()=>csv('PTBS_2026_Akademia_PM_Kody.csv',[['Lp.','Kod','Rola','Grupa','Aktywny'],...KODY.map((k,i)=>[i+1,k.kod,k.rola,k.grupa,k.aktywny?'tak':'nie'])]));
   async function wczytajWyniki(){
     const s=await fs.getDocs(fs.collection(db,'samoocena'));
