@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dokument projektu — Akademia Zarządzania Projektami PTBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="wspolne.css">
+<script src="wspolne.js"></script>
+<script src="dok_definicje.js"></script>
+<style>
+.podglad{background:#FFF7DD;border:2px solid var(--m);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.podglad select{font:600 14px var(--font);padding:6px 8px;border:2px solid var(--ramka);border-radius:8px}
+.glowa-dok{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.zespoly{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.zespoly a{display:flex;align-items:center;justify-content:center;text-align:center;min-height:46px;padding:4px 10px;border:2px solid var(--g);border-radius:8px;color:var(--g);font:600 14px/1.2 var(--font);text-decoration:none}
+.zespoly a.wyb{background:var(--g);color:#fff}
+.stan-dok{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding:6px 12px;border-radius:8px;background:var(--jasny);color:var(--g)}
+.stan-dok.akc{background:#E6F3EA;color:var(--zielen)} .stan-dok.zm{background:#FDECEC;color:var(--czerwien)} .stan-dok.do{background:#FFF4D6;color:var(--mt)}
+.pasek{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;margin:14px 0 6px}
+.pasek a{height:30px;border-radius:6px;background:var(--tlo);display:flex;align-items:center;justify-content:center;font:700 12px var(--font);color:var(--tekst2);text-decoration:none;border:2px solid transparent}
+.pasek a.w{background:var(--g);color:#fff} .pasek a.t{background:#F3D27A;color:var(--g)}
+.leg-pasek{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--tekst2);margin-bottom:12px}
+.leg-pasek i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:5px;background:var(--tlo)}
+.sek{border:2px solid var(--ramka);border-radius:12px;margin-top:16px;scroll-margin-top:80px}
+.sek>.sg{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:2px solid var(--ramka);background:var(--jasny);border-radius:10px 10px 0 0}
+.sek .nr{display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--g);color:#fff;align-items:center;justify-content:center;font-weight:800;flex:none}
+.sek .st{margin-left:auto;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;background:#fff;color:var(--tekst2);white-space:nowrap}
+.sek .st.w{background:var(--g);color:#fff} .sek .st.t{background:#F3D27A;color:var(--g)}
+.sek .sb{padding:14px;display:grid;gap:16px}
+.pole .et{font-weight:700;color:var(--g);font-size:15px}
+.pole .pod{font-size:13px;color:var(--tekst2);margin:2px 0 6px}
+.pole .meta{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--tekst2);margin-top:4px}
+.pole .meta button{background:none;border:0;padding:0;color:var(--g);font:600 12px var(--font);text-decoration:underline;cursor:pointer}
+.edytuje{font-size:12px;font-weight:700;color:var(--mt);background:#FFF4D6;border-radius:6px;padding:3px 8px;display:inline-block;margin-bottom:4px}
+.nowsza{font-size:12px;font-weight:700;color:var(--czerwien);margin-top:4px}
+input.wej,textarea.wej,select.wej{width:100%;font:400 15px/1.45 var(--font);color:var(--tekst);border:2px solid var(--ramka);border-radius:8px;padding:8px 10px;background:#fff}
+textarea.wej{min-height:78px;resize:vertical}
+.wej:focus{outline:none;border-color:var(--g)}
+.wej:disabled{background:var(--tlo);color:var(--tekst)}
+.tab{display:grid;gap:6px}
+.tab .tw{display:grid;gap:6px;align-items:start}
+.tab .th{font-size:12px;font-weight:700;color:var(--tekst2)}
+.tab textarea.wej{min-height:44px}
+.tab .staly{font-size:14px;font-weight:600;padding:8px 2px}
+.tab .usun{min-height:46px;border:2px solid var(--g);background:var(--g);border-radius:8px;cursor:pointer;font:600 15px var(--font);color:#fff}
+.tab .suma{font-weight:700;color:var(--g);font-size:14px;margin-top:4px}
+.btn-maly{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 22px;border:2px solid var(--g);border-radius:8px;background:var(--g);color:#fff;font:600 15px/1.2 var(--font);cursor:pointer}
+.btn-maly:hover{background:var(--g2);border-color:var(--g2)}
+.btn-maly:disabled{opacity:.4;cursor:not-allowed}
+.krok{border-left:4px solid var(--ramka);padding-left:12px}
+.krok.pom{opacity:.65}
+.krok .krok-akcje{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.netto{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.netto div{background:var(--jasny);border-radius:8px;padding:10px 12px;font-size:14px}
+.netto b{display:block;font-size:18px;color:var(--g)}
+.uwagi{border-top:2px dashed var(--ramka);padding-top:10px}
+.uwaga{background:#FFF7DD;border-radius:8px;padding:8px 10px;font-size:14px;margin-top:6px}
+.uwaga.ok{background:var(--tlo);color:var(--tekst2)}
+.uwaga small{display:block;color:var(--tekst2);font-size:12px}
+.akc-dec{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.zapis-stan{position:fixed;right:16px;bottom:16px;background:var(--g);color:#fff;font:600 13px var(--font);padding:8px 14px;border-radius:8px;opacity:0;transition:opacity .3s;z-index:30}
+.zapis-stan.pok{opacity:1}
+.okno-tlo{position:fixed;inset:0;background:rgba(20,30,40,.55);z-index:40;display:flex;align-items:center;justify-content:center;padding:16px}
+.okno{background:#fff;border-radius:14px;max-width:980px;width:100%;max-height:90vh;overflow:auto;padding:18px}
+.okno .dwie{display:grid;gap:12px}
+.okno .wer{border:2px solid var(--ramka);border-radius:10px;padding:10px;font-size:14px;white-space:pre-wrap}
+.okno .wer h3{margin-bottom:6px;font-size:15px}
+.okno .akcje{display:grid;gap:8px;margin-top:12px}
+.hist{border-bottom:1px solid var(--ramka);padding:8px 0;font-size:14px}
+.hist small{color:var(--tekst2)}
+.hist pre{white-space:pre-wrap;font:400 14px var(--font);margin:4px 0;background:var(--tlo);padding:6px 8px;border-radius:6px}
+@media (min-width:800px){ .okno .dwie{grid-template-columns:1fr 1fr} .okno .akcje{grid-template-columns:repeat(3,1fr)} }
+@media (max-width:799px){ .tab .tw{grid-template-columns:1fr!important} .tab .th{display:none} .pasek{grid-template-columns:repeat(6,1fr)} .akc-dec{grid-template-columns:1fr} }
+/* ===== wydruk ===== */
+#wydruk{display:none}
+@page{size:A4;margin:16mm 14mm 18mm 14mm;
+  @bottom-right{content:"Strona " counter(page) " z " counter(pages);font:9pt Montserrat,Arial,sans-serif;color:#5A6873}}
+@media print{
+  body>*:not(#wydruk){display:none!important}
+  #wydruk{display:block;font:10pt/1.45 Montserrat,Arial,sans-serif;color:#1A2733}
+  .w-gl{display:flex;justify-content:space-between;align-items:center;border-bottom:2pt solid #1F4460;padding-bottom:6pt;margin-bottom:10pt}
+  .w-gl img{height:34pt}
+  .w-gl .w-ak{font-size:8.5pt;color:#5A6873;text-align:right;line-height:1.3}
+  .w-gl .w-ak b{color:#1F4460;font-size:10pt}
+  #wydruk h1{font-size:18pt;margin:0 0 4pt;color:#1F4460}
+  .w-meta{width:100%;border-collapse:collapse;margin:6pt 0 12pt;font-size:9pt}
+  .w-meta td{border:0.75pt solid #C9D3DC;padding:3pt 6pt}
+  .w-meta td:nth-child(odd){background:#F0F6FB;font-weight:700;color:#1F4460;width:18%}
+  .w-sek{margin-top:10pt;break-inside:auto}
+  .w-sek h2{font-size:12pt;color:#fff;background:#1F4460;padding:3pt 8pt;border-radius:3pt;margin:0 0 6pt;break-after:avoid}
+  .w-pole{margin:0 0 6pt;break-inside:avoid}
+  .w-et{font-weight:700;color:#1F4460;font-size:9.5pt}
+  .w-v{white-space:pre-wrap}
+  .w-brak{color:#C8202E;font-style:normal}
+  .w-pom{color:#5A6873}
+  .w-tab{width:100%;border-collapse:collapse;font-size:8.8pt;margin-top:2pt}
+  .w-tab th{background:#F0F6FB;color:#1F4460;text-align:left;border:0.75pt solid #C9D3DC;padding:3pt 4pt}
+  .w-tab td{border:0.75pt solid #C9D3DC;padding:3pt 4pt;vertical-align:top;white-space:pre-wrap}
+  .w-tab td.l{text-align:right;white-space:nowrap}
+  .w-suma{font-weight:700;color:#1F4460;margin-top:2pt}
+}
+</style>
+</head>
+<body>
+<div id="naglowek"></div>
+<main class="wrap">
+  <div id="podglad"></div>
+  <div class="glowa-dok">
+    <div><span class="nadtytul" id="kodDok">T01</span><h1 id="tytul">Dokument</h1></div>
+    <div id="stanDok"></div>
+  </div>
+  <p class="lead" id="opisDok"></p>
+  <div id="wyborZesp"></div>
+  <div class="pasek" id="pasek"></div>
+  <div class="leg-pasek"><span><i style="background:var(--g)"></i>sekcja wypełniona</span><span><i style="background:#F3D27A"></i>w toku</span><span><i></i>do uzupełnienia</span></div>
+  <div class="przyciski" style="grid-template-columns:1fr;max-width:420px"><button class="zml-btn" id="drukBtn">Drukuj lub zapisz PDF</button></div>
+  <div id="tresc"></div>
+</main>
+<div id="stopka"></div>
+<div class="zapis-stan" id="zapisStan">Zapisano</div>
+<div id="okno"></div>
+<div id="wydruk"></div>
+<script>
+/* ===== warstwa danych dokumentu =====
+   Tryb podglądu: dane w pamięci przeglądarki (localStorage); zmiany z innej karty przeglądarki pojawiają się na bieżąco.
+   Ten sam interfejs zostanie podłączony do Firestore. */
+const DANE = (() => {
+  const kl = id => 'apm_dok_' + id, kh = id => 'apm_dokh_' + id;
+  const nowy = () => ({ pola: {}, kroki: {}, uwagi: {}, edycja: {}, wersja: 0, doAkc: null, akc: null, potw: null });
+  const czytaj = id => { try { return Object.assign(nowy(), JSON.parse(localStorage.getItem(kl(id))) || {}); } catch (e) { return nowy(); } };
+  const pisz = (id, d) => localStorage.setItem(kl(id), JSON.stringify(d));
+  const hist = id => { try { return JSON.parse(localStorage.getItem(kh(id))) || []; } catch (e) { return []; } };
+  function zapiszPole(id, pole, wart, bazaW, ja, wymus) {
+    const d = czytaj(id), stare = d.pola[pole] || { v: null, w: 0 };
+    if (!wymus && (stare.w || 0) !== (bazaW || 0)) return { konflikt: stare };
+    d.wersja++; d.pola[pole] = { v: wart, w: (stare.w || 0) + 1, kto: ja, kiedy: new Date().toISOString(), dw: d.wersja };
+    pisz(id, d);
+    const h = hist(id); h.push({ pole, stara: stare.v, nowa: wart, kto: ja, kiedy: d.pola[pole].kiedy, wersja: d.wersja });
+    localStorage.setItem(kh(id), JSON.stringify(h));
+    return { ok: d.pola[pole] };
+  }
+  function zmien(id, fn) { const d = czytaj(id); fn(d); pisz(id, d); return d; }
+  function sluchaj(id, cb) { window.addEventListener('storage', e => { if (e.key === kl(id)) cb(czytaj(id)); }); }
+  return { czytaj, zapiszPole, zmien, hist, sluchaj };
+})();
+
+/* ===== tożsamość ===== */
+const OSOBY_PODGLADU = [
+  { imie: 'Hanna Bartkowska', rola: 'uczestnik', zespol: 'P1' },
+  { imie: 'Marta Gębka (przykład)', rola: 'uczestnik', zespol: 'P1' },
+  { imie: 'Piotr Szymański', rola: 'uczestnik', zespol: 'P2' },
+  { imie: 'Michał Gadziński', rola: 'uczestnik', zespol: 'P3' },
+  { imie: 'Konrad Gieżek', rola: 'zarzad', zespol: '' },
+  { imie: 'Marcin Żółtak', rola: 'prowadzacy', zespol: '' }
+];
+const PODGLAD = APM.trybPodgladu() || new URLSearchParams(location.search).get('podglad') === '1';
+function ja() {
+  if (PODGLAD) { const i = +(sessionStorage.getItem('apm_podglad_osoba') || 0); return OSOBY_PODGLADU[i] || OSOBY_PODGLADU[0]; }
+  return { imie: localStorage.getItem('apm_imie') || APM.kod(), rola: APM.rola(), zespol: localStorage.getItem('apm_zespol') || '' };
+}
+
+if (APM.wymagajLogowania()) {
+  APM.naglowek(); APM.stopka();
+  const $ = APM.$, P = new URLSearchParams(location.search), T = P.get('t') || 'T01', DEF = DOKUMENTY[T];
+  const JA = ja(), EDYTUJE = JA.rola === 'uczestnik';
+  const ZESP = EDYTUJE ? JA.zespol : (P.get('z') || 'P1');
+  const ID = ZESP + '_' + T;
+  let D = DANE.czytaj(ID);
+  const lok = {}; /* stan lokalny pól: bazaW, brudny, timer */
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const zl = n => (Math.round(+n || 0)).toLocaleString('pl-PL') + ' zł';
+  const dt = s => s ? new Date(s).toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+  const wszystkiePola = DEF.sekcje.flatMap(s => (s.pola || []).flatMap(p => p.dod ? [p, p.dod] : [p]));
+  const defPola = id => wszystkiePola.find(p => p.id === id);
+  const wart = id => { const p = D.pola[id]; if (p) return p.v; const df = defPola(id); if (df && df.dom) return df.dom(ZESP); if (df && df.stale) return df.wiersze.map(w => Object.assign({}, w)); return df && df.typ === 'tabela' ? [] : ''; };
+  const pusty = v => v == null || v === '' || (Array.isArray(v) && !v.some(r => Object.entries(r).some(([k, x]) => x !== '' && x != null && !['km', 'sp'].includes(k))));
+
+  /* ----- tryb podglądu: wybór osoby ----- */
+  if (PODGLAD) {
+    $('#podglad').innerHTML = `<div class="podglad"><b>Tryb podglądu</b><span>Dane zapisują się tylko w tej przeglądarce. Otwórz tę stronę w drugiej karcie jako inna osoba, aby sprawdzić wspólną pracę i konflikty.</span>
+      <label>Osoba: <select id="osoba">${OSOBY_PODGLADU.map((o, i) => `<option value="${i}" ${o.imie === JA.imie ? 'selected' : ''}>${o.imie} · ${o.rola === 'zarzad' ? 'Zarząd' : o.rola === 'prowadzacy' ? 'prowadzący' : 'zespół ' + o.zespol}</option>`).join('')}</select></label></div>`;
+    $('#osoba').addEventListener('change', e => { sessionStorage.setItem('apm_podglad_osoba', e.target.value); const o = OSOBY_PODGLADU[+e.target.value]; location.search = `?t=${T}&z=${o.zespol || ZESP}&podglad=1`; });
+  }
+  $('#kodDok').textContent = T; $('#tytul').textContent = DEF.nazwa + ' · ' + ZESP; $('#opisDok').textContent = DEF.opis;
+  document.title = DEF.nazwa + ' ' + ZESP + ' — Akademia Zarządzania Projektami PTBS';
+  if (!EDYTUJE) $('#wyborZesp').innerHTML = `<div class="zespoly">${Object.keys(ZESPOLY).map(z => `<a href="?t=${T}&z=${z}${PODGLAD ? '&podglad=1' : ''}" class="${z === ZESP ? 'wyb' : ''}">${z} · ${ZESPOLY[z].projekt}</a>`).join('')}</div>`;
+
+  /* ----- stan sekcji i dokumentu ----- */
+  const krokZrobiony = id => id === 'w6' ? krokZrobiony('w5') : (D.kroki[id] === 'pom' || !pusty(wart(id)));
+  function stanSekcji(s) {
+    if (s.akceptacja) return D.akc && D.akc.decyzja !== 'do poprawy' ? 'w' : D.doAkc ? 't' : '';
+    const pola = s.pola.filter(p => p.typ !== 'wyliczenie' && !(p.dom));
+    const ile = pola.filter(p => s.kroki ? krokZrobiony(p.id) : !pusty(wart(p.id))).length;
+    return ile === pola.length ? 'w' : ile ? 't' : '';
+  }
+  const ST = { w: 'wypełniona', t: 'w toku', '': 'do uzupełnienia' };
+  function zmienionePoAkc() { if (!D.akc) return []; return Object.entries(D.pola).filter(([k, p]) => (p.dw || 0) > D.akc.wersja).map(([k]) => k); }
+  function stanDok() {
+    const zm = zmienionePoAkc();
+    if (D.akc && D.akc.decyzja !== 'do poprawy' && zm.length) return ['zm', 'Zmieniona po akceptacji'];
+    if (D.potw) return ['akc', 'Wartość potwierdzona po diagnozie'];
+    if (D.akc) return [D.akc.decyzja === 'do poprawy' ? 'zm' : 'akc', D.akc.decyzja === 'do poprawy' ? 'Do poprawy' : 'Zaakceptowana przez sponsora'];
+    if (D.doAkc) return ['do', 'Przekazana do akceptacji'];
+    return ['', 'Robocza'];
+  }
+  function odswiezStan() {
+    const [k, t] = stanDok();
+    $('#stanDok').innerHTML = `<span class="stan-dok ${k}">Status: ${t} · wersja ${D.wersja}</span>`;
+    $('#pasek').innerHTML = DEF.sekcje.map(s => `<a href="#${s.id}" class="${stanSekcji(s)}" title="${s.nr}. ${s.t}: ${ST[stanSekcji(s)]}">${s.nr}</a>`).join('');
+    DEF.sekcje.forEach(s => { const e = document.querySelector(`#${s.id} .st`); if (e) { const st = stanSekcji(s); e.className = 'st ' + st; e.textContent = ST[st]; } });
+  }
+
+  /* ----- pola ----- */
+  function wejscie(p, v, dis, klucz) {
+    const d = dis ? 'disabled' : '', k = `data-p="${klucz || p.id}"`;
+    if (p.typ === 'obszar') return `<textarea class="wej" ${k} ${d}>${esc(v)}</textarea>`;
+    if (p.typ === 'wybor') return `<select class="wej" ${k} ${d}><option value="">— wybierz —</option>${p.op.map(o => `<option ${o === v ? 'selected' : ''}>${o}</option>`).join('')}</select>`;
+    if (p.typ === 'liczba') return `<input class="wej" type="number" inputmode="decimal" min="0" step="1" ${k} value="${esc(v)}" ${d}>`;
+    return `<input class="wej" type="text" ${k} value="${esc(v)}" ${d}>`;
+  }
+  function tabela(p, dis) {
+    const w = wart(p.id), szer = p.kol.map(c => c.s + 'fr').join(' ') + (p.stale || dis ? '' : ' 44px');
+    let h = `<div class="tab" data-tab="${p.id}"><div class="tw th" style="grid-template-columns:${szer}">${p.kol.map(c => `<span>${c.t}</span>`).join('')}${p.stale || dis ? '' : '<span></span>'}</div>`;
+    w.forEach((r, i) => { h += `<div class="tw" style="grid-template-columns:${szer}">${p.kol.map(c => c.typ === 'staly' ? `<div class="staly">${esc(r[c.id])}</div>` : wejscie(c, r[c.id] ?? '', dis, `${p.id}|${i}|${c.id}`)).join('')}${p.stale || dis ? '' : `<button class="usun" data-usun="${p.id}|${i}" title="Usuń wiersz">×</button>`}</div>`; });
+    if (!p.stale && !dis && !(p.max && w.length >= p.max)) h += `<div><button class="btn-maly" data-dodaj="${p.id}">Dodaj wiersz</button></div>`;
+    if (p.suma) {
+      const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0);
+      h += p.sumaWg ? `<div class="suma">Razem: ${zl(s())} · oszczędności twarde: ${zl(s('twarda'))} · miękkie: ${zl(s('miękka'))}</div>` : `<div class="suma">Razem: ${zl(s())}</div>`;
+    }
+    return h + '</div>';
+  }
+  function sumy() {
+    const t = id => (wart(id) || []), s = (id, f) => t(id).filter(f || (() => 1)).reduce((a, r) => a + (+r.kw || 0), 0);
+    return { strata: s('w1'), tw: s('w3', r => r.rodz === 'twarda'), mi: s('w3', r => r.rodz === 'miękka'), bud: s('w5') };
+  }
+  function wyliczenie() {
+    const S = sumy();
+    return `<div class="netto"><div>Strata rocznie (krok 1)<b>${zl(S.strata)}</b></div><div>Ramowy budżet (krok 5)<b>${zl(S.bud)}</b></div>
+      <div>Korzyść netto I roku, tylko oszczędności twarde<b>${zl(S.tw - S.bud)}</b></div><div>Korzyść netto I roku, twarde i miękkie<b>${zl(S.tw + S.mi - S.bud)}</b></div></div>`;
+  }
+  function metaPola(id) {
+    const p = D.pola[id], e = D.edycja[id], inny = e && e.kto !== JA.imie && e.do > Date.now();
+    return `${inny ? `<span class="edytuje">edytuje: ${esc(e.kto)}</span>` : ''}<div class="meta">${p ? `<span>Ostatnia zmiana: ${esc(p.kto)}, ${dt(p.kiedy)}</span>` : (defPola(id) && defPola(id).dom ? '<span>Wartość wpisana z programu Akademii; zespół może ją zmienić</span>' : '<span>Pole jeszcze niewypełnione</span>')}${p ? `<button data-hist="${id}">Historia zmian</button>` : ''}</div>`;
+  }
+  function pole(p, dis) {
+    if (p.typ === 'wyliczenie') return `<div class="pole" id="pole-${p.id}"><div class="et">${p.et}</div><div class="pod">${p.pod}</div><div data-wyl>${wyliczenie()}</div></div>`;
+    const tresc = p.typ === 'tabela' ? tabela(p, dis) : wejscie(p, wart(p.id), dis);
+    return `<div class="pole" id="pole-${p.id}"><div class="et">${p.et}</div>${p.pod ? `<div class="pod">${p.pod}</div>` : ''}<div data-in="${p.id}">${tresc}</div><div data-meta="${p.id}">${metaPola(p.id)}</div><div data-nowsza="${p.id}"></div></div>`
+      + (p.dod ? pole(p.dod, dis) : '');
+  }
+  function uwagiSekcji(s) {
+    const L = D.uwagi[s.id] || [], prow = JA.rola === 'prowadzacy';
+    if (!L.length && !prow) return '';
+    return `<div class="uwagi"><div class="et" style="font-weight:700;color:var(--g);font-size:14px">Uwagi prowadzącego</div>${L.map((u, i) => `<div class="uwaga ${u.ok ? 'ok' : ''}">${esc(u.t)}<small>${esc(u.kto)}, ${dt(u.kiedy)}${u.ok ? ' · uwzględniona' : ''}</small>${!u.ok && EDYTUJE ? `<button class="btn-maly" style="margin-top:6px" data-uwz="${s.id}|${i}">Oznacz jako uwzględnioną</button>` : ''}</div>`).join('')}
+      ${prow ? `<textarea class="wej" style="margin-top:8px" id="nu-${s.id}" placeholder="Nowa uwaga do tej sekcji"></textarea><button class="btn-maly" style="margin-top:6px" data-nu="${s.id}">Dodaj uwagę</button>` : ''}</div>`;
+  }
+  function sekcjaAkc() {
+    const zar = JA.rola === 'zarzad', zm = zmienionePoAkc();
+    let h = '';
+    if (D.akc) h += `<div class="uwaga ${D.akc.decyzja === 'do poprawy' ? '' : 'ok'}"><b>Decyzja sponsora: ${esc(D.akc.decyzja)}</b> (wersja ${D.akc.wersja})${D.akc.uwagi ? '<br>' + esc(D.akc.uwagi) : ''}<small>${esc(D.akc.kto)}, ${dt(D.akc.kiedy)}</small></div>`;
+    if (zm.length && D.akc) h += `<div class="nowsza">Po akceptacji zespół zmienił pola: ${zm.map(k => (defPola(k) || { et: k }).et).join('; ')}.</div>`;
+    if (D.potw) h += `<div class="uwaga ok"><b>Wartość projektu potwierdzona po diagnozie (KM1)</b>${D.potw.uwagi ? '<br>' + esc(D.potw.uwagi) : ''}<small>${esc(D.potw.kto)}, ${dt(D.potw.kiedy)}</small></div>`;
+    if (!D.akc && D.doAkc) h += `<div class="uwaga">Zespół przekazał kartę do akceptacji: ${esc(D.doAkc.kto)}, ${dt(D.doAkc.kiedy)}.</div>`;
+    if (!D.akc && !D.doAkc && !zar) h += '<p style="margin:0">Karta jest robocza. Gdy zespół uzna ją za gotową, przekazuje ją sponsorowi do akceptacji.</p>';
+    if (EDYTUJE && (!D.doAkc || (D.akc && (D.akc.decyzja === 'do poprawy' || zm.length)))) h += `<div><button class="zml-btn" style="max-width:420px" id="doAkcBtn">Przekaż kartę do akceptacji</button></div>`;
+    if (zar) h += `<div class="pole"><div class="et">Decyzja sponsora</div><textarea class="wej" id="akcUw" placeholder="Uwagi sponsora (nieobowiązkowe)"></textarea>
+      <div class="akc-dec"><button class="zml-btn" data-dec="akceptuję">Akceptuję</button><button class="zml-btn" data-dec="akceptuję z uwagami">Akceptuję z uwagami</button><button class="zml-btn" data-dec="do poprawy">Do poprawy</button></div>
+      ${D.akc && D.akc.decyzja !== 'do poprawy' && !D.potw ? `<div class="akc-dec" style="grid-template-columns:1fr"><button class="zml-btn" id="potwBtn">Potwierdzam wartość projektu po diagnozie (KM1)</button></div>` : ''}</div>`;
+    return h;
+  }
+  function rysuj() {
+    const dis = !EDYTUJE;
+    $('#tresc').innerHTML = DEF.sekcje.map(s => {
+      let b;
+      if (s.akceptacja) b = sekcjaAkc();
+      else if (s.kroki) {
+        let widoczny = true;
+        b = `<p class="pod" style="margin:0;font-size:14px;color:var(--tekst2)">${s.wstep}</p>` + s.pola.map(p => {
+          if (!widoczny) return '';
+          const pom = D.kroki[p.id] === 'pom', zrob = krokZrobiony(p.id);
+          const h = `<div class="krok ${pom ? 'pom' : ''}">${pom ? `<div class="pole"><div class="et">${p.et}</div><div class="pod">Krok pominięty: nie dotyczy projektu.</div></div>` : pole(p, dis)}
+            ${EDYTUJE && p.typ !== 'wyliczenie' ? `<div class="krok-akcje">${pom ? `<button class="btn-maly" data-krok="${p.id}">Przywróć krok</button>` : (pusty(wart(p.id)) ? `<button class="btn-maly" data-krok="${p.id}">Pomiń krok — nie dotyczy projektu</button>` : '')}</div>` : ''}</div>`;
+          if (!zrob) widoczny = false;
+          return h;
+        }).join('') + (widoczny ? '' : '<p class="pod" style="margin:0;font-size:13px;color:var(--tekst2)">Kolejny krok pojawi się po wypełnieniu albo pominięciu bieżącego.</p>');
+      } else b = s.pola.map(p => pole(p, dis)).join('');
+      return `<section class="sek" id="${s.id}"><div class="sg"><span class="nr">${s.nr}</span><h2 style="margin:0;font-size:18px">${s.t}</h2><span class="st"></span></div><div class="sb">${b}${s.akceptacja ? '' : uwagiSekcji(s)}</div></section>`;
+    }).join('');
+    odswiezStan(); podepnij();
+  }
+
+  /* ----- zapis ----- */
+  let tz = null;
+  const pokazZapis = t => { const e = $('#zapisStan'); e.textContent = t; e.classList.add('pok'); clearTimeout(tz); tz = setTimeout(() => e.classList.remove('pok'), 1600); };
+  function wartoscZDom(id) {
+    const df = defPola(id);
+    if (df.typ === 'tabela') {
+      const w = (wart(id) || []).map(r => Object.assign({}, r));
+      document.querySelectorAll(`[data-p^="${id}|"]`).forEach(el => { const [, i, c] = el.dataset.p.split('|'); const kol = df.kol.find(k => k.id === c); w[+i] = w[+i] || {}; w[+i][c] = kol.typ === 'liczba' ? (el.value === '' ? '' : +el.value) : el.value; });
+      return w;
+    }
+    const el = document.querySelector(`[data-p="${id}"]`); return df.typ === 'liczba' ? (el.value === '' ? '' : +el.value) : el.value;
+  }
+  function zapisz(id, wymus, wartosc) {
+    const L = lok[id] || (lok[id] = {}); clearTimeout(L.timer);
+    const v = wartosc !== undefined ? wartosc : wartoscZDom(id);
+    const bazaW = L.bazaW !== undefined ? L.bazaW : ((D.pola[id] || {}).w || 0);
+    const r = DANE.zapiszPole(ID, id, v, bazaW, JA.imie, wymus);
+    if (r.konflikt) { konflikt(id, v, r.konflikt); return; }
+    L.bazaW = r.ok.w; L.brudny = false; D = DANE.czytaj(ID);
+    $(`[data-meta="${id}"]`) && ($(`[data-meta="${id}"]`).innerHTML = metaPola(id)); $(`[data-nowsza="${id}"]`) && ($(`[data-nowsza="${id}"]`).innerHTML = '');
+    pokazZapis('Zapisano'); odswiezZalezne(id);
+  }
+  function odswiezZalezne(id) {
+    const df = defPola(id);
+    if (df && df.typ === 'tabela' && df.suma) { const box = $(`[data-in="${id}"]`); const f = document.activeElement && box.contains(document.activeElement); if (!f) { box.innerHTML = tabela(df, !EDYTUJE); podepnijPola(box); } else { const s = box.querySelector('.suma'); if (s) { const t = document.createElement('div'); t.innerHTML = tabela(df, !EDYTUJE); s.replaceWith(t.querySelector('.suma')); } } }
+    const wy = document.querySelector('[data-wyl]'); if (wy) wy.innerHTML = wyliczenie();
+    const sek = DEF.sekcje.find(s => s.kroki && s.pola.some(p => p.id === id || (p.dod && p.dod.id === id)));
+    if (sek) { const przed = sek.pola.map(p => krokZrobiony(p.id)).join(); if (lok._kroki !== przed) { lok._kroki = przed; if (!document.activeElement || !document.activeElement.closest('.wej')) rysuj(); else setTimeout(() => { if (!document.activeElement || !document.activeElement.closest('.wej')) rysuj(); }, 0); } }
+    odswiezStan();
+  }
+  function ustawEdycje(id, on) {
+    if (!EDYTUJE) return;
+    D = DANE.zmien(ID, d => { if (on) d.edycja[id] = { kto: JA.imie, do: Date.now() + 120000 }; else if (d.edycja[id] && d.edycja[id].kto === JA.imie) delete d.edycja[id]; });
+  }
+  const poleZ = el => el.dataset.p.split('|')[0];
+  function podepnijPola(root) {
+    root.querySelectorAll('[data-p]').forEach(el => {
+      const id = poleZ(el);
+      el.addEventListener('focus', () => { const L = lok[id] || (lok[id] = {}); if (!L.brudny) L.bazaW = (D.pola[id] || {}).w || 0; ustawEdycje(id, true); });
+      el.addEventListener('input', () => { const L = lok[id] || (lok[id] = {}); L.brudny = true; clearTimeout(L.timer); L.timer = setTimeout(() => zapisz(id), 1500); });
+      el.addEventListener('change', () => { if (el.tagName === 'SELECT') { (lok[id] || (lok[id] = {})).brudny = true; zapisz(id); } });
+      el.addEventListener('blur', () => { const L = lok[id] || {}; setTimeout(() => { if (!document.activeElement || poleZOpt(document.activeElement) !== id) { if (L.brudny) zapisz(id); ustawEdycje(id, false); } }, 50); });
+    });
+    root.querySelectorAll('[data-dodaj]').forEach(b => b.addEventListener('click', () => { const id = b.dataset.dodaj, w = wartoscZDom(id); w.push({}); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
+    root.querySelectorAll('[data-usun]').forEach(b => b.addEventListener('click', () => { const [id, i] = b.dataset.usun.split('|'); const w = wartoscZDom(id); w.splice(+i, 1); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
+    root.querySelectorAll('[data-hist]').forEach(b => b.addEventListener('click', () => historia(b.dataset.hist)));
+  }
+  const poleZOpt = el => el && el.dataset && el.dataset.p ? poleZ(el) : null;
+  function podepnij() {
+    podepnijPola(document);
+    document.querySelectorAll('[data-krok]').forEach(b => b.addEventListener('click', () => { const id = b.dataset.krok; D = DANE.zmien(ID, d => { if (d.kroki[id] === 'pom') delete d.kroki[id]; else d.kroki[id] = 'pom'; d.wersja++; }); rysuj(); }));
+    document.querySelectorAll('[data-nu]').forEach(b => b.addEventListener('click', () => { const s = b.dataset.nu, t = $('#nu-' + s).value.trim(); if (!t) return; D = DANE.zmien(ID, d => { (d.uwagi[s] = d.uwagi[s] || []).push({ t, kto: JA.imie, kiedy: new Date().toISOString(), ok: false }); }); rysuj(); }));
+    document.querySelectorAll('[data-uwz]').forEach(b => b.addEventListener('click', () => { const [s, i] = b.dataset.uwz.split('|'); D = DANE.zmien(ID, d => { d.uwagi[s][+i].ok = true; }); rysuj(); }));
+    const da = $('#doAkcBtn'); if (da) da.addEventListener('click', () => { D = DANE.zmien(ID, d => { d.doAkc = { kto: JA.imie, kiedy: new Date().toISOString() }; if (d.akc && (d.akc.decyzja === 'do poprawy' || Object.values(d.pola).some(p => (p.dw || 0) > d.akc.wersja))) d.akc = null; }); rysuj(); });
+    document.querySelectorAll('[data-dec]').forEach(b => b.addEventListener('click', () => { const uw = $('#akcUw').value.trim(); D = DANE.zmien(ID, d => { d.akc = { decyzja: b.dataset.dec, uwagi: uw, kto: JA.imie, kiedy: new Date().toISOString(), wersja: d.wersja }; }); rysuj(); }));
+    const pb = $('#potwBtn'); if (pb) pb.addEventListener('click', () => { const uw = $('#akcUw').value.trim(); D = DANE.zmien(ID, d => { d.potw = { uwagi: uw, kto: JA.imie, kiedy: new Date().toISOString(), wersja: d.wersja }; }); rysuj(); });
+  }
+
+  /* ----- konflikt i historia ----- */
+  const pokazW = (id, v) => { const df = defPola(id); if (df.typ !== 'tabela') return esc(v || '—'); return (v || []).map((r, i) => `${i + 1}. ` + df.kol.map(c => `${c.t}: ${esc(r[c.id] ?? '')}`).join(' · ')).join('\n') || '—'; };
+  function zamknijOkno() { $('#okno').innerHTML = ''; }
+  function konflikt(id, moja, zapisana) {
+    const df = defPola(id), tekst = df.typ !== 'tabela';
+    $('#okno').innerHTML = `<div class="okno-tlo"><div class="okno"><h2>To pole zmieniła inna osoba w czasie Twojej edycji</h2>
+      <p>Pole „${esc(df.et)}”. Nowszą wersję zapisano ${dt(zapisana.kiedy)}, autor: ${esc(zapisana.kto)}. Wybierz, którą wersję zostawić${tekst ? ', albo połącz je w polu poniżej' : ''}. Wersja, której nie wybierzesz, zostanie w historii zmian.</p>
+      <div class="dwie"><div class="wer"><h3>Twoja wersja</h3>${pokazW(id, moja)}</div><div class="wer"><h3>Wersja zapisana przez: ${esc(zapisana.kto)}</h3>${pokazW(id, zapisana.v)}</div></div>
+      ${tekst ? `<div class="pole" style="margin-top:12px"><div class="et">Połączona wersja</div><textarea class="wej" id="polacz" style="min-height:120px">${esc(zapisana.v || '')}\n${esc(moja || '')}</textarea></div>` : ''}
+      <div class="akcje"><button class="zml-btn" id="kMoja">Zostaw moją wersję</button><button class="zml-btn" id="kIch">Zostaw zapisaną wersję</button>${tekst ? '<button class="zml-btn" id="kPol">Zapisz połączoną wersję</button>' : ''}</div></div></div>`;
+    const dalej = v => { zamknijOkno(); D = DANE.czytaj(ID); lok[id] = { bazaW: (D.pola[id] || {}).w || 0 }; if (v !== undefined) { const r = DANE.zapiszPole(ID, id, v, lok[id].bazaW, JA.imie, true); lok[id].bazaW = r.ok.w; } D = DANE.czytaj(ID); rysuj(); pokazZapis('Zapisano'); };
+    $('#kMoja').onclick = () => { DANE.zapiszPole(ID, id, moja, 0, JA.imie + ' (wersja niewybrana)', true); dalej(moja); };
+    $('#kIch').onclick = () => { const h = DANE.hist(ID); h.push({ pole: id, stara: moja, nowa: zapisana.v, kto: JA.imie + ' (wersja niewybrana)', kiedy: new Date().toISOString(), wersja: D.wersja }); localStorage.setItem('apm_dokh_' + ID, JSON.stringify(h)); dalej(); };
+    if (tekst) $('#kPol').onclick = () => dalej($('#polacz').value);
+  }
+  function historia(id) {
+    const df = defPola(id), H = DANE.hist(ID).filter(h => h.pole === id).reverse();
+    $('#okno').innerHTML = `<div class="okno-tlo"><div class="okno"><h2>Historia zmian: ${esc(df.et)}</h2>
+      ${H.map((h, i) => `<div class="hist"><small>${esc(h.kto)}, ${dt(h.kiedy)} · wersja dokumentu ${h.wersja}</small><pre>${pokazW(id, h.nowa)}</pre>${EDYTUJE && i > 0 ? `<button class="btn-maly" data-przywroc="${i}">Przywróć tę wersję</button>` : ''}</div>`).join('') || '<p>Brak zmian.</p>'}
+      <div class="akcje" style="grid-template-columns:1fr"><button class="zml-btn" id="hZamknij">Zamknij</button></div></div></div>`;
+    $('#hZamknij').onclick = zamknijOkno;
+    document.querySelectorAll('[data-przywroc]').forEach(b => b.onclick = () => { const h = H[+b.dataset.przywroc]; D = DANE.czytaj(ID); DANE.zapiszPole(ID, id, h.nowa, 0, JA.imie, true); D = DANE.czytaj(ID); zamknijOkno(); rysuj(); pokazZapis('Przywrócono wersję'); });
+  }
+
+  /* ----- zmiany innych osób ----- */
+  DANE.sluchaj(ID, nowe => {
+    const stare = D; D = nowe;
+    Object.keys(D.pola).forEach(id => {
+      const L = lok[id] || {}, zm = !stare.pola[id] || stare.pola[id].w !== D.pola[id].w;
+      const f = document.activeElement && poleZOpt(document.activeElement) === id;
+      if (zm && !L.brudny && !f) { const box = $(`[data-in="${id}"]`); const df = defPola(id); if (box && df) { box.innerHTML = df.typ === 'tabela' ? tabela(df, !EDYTUJE) : wejscie(df, D.pola[id].v, !EDYTUJE); podepnijPola(box); } L.bazaW = D.pola[id].w; }
+      else if (zm && (L.brudny || f) && D.pola[id].kto !== JA.imie) { const n = $(`[data-nowsza="${id}"]`); if (n) n.innerHTML = `<div class="nowsza">Nowszą wersję tego pola zapisała inna osoba: ${esc(D.pola[id].kto)}. Przy zapisie zobaczysz obie wersje.</div>`; }
+    });
+    document.querySelectorAll('[data-meta]').forEach(e => e.innerHTML = metaPola(e.dataset.meta));
+    const ak = JSON.stringify([stare.akc, stare.doAkc, stare.potw, stare.uwagi, stare.kroki]) !== JSON.stringify([D.akc, D.doAkc, D.potw, D.uwagi, D.kroki]);
+    if (ak && !(document.activeElement && document.activeElement.closest('.wej'))) rysuj(); else { const wy = document.querySelector('[data-wyl]'); if (wy) wy.innerHTML = wyliczenie(); odswiezStan(); }
+  });
+  setInterval(() => document.querySelectorAll('[data-meta]').forEach(e => e.innerHTML = metaPola(e.dataset.meta)), 15000);
+
+  /* ----- wydruk ----- */
+  function wydruk() {
+    D = DANE.czytaj(ID);
+    const [, st] = stanDok(), brak = '<span class="w-brak">do uzupełnienia</span>';
+    const wP = p => {
+      if (p.typ === 'wyliczenie') { const S = sumy(); return `<div class="w-pole"><div class="w-et">${p.et}</div><table class="w-tab"><tr><th>Strata rocznie</th><th>Ramowy budżet</th><th>Korzyść netto I roku (twarde)</th><th>Korzyść netto I roku (twarde i miękkie)</th></tr><tr><td class="l">${zl(S.strata)}</td><td class="l">${zl(S.bud)}</td><td class="l">${zl(S.tw - S.bud)}</td><td class="l">${zl(S.tw + S.mi - S.bud)}</td></tr></table></div>`; }
+      if (D.kroki[p.id] === 'pom') return `<div class="w-pole"><div class="w-et">${p.et}</div><div class="w-pom">Krok pominięty: nie dotyczy projektu.</div></div>`;
+      const v = wart(p.id);
+      let t;
+      if (p.typ === 'tabela') {
+        const w = (v || []).filter(r => p.stale || !pusty([r]));
+        t = w.length ? `<table class="w-tab"><tr>${p.kol.map(c => `<th>${c.t}</th>`).join('')}</tr>${w.map(r => `<tr>${p.kol.map(c => `<td class="${c.typ === 'liczba' ? 'l' : ''}">${c.typ === 'liczba' && r[c.id] !== '' && r[c.id] != null ? zl(r[c.id]) : esc(r[c.id] ?? '')}</td>`).join('')}</tr>`).join('')}</table>` : brak;
+        if (w.length && p.suma) { const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0); t += `<div class="w-suma">Razem: ${zl(s())}${p.sumaWg ? ` · twarde: ${zl(s('twarda'))} · miękkie: ${zl(s('miękka'))}` : ''}</div>`; }
+      } else t = pusty(v) ? brak : `<div class="w-v">${esc(v)}</div>`;
+      return `<div class="w-pole"><div class="w-et">${p.et}</div>${t}</div>` + (p.dod ? wP(p.dod) : '');
+    };
+    const wS = s => {
+      if (s.akceptacja) return `<div class="w-sek"><h2>${s.nr}. ${s.t}</h2>${D.akc ? `<div class="w-pole"><div class="w-et">Decyzja sponsora</div><div>${esc(D.akc.decyzja)} · ${esc(D.akc.kto)}, ${dt(D.akc.kiedy)} · wersja ${D.akc.wersja}${D.akc.uwagi ? '<br>Uwagi: ' + esc(D.akc.uwagi) : ''}</div></div>` : `<div class="w-pole">${brak}</div>`}${D.potw ? `<div class="w-pole"><div class="w-et">Potwierdzenie wartości po diagnozie (KM1)</div><div>${esc(D.potw.kto)}, ${dt(D.potw.kiedy)}${D.potw.uwagi ? '<br>Uwagi: ' + esc(D.potw.uwagi) : ''}</div></div>` : ''}</div>`;
+      return `<div class="w-sek"><h2>${s.nr}. ${s.t}</h2>${s.pola.map(wP).join('')}</div>`;
+    };
+    $('#wydruk').innerHTML = `<div class="w-gl"><img src="logo_ptbs.png" alt="PTBS"><div class="w-ak"><b>Akademia Zarządzania Projektami PTBS</b><br>${T} · ${DEF.nazwa}</div></div>
+      <h1>${DEF.nazwa}: ${esc(wart('nazwa_proj') || ZESPOLY[ZESP].projekt)}</h1>
+      <table class="w-meta"><tr><td>Zespół</td><td>${ZESP}${wart('nazwa_zesp') ? ' · ' + esc(wart('nazwa_zesp')) : ''}</td><td>Status</td><td>${st}</td></tr>
+      <tr><td>Wersja</td><td>${D.wersja}</td><td>Data wydruku</td><td>${dt(new Date().toISOString())}</td></tr></table>
+      ${DEF.sekcje.map(wS).join('')}
+      `;
+    let ps=document.getElementById('stylDruku'); if(!ps){ ps=document.createElement('style'); ps.id='stylDruku'; document.head.appendChild(ps); }
+    ps.textContent=`@page{@bottom-left{content:"${T} ${DEF.nazwa} · ${ZESP} · wersja ${D.wersja} · ${st} · wydruk ${dt(new Date().toISOString())}";font:8pt Montserrat,Arial,sans-serif;color:#5A6873}}`;
+  }
+  window.addEventListener('beforeprint', wydruk);
+  $('#drukBtn').addEventListener('click', () => { wydruk(); setTimeout(() => window.print(), 50); });
+
+  rysuj();
+}
+</script>
+</body>
+</html>
