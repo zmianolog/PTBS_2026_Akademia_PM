@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>D00 Start Akademii — prezentacja — Akademia Zarządzania Projektami PTBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script>
+/* Strona Akademii wymaga zalogowania kodem. Otwarta z dysku (file://) działa bez logowania. */
+(function(){ if(location.protocol.indexOf('http')===0){ var k=null; try{k=localStorage.getItem('apm_kod');}catch(e){} if(!k) location.replace('index.html'); } })();
+</script>
+<style>
+@font-face{font-family:"Zmianologica Sans";src:local("Zmianologica Sans"),local("ZmianologicaSans-Regular");font-weight:400}
+@font-face{font-family:"Zmianologica Sans";src:local("Zmianologica Sans SemiBold"),local("ZmianologicaSans-SemiBold");font-weight:600}
+@font-face{font-family:"Zmianologica Sans";src:local("Zmianologica Sans Bold"),local("ZmianologicaSans-Bold");font-weight:700}
+@font-face{font-family:"Zmianologica Sans";src:local("Zmianologica Sans ExtraBold"),local("ZmianologicaSans-ExtraBold");font-weight:800}
+/* ikony ZML */
+:root{--zml-granat:#1F4460;--zml-miod:#E8B62C}
+.zi{width:var(--zi-rozmiar,1em);height:var(--zi-rozmiar,1em);fill:none;stroke:var(--zi-linia,var(--zml-granat));stroke-width:var(--zi-grubosc,1.5);stroke-linecap:round;stroke-linejoin:round;overflow:visible;vertical-align:middle;flex:none}
+.zi .a{stroke:var(--zi-akcent,var(--zml-miod))}
+.zi .af{fill:var(--zi-akcent,var(--zml-miod));stroke:none}
+.zi .f{fill:var(--zi-linia,var(--zml-granat));stroke:none}
+.zi-negatyw{--zi-linia:#fff;--zi-akcent:var(--zml-miod)}
+.zi .a,.zi .af{transform-box:fill-box;transform-origin:center}
+.zi .ov{transform-box:view-box}
+.zi-r-rosnij .a,.zi-r-rosnij .af{transform-origin:center bottom}
+.zi-r-wydluz .a{transform-origin:left center}
+.zi-r-puls{--zi-anim:zi-puls;--zi-czas:1.6s;--zi-krzywa:ease-in-out}
+.zi-r-skok{--zi-anim:zi-skok;--zi-czas:1.2s;--zi-krzywa:ease-in-out}
+.zi-r-przesun{--zi-anim:zi-przesun;--zi-czas:1.2s;--zi-krzywa:ease-in-out}
+.zi-r-drgaj{--zi-anim:zi-drgaj;--zi-czas:1s;--zi-krzywa:ease-in-out}
+.zi-r-obrot{--zi-anim:zi-obrot;--zi-czas:3s;--zi-krzywa:linear}
+.zi-r-wahadlo{--zi-anim:zi-wahadlo;--zi-czas:2.4s;--zi-krzywa:ease-in-out}
+.zi-r-miga{--zi-anim:zi-miga;--zi-czas:1.6s;--zi-krzywa:ease-in-out}
+.zi-r-rys{--zi-anim:zi-rys;--zi-czas:2.2s;--zi-krzywa:ease-out}
+.zi-r-plyn{--zi-anim:zi-plyn;--zi-czas:1.6s;--zi-krzywa:linear}
+.zi-r-rosnij{--zi-anim:zi-rosnij;--zi-czas:1.8s;--zi-krzywa:ease-in-out}
+.zi-r-wydluz{--zi-anim:zi-wydluz;--zi-czas:2.2s;--zi-krzywa:ease-in-out}
+.zi-r-fala{--zi-anim:zi-fala;--zi-czas:2s;--zi-krzywa:ease-out}
+.slajd.biez .tyt .zi .a,.slajd.biez .tyt .zi .af,.zi-host:hover .zi .a,.zi-host:hover .zi .af{animation:var(--zi-anim) var(--zi-czas) var(--zi-krzywa) infinite}
+@keyframes zi-puls{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+@keyframes zi-skok{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes zi-przesun{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+@keyframes zi-drgaj{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+@keyframes zi-obrot{to{transform:rotate(360deg)}}
+@keyframes zi-wahadlo{0%,100%{transform:rotate(-35deg)}50%{transform:rotate(25deg)}}
+@keyframes zi-miga{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes zi-rys{0%{stroke-dasharray:1;stroke-dashoffset:1;opacity:0}8%{opacity:1}60%,100%{stroke-dasharray:1;stroke-dashoffset:0;opacity:1}}
+@keyframes zi-plyn{to{stroke-dashoffset:-20}}
+@keyframes zi-rosnij{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.45)}}
+@keyframes zi-wydluz{0%,100%{transform:scaleX(1)}50%{transform:scaleX(.3)}}
+@keyframes zi-fala{0%{transform:scale(.35);opacity:1}100%{transform:scale(1.5);opacity:0}}
+
+/* ===== scena 1600x900 ===== */
+:root{--g:#1F4460;--g2:#163248;--m:#E8B62C;--mt:#5C4810;--ms:#FDF4DC;--tlo:#F5F5F7;--jasny:#F0F6FB;--ramka:#D5DDE5;--tekst:#1B2733;--tekst2:#5E6B78;
+ --font:"Zmianologica Sans",Montserrat,"Segoe UI",Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#1B2733;font-family:var(--font);color:var(--tekst)}
+#okno{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+#scena{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;background:var(--tlo);overflow:hidden}
+.slajd{position:absolute;inset:0;display:none;--s:1}
+.slajd.mierz{display:block!important;visibility:hidden}
+.mierz .odsl{opacity:1!important;transform:none!important}
+.slajd.biez{display:block}
+/* nagłówek */
+.nag{position:absolute;left:0;right:0;top:0;height:92px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;background:#fff;border-bottom:2px solid var(--ramka);color:var(--g);font-size:26px;z-index:3}
+.nag .l{display:flex;align-items:center;gap:16px}
+.nag .kr{width:3px;height:40px;background:var(--g)}
+.nag .klient{font-size:15px;font-weight:700;line-height:1.15;color:var(--g);text-align:right;opacity:.0}
+/* logo zajęć: sześć słupków */
+.logo-z rect{fill:var(--g)} .logo-z rect:last-child{fill:var(--m)}
+.logo-z.anim rect{transform-box:fill-box;transform-origin:center bottom;animation:slupek 2.4s ease-in-out infinite}
+.logo-z.anim rect:nth-child(2){animation-delay:.2s}.logo-z.anim rect:nth-child(3){animation-delay:.4s}.logo-z.anim rect:nth-child(4){animation-delay:.6s}.logo-z.anim rect:nth-child(5){animation-delay:.8s}.logo-z.anim rect:nth-child(6){animation-delay:1s}
+.logo-z.wejscie rect{animation:wejdz .7s cubic-bezier(.2,.8,.2,1) both, slupek 2.4s ease-in-out 1.6s infinite}
+.logo-z.wejscie rect:nth-child(2){animation-delay:.12s,1.8s}.logo-z.wejscie rect:nth-child(3){animation-delay:.24s,2s}.logo-z.wejscie rect:nth-child(4){animation-delay:.36s,2.2s}.logo-z.wejscie rect:nth-child(5){animation-delay:.48s,2.4s}.logo-z.wejscie rect:nth-child(6){animation-delay:.6s,2.6s}
+@keyframes slupek{0%,100%{transform:scaleY(1)}30%{transform:scaleY(1.12)}60%{transform:scaleY(.94)}}
+@keyframes wejdz{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}
+/* stopka */
+.st{position:absolute;left:0;right:0;bottom:0;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;font-size:19px;color:var(--tekst2);z-index:3}
+.st .l{display:flex;gap:16px;align-items:center}
+.st .l b{color:var(--g);letter-spacing:.04em}
+.st .znak-zml{width:26px;height:28px;fill:var(--g)}
+.st .bl{font-weight:600;color:var(--g);border-left:2px solid var(--ramka);padding-left:16px}
+.st .r{display:flex;gap:10px;align-items:center}
+.st .nrs{min-width:110px;text-align:right;line-height:1.1}
+.st .nrs small{display:block;font-size:13px;color:#8A3A00}
+.pb{width:48px;height:40px;border:2px solid var(--ramka);border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.pb .zi{--zi-rozmiar:24px}
+.pb:hover{border-color:var(--g)}
+.pb.wl{border-color:var(--m);background:var(--ms)}
+.pb.szary{background:#C9CED4;border-color:#C9CED4}
+.pb.szary .zi{--zi-linia:#fff;--zi-akcent:#fff}
+.pb:disabled{opacity:.45;cursor:not-allowed}
+#scena.ciemna .st{color:#C9D6E2} #scena.ciemna .st .l b,#scena.ciemna .st .bl{color:#fff} #scena.ciemna .st .znak-zml{fill:#fff} #scena.ciemna .st .bl{border-color:rgba(255,255,255,.3)}
+#scena.bez-nag .nag{display:none}
+/* obszar treści */
+.tr{position:absolute;left:90px;right:90px;top:124px;bottom:76px;display:flex;flex-direction:column}
+.pas{align-self:flex-start;background:var(--m);color:var(--mt);font-weight:800;font-size:20px;border-radius:999px;padding:6px 18px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.tyt{display:flex;align-items:center;gap:18px;margin:0 0 22px;font-size:44px;line-height:1.12;color:var(--g);font-weight:800}
+.tyt .zi{--zi-rozmiar:52px}
+.obsz{flex:1;min-height:0;display:flex;flex-direction:column;gap:20px}
+p.lead{font-size:calc(var(--s)*26px);line-height:1.45;margin:0;color:var(--tekst)}
+/* karty i siatki */
+.siatka{display:grid;gap:20px;grid-auto-rows:1fr}
+.k2{grid-template-columns:repeat(2,1fr)} .k3{grid-template-columns:repeat(3,1fr)} .k4{grid-template-columns:repeat(4,1fr)} .k5{grid-template-columns:repeat(5,1fr)} .k6{grid-template-columns:repeat(6,1fr)}
+.karta{background:#fff;border:2px solid var(--ramka);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.karta h3{margin:0;font-size:calc(var(--s)*27px);line-height:1.2;color:var(--g)}
+.karta p{margin:0;font-size:calc(var(--s)*23px);line-height:1.38}
+.karta .przyk{margin-top:auto;font-size:calc(var(--s)*22px);line-height:1.35;background:var(--jasny);border-radius:10px;padding:10px 12px;color:var(--g)}
+.karta.gl{border-color:var(--g)}
+.karta.mi{border-color:var(--m);background:var(--ms)}
+.ik{width:calc(var(--s)*66px);height:calc(var(--s)*66px);border-radius:50%;border:2px solid var(--g);background:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.ik .zi{--zi-rozmiar:calc(var(--s)*36px)}
+.ik.spol{background:var(--g)} .ik.spol .zi{--zi-linia:#fff;--zi-akcent:var(--m)}
+.nr{width:calc(var(--s)*46px);height:calc(var(--s)*46px);border-radius:50%;background:var(--g);color:#fff;font-weight:800;font-size:calc(var(--s)*22px);display:flex;align-items:center;justify-content:center;flex:none}
+.nr.m{background:var(--m);color:var(--mt)}
+.wiersz{display:flex;align-items:center;gap:14px}
+.ramka{background:var(--jasny);border-left:6px solid var(--g);border-radius:12px;padding:16px 22px;font-size:calc(var(--s)*24px);line-height:1.4}
+.ramka.m{background:var(--ms);border-left-color:var(--m)}
+.ramka b{color:var(--g)}
+ol.pk{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px;counter-reset:pk}
+ol.pk li{position:relative;padding-left:calc(var(--s)*60px);min-height:calc(var(--s)*44px);font-size:calc(var(--s)*25px);line-height:1.38;counter-increment:pk}
+ol.pk li::before{content:counter(pk);position:absolute;left:0;top:calc(var(--s)*-3px);width:calc(var(--s)*44px);height:calc(var(--s)*44px);border-radius:50%;background:var(--g);color:#fff;font-weight:800;font-size:calc(var(--s)*21px);display:flex;align-items:center;justify-content:center}
+.malo{font-size:calc(var(--s)*19px);color:var(--tekst2)}
+table.tb{border-collapse:separate;border-spacing:0;width:100%;font-size:calc(var(--s)*24px);background:#fff;border:2px solid var(--ramka);border-radius:16px;overflow:hidden}
+table.tb th,table.tb td{padding:14px 20px;text-align:left;vertical-align:top;border-bottom:2px solid var(--ramka)}
+table.tb tr:last-child td{border-bottom:0}
+table.tb th{background:var(--g);color:#fff;font-size:calc(var(--s)*24px)}
+table.tb td:first-child{font-weight:700;color:var(--g);width:22%}
+table.tb td:not(:first-child){width:39%}
+/* łańcuch ze strzałkami */
+.lancuch{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr 34px 1fr 34px 1fr;align-items:stretch;gap:0}
+.lancuch .strz{display:flex;align-items:center;justify-content:center}
+.lancuch .strz svg{width:34px;height:34px;stroke:var(--m);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.lancuch .karta{padding:18px}
+.lancuch .karta h3{font-size:calc(var(--s)*25px)}
+.lancuch .karta p{font-size:calc(var(--s)*21px)}
+.lancuch .karta .przyk{font-size:calc(var(--s)*20px)}
+/* odsłanianie */
+.odsl{transition:opacity .35s,transform .35s}
+.odsl:not(.widoczny){opacity:0;transform:translateY(10px)}
+/* przerywnik i start */
+.slajd.przerywnik{background:var(--g);color:#fff}
+.przerywnik .tr{top:110px}
+.przerywnik .blok{color:var(--m);font-weight:800;font-size:30px;letter-spacing:.08em;text-transform:uppercase}
+.przerywnik h1{font-size:80px;line-height:1.1;margin:10px 0 22px;color:#fff}
+.przerywnik p{font-size:34px;line-height:1.45;max-width:1350px;margin:0 0 26px;color:#E6EDF3}
+.przerywnik .tem{display:grid;grid-template-columns:repeat(2,1fr);gap:22px 40px;max-width:1420px}
+.przerywnik .tem div{display:flex;gap:16px;align-items:center;font-size:32px}
+.przerywnik .tem b{width:54px;height:54px;font-size:26px!important;border-radius:50%;background:var(--m);color:var(--mt);display:flex;align-items:center;justify-content:center;flex:none;font-size:22px}
+.slajd.start-sl{background:#fff}
+.start-sl .srodek{position:absolute;left:0;right:0;top:70px;bottom:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px}
+.start-sl .logo-z{width:190px;height:190px}
+.start-sl .et{font-weight:800;color:#B68C20;letter-spacing:.12em;text-transform:uppercase;font-size:24px}
+.start-sl h1{margin:0;font-size:64px;line-height:1.1;color:var(--g)}
+.start-sl h1 b{color:var(--g);font-weight:800}
+.start-sl p{margin:0;font-size:28px;line-height:1.4;color:var(--tekst2);max-width:1100px}
+.zbtn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:58px;padding:0 34px;border:0;border-radius:999px;background:var(--g);color:#fff;font:700 24px var(--font);cursor:pointer;text-decoration:none}
+.zbtn:hover{background:var(--g2)}
+.zbtn.m{background:var(--m);color:var(--mt)}
+/* mapa */
+.mapa .siatka{flex:1}
+.mapa .karta{gap:12px}
+.mapa .karta .gora{display:flex;align-items:center;gap:12px}
+.mapa .karta.tu{border:3px solid var(--m);background:var(--ms)}
+.mapa .tutaj{display:none;font-size:17px;font-weight:800;color:var(--mt);background:var(--m);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.mapa .karta.tu .tutaj{display:inline-block}
+.mapa .karta.za{opacity:.55}
+/* cykl / oś z panelem */
+.etapy{flex:1;display:grid;grid-template-columns:600px 1fr;grid-template-rows:minmax(0,1fr);gap:34px;min-height:0}
+.etapy svg.kolo{width:100%;height:100%;min-height:0;overflow:visible}
+.etapy .wez circle.t{fill:#fff;stroke:var(--g);stroke-width:3}
+.etapy .wez.akt circle.t{stroke:var(--m);stroke-width:7;fill:var(--ms)}
+.etapy .wez text{font-family:var(--font);fill:var(--g);font-weight:700}
+.etapy .luk{stroke:var(--m);stroke-width:4;fill:none}
+.etapy .grot{fill:var(--m)}
+.panel{background:#fff;border:2px solid var(--ramka);border-radius:20px;padding:28px 32px;display:flex;flex-direction:column;gap:14px;min-height:0}
+.panel .pn{display:flex;align-items:center;gap:16px}
+.panel h3{margin:0;font-size:calc(var(--s)*34px);color:var(--g);line-height:1.15}
+.panel p{margin:0;font-size:calc(var(--s)*25px);line-height:1.42}
+.panel .et{font-size:calc(var(--s)*20px);font-weight:800;color:#B68C20;text-transform:uppercase;letter-spacing:.06em}
+.panel .sp{margin-top:auto;font-size:calc(var(--s)*23px);background:var(--jasny);border-radius:12px;padding:12px 16px;color:var(--g);line-height:1.38}
+.os{flex:1;display:flex;flex-direction:column;gap:20px;min-height:0}
+.os .pasek{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.os .kr{background:#fff;border:2px solid var(--ramka);border-radius:16px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-size:calc(var(--s)*21px);font-weight:700;color:var(--g);line-height:1.2;position:relative}
+.os .kr.akt{border:3px solid var(--m);background:var(--ms)}
+.os .kr .zi{--zi-rozmiar:40px}
+.os .kr:not(:last-child)::after{content:"";position:absolute;right:-12px;top:50%;width:10px;height:10px;border-top:3px solid var(--m);border-right:3px solid var(--m);transform:translateY(-50%) rotate(45deg)}
+.os .panel{flex:1}
+/* spotkania a etapy */
+.kol{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:16px;flex:1;min-height:0}
+.kol .karta{padding:16px;gap:8px}
+.kol h3{font-size:calc(var(--s)*22px)}
+.kol .sp{display:flex;gap:8px;align-items:flex-start;font-size:calc(var(--s)*19px);line-height:1.28}
+.kol .sp b{flex:none;width:52px;height:30px;border-radius:8px;background:var(--jasny);color:var(--g);display:flex;align-items:center;justify-content:center;font-size:calc(var(--s)*16px)}
+.kol .km{margin-top:auto;font-size:calc(var(--s)*18px);font-weight:700;color:var(--mt);background:var(--ms);border-radius:8px;padding:6px 8px;line-height:1.3}
+/* obliczenie */
+.obl{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1;min-height:0}
+.obl .karta{gap:8px}
+.obl .lin{display:flex;justify-content:space-between;gap:16px;font-size:calc(var(--s)*23px);line-height:1.35;padding:6px 0;border-bottom:1.5px dashed var(--ramka)}
+.obl .lin:last-child{border-bottom:0}
+.obl .lin span:last-child{font-weight:700;color:var(--g);white-space:nowrap}
+.obl .wyn{background:var(--g);color:#fff;border-radius:12px;padding:10px 14px;margin-top:auto}
+.obl .wyn .lin{border-color:rgba(255,255,255,.3)} .obl .wyn .lin span:last-child{color:var(--m)}
+/* kompetencje */
+.komp{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.komp .karta{align-items:center;text-align:center;padding:16px 12px;gap:10px}
+.komp .karta p{font-size:calc(var(--s)*20px);line-height:1.28;font-weight:700;color:var(--g)}
+.komp .kod{font-size:calc(var(--s)*16px);font-weight:800;color:var(--tekst2)}
+.grupa{display:flex;align-items:center;gap:14px;font-size:calc(var(--s)*22px);font-weight:800;color:var(--g)}
+.grupa::after{content:"";flex:1;height:2px;background:var(--ramka)}
+/* karta zadania */
+.zad-g{flex:1;display:grid;grid-template-columns:1fr 520px;gap:28px;min-height:0}
+.zad-cw{background:#fff;border:3px solid var(--m);border-radius:22px;padding:22px 32px;display:flex;flex-direction:column;min-height:0}
+.zad-cw .f{display:flex;gap:22px;align-items:center;font-size:20px;font-weight:700;color:var(--tekst2);margin-bottom:10px;white-space:nowrap}
+.zad-cw .cel{font-size:calc(var(--s)*27px);font-weight:800;color:var(--g);line-height:1.3;margin-bottom:12px}
+.zad-cw ol{margin:0;padding-left:38px;font-size:calc(var(--s)*25px);line-height:1.36}.zad-cw li{margin-bottom:8px}
+.glos{white-space:nowrap;display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 16px;border:2px solid var(--ramka);border-radius:999px;background:#fff;font:700 18px var(--font);color:var(--g);cursor:pointer;margin-left:auto}
+.glos .gl-ik{position:relative;width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+.glos .gl-ik .zi{--zi-rozmiar:22px;position:relative;z-index:1}
+.glos .gl-ik::before,.glos .gl-ik::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--m);animation:pier 2.4s ease-out infinite}
+.glos .gl-ik::after{animation-delay:1.2s}
+@keyframes pier{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.7);opacity:0}}
+.zad-pr{background:var(--g);color:#fff;border-radius:22px;padding:24px 28px;display:flex;flex-direction:column;position:relative}
+.zad-pr .mm{color:var(--m);font-weight:800;font-size:16px;letter-spacing:.08em;text-transform:uppercase}
+.zad-pr .kod{font-size:64px;font-weight:800;line-height:1}
+.zad-pr .et{font-size:22px;font-weight:700;margin-top:4px}
+.zeg{position:absolute;top:22px;right:24px;width:128px;height:128px}
+.zeg svg{position:absolute;inset:0;width:128px;height:128px;transform:rotate(-90deg)}
+.zeg .tx{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.zeg b{font-size:40px;line-height:1}.zeg span{font-size:13px;color:var(--m);font-weight:800;letter-spacing:.08em}
+.zeg::before,.zeg::after{content:"";position:absolute;inset:0;border-radius:50%;border:3px solid rgba(232,182,44,.6);animation:pzeg 2.4s ease-out infinite}
+.zeg::after{animation-delay:1.2s}
+@keyframes pzeg{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.35);opacity:0}}
+.qrw{display:flex;gap:20px;align-items:center;margin-top:auto;margin-bottom:16px}
+.qrw .q{flex:none;width:150px;height:150px;background:#fff;border-radius:10px;display:grid;place-items:center;overflow:hidden;color:var(--g);font-weight:800}
+.qrw .q img,.qrw .q svg{width:138px;height:138px}
+.qrw p{margin:0;font-size:20px;line-height:1.35}.qrw p b{color:var(--m)}
+.zad-pr .zbtn{width:100%}
+.zad-pr .uw{font-size:17px;line-height:1.35;margin-top:10px;color:#C9D6E2}
+/* wskaźnik */
+#scena.wsk,#scena.wsk *{cursor:none!important}
+#kropka{position:fixed;left:0;top:0;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#E0242F;pointer-events:none;z-index:50;display:none}
+#kropka::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(224,36,47,.6);animation:pk 1.4s ease-out infinite}
+@keyframes pk{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.4);opacity:0}}
+/* spis slajdów */
+.spis-tlo{position:fixed;inset:0;background:rgba(15,34,51,.45);z-index:40;display:none}
+.spis{position:fixed;top:0;right:0;bottom:0;width:440px;max-width:92vw;background:#fff;z-index:41;display:none;flex-direction:column;font-family:var(--font);box-shadow:-8px 0 30px rgba(0,0,0,.2)}
+.spis.otw,.spis-tlo.otw{display:flex}
+.spis-g{padding:16px 18px;border-bottom:2px solid var(--ramka);display:flex;flex-direction:column;gap:10px}
+.spis-g .spis-r{display:flex;justify-content:space-between;align-items:center}
+.spis-g h2{margin:0;font-size:20px;color:var(--g)}
+.spis-g input{height:40px;border:2px solid var(--ramka);border-radius:8px;padding:0 12px;font:600 15px var(--font)}
+.spis-l{overflow:auto;padding:8px 10px 20px}
+.sp-blok{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#B68C20;margin:14px 8px 4px}
+.sp-poz{display:flex;gap:10px;align-items:baseline;padding:7px 8px;border-radius:8px;cursor:pointer;font-size:15px;color:var(--tekst)}
+.sp-poz:hover{background:var(--jasny)}
+.sp-poz.sp-biez{background:var(--ms)}
+.sp-poz .sp-nr{flex:none;width:28px;text-align:right;color:var(--tekst2);font-weight:700}
+.sp-poz.sp-prz{font-weight:800;color:var(--g)}
+.sp-poz .sp-dop{margin-left:auto;font-size:12px;color:var(--tekst2)}
+.sp-poz.sp-ukr .sp-t{text-decoration:line-through;color:#8A96A0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="okno"><div id="scena">
+
+<header class="nag">
+  <div class="l"><svg class="logo-z" width="54" height="54" viewBox="0 0 34 34" aria-hidden="true"><rect x="1.0" y="22.0" width="4" height="8.0" rx="1.2"/><rect x="6.5" y="17.6" width="4" height="12.4" rx="1.2"/><rect x="12.0" y="13.2" width="4" height="16.8" rx="1.2"/><rect x="17.5" y="8.8" width="4" height="21.2" rx="1.2"/><rect x="23.0" y="4.4" width="4" height="25.6" rx="1.2"/><rect x="28.5" y="0.0" width="4" height="30.0" rx="1.2"/></svg><div class="kr"></div><div>Akademia Zarządzania <b>Projektami PTBS</b></div></div>
+  <div class="klient" aria-hidden="true">PTBS</div>
+</header>
+
+<!-- ========== BLOK 1: OTWARCIE ========== -->
+<section class="slajd start-sl" data-blok="Otwarcie" data-tytul="Strona tytułowa">
+  <div class="srodek">
+    <svg class="logo-z" viewBox="0 0 34 34" aria-hidden="true"><rect x="1.0" y="22.0" width="4" height="8.0" rx="1.2"/><rect x="6.5" y="17.6" width="4" height="12.4" rx="1.2"/><rect x="12.0" y="13.2" width="4" height="16.8" rx="1.2"/><rect x="17.5" y="8.8" width="4" height="21.2" rx="1.2"/><rect x="23.0" y="4.4" width="4" height="25.6" rx="1.2"/><rect x="28.5" y="0.0" width="4" height="30.0" rx="1.2"/></svg>
+    <div class="et">Spotkanie D00 · Start Akademii</div>
+    <h1>Akademia Zarządzania <b>Projektami PTBS</b></h1>
+    <p>Na pierwszym spotkaniu ustalamy, czym jest projekt, od czego zależy jego wartość dla Spółki i jak zespoły zaczynają pracę nad kartami swoich projektów.</p>
+    <button class="zbtn" data-akcja="dalej">Rozpocznij</button>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Otwarcie">
+  <div class="tr"><span class="pas">Otwarcie</span>
+    <h2 class="tyt"><svg class="zi zi-r-skok" viewBox="0 0 24 24"><circle cx="10" cy="8" r="3"/><path d="M4 21c0-3.6 2.7-6 6-6s6 2.4 6 6"/><path class="a" d="M18.5 10V3M16 5.5L18.5 3 21 5.5"/></svg>Słowo sponsora projektów Akademii</h2>
+    <div class="obsz">
+      <div class="siatka k2" style="flex:1">
+        <div class="karta gl" style="justify-content:center;align-items:flex-start;gap:16px">
+          <div class="wiersz"><span class="ik spol"><svg class="zi zi-r-skok" viewBox="0 0 24 24"><circle cx="10" cy="8" r="3"/><path d="M4 21c0-3.6 2.7-6 6-6s6 2.4 6 6"/><path class="a" d="M18.5 10V3M16 5.5L18.5 3 21 5.5"/></svg></span><div><h3 style="font-size:calc(var(--s)*36px)">Konrad Gieżek</h3><p style="color:var(--tekst2)">Wiceprezes Zarządu PTBS</p></div></div>
+          <p style="font-size:calc(var(--s)*26px)">Inicjator Akademii i sponsor wszystkich trzech projektów, nad którymi pracują zespoły.</p>
+        </div>
+        <div class="karta">
+          <h3>Rola sponsora w projekcie</h3>
+          <ol class="pk">
+            <li>Sponsor określa, po co Spółka prowadzi projekt i jakiego rezultatu od niego oczekuje.</li>
+            <li>Sponsor akceptuje kartę projektu, a później decyduje o zmianach celu, zakresu i kosztu.</li>
+            <li>Sponsor rozstrzyga sprawy, których zespół nie może rozstrzygnąć sam.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== BLOK 2: ORGANIZACJA ========== -->
+<section class="slajd przerywnik" data-blok="Organizacja">
+  <div class="tr"><div class="blok">Blok 2</div><h1>Organizacja Akademii</h1>
+    <p>W tym bloku ustalamy, co uczestnicy będą umieć po spotkaniu, jak pracujemy w Akademii, kiedy są najbliższe spotkania i jak korzystać ze strony Akademii.</p>
+    <div class="tem"><div><b>A</b>Po spotkaniu</div><div><b>B</b>Jak pracujemy</div><div><b>C</b>Terminy najbliższych spotkań</div><div><b>D</b>Strona Akademii i kody dostępu</div></div>
+  </div>
+</section>
+<section class="slajd mapa" data-mapa="2" data-blok="Organizacja"></section>
+
+<section class="slajd" data-blok="Organizacja">
+  <div class="tr"><span class="pas">Część A</span>
+    <h2 class="tyt"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle class="af" cx="12" cy="12" r="1.8"/></svg>Po spotkaniu</h2>
+    <div class="obsz">
+      <ol class="pk" style="gap:22px">
+        <li class="odsl">Po spotkaniu wyjaśnisz, czym projekt różni się od działalności bieżącej Spółki.</li>
+        <li class="odsl">Po spotkaniu opiszesz drogę od problemu i straty, którą problem powoduje, do korzyści finansowej z projektu.</li>
+        <li class="odsl">Po spotkaniu rozpoznasz etapy projektu i wskażesz spotkania Akademii, na których zespoły przez nie przechodzą.</li>
+        <li class="odsl">Po spotkaniu zaczniesz razem z zespołem kartę projektu: opiszesz problem, wskażesz, kogo dotyczy, i oszacujesz stratę.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Organizacja">
+  <div class="tr"><span class="pas">Część B</span>
+    <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-8-8"/><path class="a" d="M12 4a8 8 0 0 1 8 8M17.6 9.8L20 12l2.3-2.4"/></svg>Jak pracujemy w Akademii</h2>
+    <div class="etapy" data-etapy="praca" data-uklad="kolo"></div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Organizacja">
+  <div class="tr"><span class="pas">Część C</span>
+    <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path class="a" d="M8.5 15l2.5 2.5 4.5-4.5"/></svg>Terminy najbliższych spotkań</h2>
+    <div class="obsz">
+      <div class="siatka k4" style="flex:1" id="terminy"></div>
+      <div class="ramka m">Terminy są propozycją. Potwierdzamy je teraz, a ewentualne zmiany wpisuję na stronie Akademii w zakładce „Programy szkoleniowe”.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Organizacja">
+  <div class="tr"><span class="pas">Część D</span>
+    <h2 class="tyt"><svg class="zi zi-r-drgaj" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path class="a" d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>Strona Akademii i kody dostępu</h2>
+    <div class="obsz" style="flex-direction:row;gap:24px">
+      <div class="karta" style="flex:1">
+        <h3>Jak wejść na stronę</h3>
+        <ol class="pk">
+          <li>Otwórz w telefonie albo w komputerze stronę <b>apmptbs.pl</b> albo zeskanuj kod QR.</li>
+          <li>Wpisz kod z kartki, którą otrzymujesz teraz. Strona zapamięta kod na tym urządzeniu.</li>
+          <li>Kod jest osobisty: pod tym kodem zapisuje się Twoja samoocena i praca Twojego zespołu, dlatego nie przekazuj go innym osobom.</li>
+        </ol>
+        <div class="qrw" style="margin-bottom:0"><div class="q q-adres" data-adres="https://apmptbs.pl"><svg viewBox="0 0 25 25" shape-rendering="crispEdges"><path fill="#1F4460" d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM11 0h1v1h-1zM12 0h1v1h-1zM14 0h1v1h-1zM15 0h1v1h-1zM16 0h1v1h-1zM18 0h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM21 0h1v1h-1zM22 0h1v1h-1zM23 0h1v1h-1zM24 0h1v1h-1zM0 1h1v1h-1zM6 1h1v1h-1zM11 1h1v1h-1zM12 1h1v1h-1zM13 1h1v1h-1zM18 1h1v1h-1zM24 1h1v1h-1zM0 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM6 2h1v1h-1zM12 2h1v1h-1zM15 2h1v1h-1zM16 2h1v1h-1zM18 2h1v1h-1zM20 2h1v1h-1zM21 2h1v1h-1zM22 2h1v1h-1zM24 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM6 3h1v1h-1zM8 3h1v1h-1zM9 3h1v1h-1zM10 3h1v1h-1zM11 3h1v1h-1zM12 3h1v1h-1zM15 3h1v1h-1zM18 3h1v1h-1zM20 3h1v1h-1zM21 3h1v1h-1zM22 3h1v1h-1zM24 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM9 4h1v1h-1zM10 4h1v1h-1zM14 4h1v1h-1zM15 4h1v1h-1zM16 4h1v1h-1zM18 4h1v1h-1zM20 4h1v1h-1zM21 4h1v1h-1zM22 4h1v1h-1zM24 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM11 5h1v1h-1zM18 5h1v1h-1zM24 5h1v1h-1zM0 6h1v1h-1zM1 6h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM19 6h1v1h-1zM20 6h1v1h-1zM21 6h1v1h-1zM22 6h1v1h-1zM23 6h1v1h-1zM24 6h1v1h-1zM8 7h1v1h-1zM9 7h1v1h-1zM10 7h1v1h-1zM12 7h1v1h-1zM13 7h1v1h-1zM0 8h1v1h-1zM4 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM8 8h1v1h-1zM9 8h1v1h-1zM10 8h1v1h-1zM11 8h1v1h-1zM12 8h1v1h-1zM13 8h1v1h-1zM15 8h1v1h-1zM17 8h1v1h-1zM18 8h1v1h-1zM19 8h1v1h-1zM20 8h1v1h-1zM21 8h1v1h-1zM24 8h1v1h-1zM4 9h1v1h-1zM7 9h1v1h-1zM8 9h1v1h-1zM9 9h1v1h-1zM13 9h1v1h-1zM14 9h1v1h-1zM15 9h1v1h-1zM17 9h1v1h-1zM20 9h1v1h-1zM21 9h1v1h-1zM23 9h1v1h-1zM2 10h1v1h-1zM5 10h1v1h-1zM6 10h1v1h-1zM9 10h1v1h-1zM10 10h1v1h-1zM11 10h1v1h-1zM15 10h1v1h-1zM17 10h1v1h-1zM19 10h1v1h-1zM21 10h1v1h-1zM22 10h1v1h-1zM0 11h1v1h-1zM1 11h1v1h-1zM4 11h1v1h-1zM5 11h1v1h-1zM8 11h1v1h-1zM9 11h1v1h-1zM12 11h1v1h-1zM14 11h1v1h-1zM16 11h1v1h-1zM17 11h1v1h-1zM22 11h1v1h-1zM23 11h1v1h-1zM1 12h1v1h-1zM4 12h1v1h-1zM5 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM9 12h1v1h-1zM11 12h1v1h-1zM13 12h1v1h-1zM14 12h1v1h-1zM16 12h1v1h-1zM17 12h1v1h-1zM18 12h1v1h-1zM19 12h1v1h-1zM21 12h1v1h-1zM22 12h1v1h-1zM23 12h1v1h-1zM24 12h1v1h-1zM0 13h1v1h-1zM1 13h1v1h-1zM2 13h1v1h-1zM5 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM10 13h1v1h-1zM12 13h1v1h-1zM15 13h1v1h-1zM16 13h1v1h-1zM20 13h1v1h-1zM23 13h1v1h-1zM5 14h1v1h-1zM6 14h1v1h-1zM7 14h1v1h-1zM8 14h1v1h-1zM9 14h1v1h-1zM10 14h1v1h-1zM11 14h1v1h-1zM12 14h1v1h-1zM13 14h1v1h-1zM14 14h1v1h-1zM15 14h1v1h-1zM16 14h1v1h-1zM18 14h1v1h-1zM19 14h1v1h-1zM20 14h1v1h-1zM21 14h1v1h-1zM22 14h1v1h-1zM2 15h1v1h-1zM3 15h1v1h-1zM4 15h1v1h-1zM9 15h1v1h-1zM11 15h1v1h-1zM13 15h1v1h-1zM16 15h1v1h-1zM19 15h1v1h-1zM20 15h1v1h-1zM22 15h1v1h-1zM23 15h1v1h-1zM0 16h1v1h-1zM1 16h1v1h-1zM5 16h1v1h-1zM6 16h1v1h-1zM7 16h1v1h-1zM10 16h1v1h-1zM12 16h1v1h-1zM13 16h1v1h-1zM16 16h1v1h-1zM17 16h1v1h-1zM18 16h1v1h-1zM19 16h1v1h-1zM20 16h1v1h-1zM21 16h1v1h-1zM22 16h1v1h-1zM8 17h1v1h-1zM10 17h1v1h-1zM13 17h1v1h-1zM14 17h1v1h-1zM16 17h1v1h-1zM20 17h1v1h-1zM0 18h1v1h-1zM1 18h1v1h-1zM2 18h1v1h-1zM3 18h1v1h-1zM4 18h1v1h-1zM5 18h1v1h-1zM6 18h1v1h-1zM8 18h1v1h-1zM9 18h1v1h-1zM16 18h1v1h-1zM18 18h1v1h-1zM20 18h1v1h-1zM0 19h1v1h-1zM6 19h1v1h-1zM12 19h1v1h-1zM14 19h1v1h-1zM16 19h1v1h-1zM20 19h1v1h-1zM21 19h1v1h-1zM22 19h1v1h-1zM23 19h1v1h-1zM24 19h1v1h-1zM0 20h1v1h-1zM2 20h1v1h-1zM3 20h1v1h-1zM4 20h1v1h-1zM6 20h1v1h-1zM8 20h1v1h-1zM9 20h1v1h-1zM11 20h1v1h-1zM13 20h1v1h-1zM14 20h1v1h-1zM16 20h1v1h-1zM17 20h1v1h-1zM18 20h1v1h-1zM19 20h1v1h-1zM20 20h1v1h-1zM21 20h1v1h-1zM22 20h1v1h-1zM24 20h1v1h-1zM0 21h1v1h-1zM2 21h1v1h-1zM3 21h1v1h-1zM4 21h1v1h-1zM6 21h1v1h-1zM10 21h1v1h-1zM12 21h1v1h-1zM17 21h1v1h-1zM18 21h1v1h-1zM19 21h1v1h-1zM22 21h1v1h-1zM23 21h1v1h-1zM24 21h1v1h-1zM0 22h1v1h-1zM2 22h1v1h-1zM3 22h1v1h-1zM4 22h1v1h-1zM6 22h1v1h-1zM9 22h1v1h-1zM11 22h1v1h-1zM12 22h1v1h-1zM13 22h1v1h-1zM14 22h1v1h-1zM16 22h1v1h-1zM18 22h1v1h-1zM21 22h1v1h-1zM23 22h1v1h-1zM0 23h1v1h-1zM6 23h1v1h-1zM10 23h1v1h-1zM11 23h1v1h-1zM13 23h1v1h-1zM17 23h1v1h-1zM19 23h1v1h-1zM20 23h1v1h-1zM21 23h1v1h-1zM22 23h1v1h-1zM23 23h1v1h-1zM0 24h1v1h-1zM1 24h1v1h-1zM2 24h1v1h-1zM3 24h1v1h-1zM4 24h1v1h-1zM5 24h1v1h-1zM6 24h1v1h-1zM8 24h1v1h-1zM9 24h1v1h-1zM10 24h1v1h-1zM12 24h1v1h-1zM13 24h1v1h-1zM15 24h1v1h-1zM18 24h1v1h-1zM22 24h1v1h-1zM23 24h1v1h-1zM24 24h1v1h-1z"/></svg></div><p style="color:var(--g)">Adres strony:<br><b style="color:var(--g)">apmptbs.pl</b></p></div>
+      </div>
+      <div class="karta" style="flex:1">
+        <h3>Co jest na stronie</h3>
+        <ol class="pk">
+          <li><b>O Akademii:</b> cele, przebieg i dwanaście kompetencji, które rozwijamy.</li>
+          <li><b>Samoocena kompetencji:</b> pierwsze zadanie każdego uczestnika.</li>
+          <li><b>Programy szkoleniowe:</b> każde spotkanie z celami, materiałami i zadaniami.</li>
+          <li><b>Karta projektu:</b> dokument zespołu, nad którym pracujecie od dziś.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== BLOK 3: CZYM JEST PROJEKT ========== -->
+<section class="slajd przerywnik" data-blok="Czym jest projekt">
+  <div class="tr"><div class="blok">Blok 3</div><h1>Czym jest projekt</h1>
+    <p>W tym bloku określamy, czym projekt różni się od codziennej pracy, i pokazujemy, jak policzyć, ile projekt jest wart dla Spółki.</p>
+    <div class="tem"><div><b>A</b>Definicja projektu</div><div><b>B</b>Projekt a działalność bieżąca</div><div><b>C</b>Wasze doświadczenia</div><div><b>D</b>Od straty do korzyści</div><div><b>E</b>Oszczędność twarda i miękka</div><div><b>F</b>Korzyści bez kwoty</div></div>
+  </div>
+</section>
+<section class="slajd mapa" data-mapa="3" data-blok="Czym jest projekt"></section>
+
+<section class="slajd" data-blok="Czym jest projekt">
+  <div class="tr"><span class="pas">Część A</span>
+    <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/><path class="a" d="M9 13h7M9 17h5"/></svg>Projekt: tymczasowe przedsięwzięcie z określonym rezultatem</h2>
+    <div class="obsz">
+      <p class="lead">Projekt to tymczasowe przedsięwzięcie, które Spółka podejmuje, aby wytworzyć określony rezultat: nowy produkt, nową usługę albo zmianę w sposobie pracy.</p>
+      <div class="siatka k3" style="flex:1">
+        <div class="karta odsl"><span class="ik"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path class="a" d="M8.5 15l2.5 2.5 4.5-4.5"/></svg></span><h3>Tymczasowe</h3><p>Projekt ma określony początek i koniec. Kończy się, gdy osiągnie rezultat albo gdy sponsor zdecyduje o jego przerwaniu.</p></div>
+        <div class="karta odsl"><span class="ik"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle class="af" cx="12" cy="12" r="1.8"/></svg></span><h3>Określony rezultat</h3><p>Projekt wytwarza rezultat, którego w Spółce wcześniej nie było. Po zakończeniu projektu rezultat przechodzi do codziennej pracy.</p></div>
+        <div class="karta odsl"><span class="ik"><svg class="zi zi-r-skok" viewBox="0 0 24 24"><rect x="3" y="14" width="7" height="6" rx="1"/><rect x="14" y="14" width="7" height="6" rx="1"/><rect class="a" x="8.5" y="6.5" width="7" height="6" rx="1"/><path d="M2 21h20"/></svg></span><h3>Wyznaczone zasoby</h3><p>Projekt ma wyznaczony czas, ludzi i pieniądze. Sponsor ustala je na początku, a zespół pracuje w tych granicach.</p></div>
+      </div>
+      <p class="malo">Definicja według standardu zarządzania projektami PMI (PMBOK Guide).</p>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Czym jest projekt">
+  <div class="tr"><span class="pas">Część B</span>
+    <h2 class="tyt"><svg class="zi zi-r-rosnij" viewBox="0 0 24 24"><path d="M2 21h20"/><rect x="4.5" y="10" width="6" height="11" rx="1"/><rect class="a" x="13.5" y="5" width="6" height="16" rx="1"/></svg>Projekt a działalność bieżąca</h2>
+    <div class="obsz">
+      <table class="tb">
+        <tr><th></th><th>Projekt</th><th>Działalność bieżąca</th></tr>
+        <tr class="odsl"><td>Po co</td><td>Wprowadza zmianę: tworzy rezultat, którego wcześniej nie było.</td><td>Utrzymuje działanie Spółki w ustalony sposób.</td></tr>
+        <tr class="odsl"><td>Czas</td><td>Ma początek i koniec.</td><td>Trwa stale.</td></tr>
+        <tr class="odsl"><td>Powtarzalność</td><td>Każdy projekt jest inny.</td><td>Te same czynności powtarzają się.</td></tr>
+        <tr class="odsl"><td>Zespół</td><td>Osoby z różnych działów, na czas projektu, bez wspólnego przełożonego.</td><td>Stały zespół w dziale, z przełożonym.</td></tr>
+        <tr class="odsl"><td>Przykład</td><td>Wprowadzenie nowego sposobu obsługi korespondencji.</td><td>Codzienna obsługa korespondencji.</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Czym jest projekt">
+  <div class="tr"><span class="pas">Część C</span>
+    <h2 class="tyt"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><path d="M3 3h11a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H8l-3 2.5V11H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path class="a" d="M18 9h3a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-1v2.5L17 17h-6a1 1 0 0 1-1-1v-2"/></svg>Wasze doświadczenia z projektami</h2>
+    <div class="obsz">
+      <div class="ramka m" style="font-size:calc(var(--s)*32px);line-height:1.35;padding:26px 30px"><b>Czy braliście udział w pracy, która miała określony cel i termin, angażowała osoby z różnych działów i zakończyła się w określonym momencie?</b></div>
+      <div class="siatka k3" style="flex:1">
+        <div class="karta odsl"><span class="nr">1</span><h3>Co było celem?</h3><p>Jaki rezultat ta praca miała przynieść i kto go oczekiwał?</p></div>
+        <div class="karta odsl"><span class="nr">2</span><h3>Co pomagało, a co przeszkadzało?</h3><p>Jakie sytuacje ułatwiały pracę, a jakie ją opóźniały?</p></div>
+        <div class="karta odsl"><span class="nr">3</span><h3>Jak się zakończyła?</h3><p>Czy rezultat powstał i czy był potem używany w codziennej pracy?</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Czym jest projekt">
+  <div class="tr"><span class="pas">Część D</span>
+    <h2 class="tyt"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><path d="M6.5 3h11L22 9 12 21 2 9zM2 9h20"/><path class="a" d="M8.5 9L12 21l3.5-12M9 3l3 6 3-6"/></svg>Od problemu i straty do korzyści z projektu</h2>
+    <div class="obsz">
+      <div class="lancuch" style="flex:1">
+        <div class="karta odsl"><span class="nr">1</span><h3>Problem</h3><p>Stan, który dziś nie działa i który da się zaobserwować.</p><div class="przyk">Lokale po zdaniu przez najemców stoją puste średnio 45 dni.</div></div>
+        <div class="strz odsl"><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="karta odsl"><span class="nr">2</span><h3>Strata</h3><p>Koszt problemu w skali roku: czas pracy, wydatki, utracony przychód, błędy i ryzyko.</p><div class="przyk">20 lokali × 45 dni × 60 zł czynszu dziennie = 54 000 zł rocznie.</div></div>
+        <div class="strz odsl"><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="karta odsl"><span class="nr">3</span><h3>Potrzeba</h3><p>Stan, w którym straty nie ma albo jest mniejsza.</p><div class="przyk">Lokal wraca do najmu w ciągu 25 dni.</div></div>
+        <div class="strz odsl"><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="karta odsl"><span class="nr">4</span><h3>Wartość</h3><p>Strata, której Spółka uniknie, albo dodatkowy przychód.</p><div class="przyk">20 lokali × 20 dni × 60 zł = 24 000 zł rocznie.</div></div>
+        <div class="strz odsl"><svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+        <div class="karta mi odsl"><span class="nr m">5</span><h3>Korzyść netto</h3><p>Wartość pomniejszona o koszt projektu i utrzymania rozwiązania.</p><div class="przyk">Projekt kosztuje 7 200 zł, więc zwraca się w niecałe 4 miesiące.</div></div>
+      </div>
+      <p class="malo">Przykład spoza projektów Akademii. Liczby przyjęto do ilustracji metody.</p>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Czym jest projekt">
+  <div class="tr"><span class="pas">Część D</span>
+    <h2 class="tyt"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h12v3M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2"/><circle class="af" cx="16.5" cy="14" r="1.4"/></svg>Przykład wyliczenia krok po kroku</h2>
+    <div class="obl">
+      <div class="karta odsl">
+        <h3>Strata dziś, w skali roku</h3>
+        <div class="lin"><span>Lokale zwalniane w roku</span><span>20</span></div>
+        <div class="lin"><span>Utracony czynsz: 20 × 45 dni × 60 zł</span><span>54 000 zł</span></div>
+        <div class="lin"><span>Czas koordynacji: 20 × 6 h × 60 zł/h</span><span>7 200 zł</span></div>
+        <div class="przyk" style="margin-top:auto">Stawka godzinowa 60 zł to koszt pracodawcy za godzinę efektywnej pracy, bez kosztów biura.</div>
+      </div>
+      <div class="karta odsl">
+        <h3>Korzyść po projekcie, w skali roku</h3>
+        <div class="lin"><span>Czynsz: 20 × 20 dni krócej × 60 zł</span><span>24 000 zł</span></div>
+        <div class="lin"><span>Koordynacja: 20 × 3 h mniej × 60 zł/h</span><span>3 600 zł</span></div>
+        <div class="lin"><span>Koszt projektu: 3 osoby × 40 h × 60 zł/h</span><span>7 200 zł</span></div>
+        <div class="wyn">
+          <div class="lin"><span>Okres zwrotu, tylko oszczędność twarda</span><span>3,6 mies.</span></div>
+          <div class="lin"><span>Okres zwrotu, twarda i miękka</span><span>3,1 mies.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Czym jest projekt">
+  <div class="tr"><span class="pas">Część E</span>
+    <h2 class="tyt"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v3M9 17h6l1 4H8z"/><path class="a" d="M7 4h10v5a5 5 0 0 1-10 0z"/></svg>Oszczędność twarda i oszczędność miękka</h2>
+    <div class="obsz">
+      <div class="siatka k2" style="flex:1">
+        <div class="karta gl odsl"><h3>Oszczędność twarda</h3><p>Koszt, który znika z wyników finansowych Spółki, albo przychód, który się w nich pojawia.</p><p>Przykłady: utracony czynsz, nadgodziny, zlecenia zewnętrzne, kary i odsetki.</p><div class="przyk">W przykładzie: 24 000 zł rocznie odzyskanego czynszu.</div></div>
+        <div class="karta odsl"><h3>Oszczędność miękka</h3><p>Uwolniony czas pracy, wyceniony stawką godzinową. Ma wartość, ale nie zmienia wyników finansowych, dopóki ktoś nie zdecyduje, do jakiej pracy przeznaczyć ten czas.</p><div class="przyk">W przykładzie: 3 600 zł rocznie, czyli 60 godzin pracy.</div></div>
+      </div>
+      <div class="ramka m odsl">W karcie projektu obie oszczędności wpisujecie osobno. Sponsor widzi wtedy, ile pojawi się w wynikach Spółki, a ile to uwolniony czas pracy. W metodyce lean to rozróżnienie nazywa się <i>hard savings</i> i <i>soft savings</i>.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Czym jest projekt">
+  <div class="tr"><span class="pas">Część F</span>
+    <h2 class="tyt"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path class="a" d="M12 9v4.5"/><circle class="af" cx="12" cy="17" r="1"/></svg>Korzyści, którym nie da się przypisać kwoty</h2>
+    <div class="obsz">
+      <p class="lead">Niektóre korzyści, na przykład zgodność ewidencji z przepisami albo jakość obsługi najemców, nie mają wiarygodnej kwoty. Zespół pokazuje je jednym z dwóch sposobów.</p>
+      <div class="siatka k2" style="flex:1">
+        <div class="karta odsl"><span class="ik"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><path d="M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path class="a" d="M12 9v4.5"/><circle class="af" cx="12" cy="17" r="1"/></svg></span><h3>Wycena ryzyka</h3><p>Prawdopodobieństwo zdarzenia w roku pomnożone przez jego koszt.</p><div class="przyk">Przykład: 10% szans na korektę ewidencji kosztującą 30 000 zł daje 3 000 zł rocznie.</div></div>
+        <div class="karta odsl"><span class="ik"><svg class="zi zi-r-wahadlo" viewBox="0 0 24 24"><path d="M3 17a9 9 0 0 1 18 0M12 8v1.5M6.5 10.5l1 1M17.5 10.5l-1 1"/><circle class="f" cx="12" cy="17" r="1.3"/><path class="a ov" style="transform-origin:12px 17px" d="M12 17l4-5"/></svg></span><h3>Miernik niefinansowy</h3><p>Liczba lub odsetek, który pokazuje zmianę bez przeliczania jej na pieniądze.</p><div class="przyk">Przykład: odsetek pozycji ewidencji zgodnych ze spisem z natury.</div></div>
+      </div>
+      <div class="ramka m odsl"><b>Zasada:</b> kwota trafia do karty tylko wtedy, gdy zespół wskaże jej źródło: rejestr, system, księgowość, pomiar próbny albo szacunek osoby wykonującej tę pracę.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== BLOK 4: ETAPY PROJEKTU ========== -->
+<section class="slajd przerywnik" data-blok="Etapy projektu">
+  <div class="tr"><div class="blok">Blok 4</div><h1>Etapy projektu</h1>
+    <p>W tym bloku pokazujemy, przez jakie etapy przechodzi projekt i na których spotkaniach Akademii zespoły przerabiają każdy z nich na swoich projektach.</p>
+    <div class="tem"><div><b>A</b>Sześć etapów projektu</div><div><b>B</b>Etapy a spotkania Akademii</div></div>
+  </div>
+</section>
+<section class="slajd mapa" data-mapa="4" data-blok="Etapy projektu"></section>
+
+<section class="slajd" data-blok="Etapy projektu">
+  <div class="tr"><span class="pas">Część A</span>
+    <h2 class="tyt"><svg class="zi zi-r-przesun" viewBox="0 0 24 24"><path d="M2 7h3.5l3 5-3 5H2l3-5zM8.5 7H12l3 5-3 5H8.5l3-5z"/><path class="a" d="M15 7h3.5l3 5-3 5H15l3-5z"/></svg>Sześć etapów projektu</h2>
+    <div class="os" data-etapy="cykl" data-uklad="os"></div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Etapy projektu">
+  <div class="tr"><span class="pas">Część B</span>
+    <h2 class="tyt"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/><circle class="af" cx="12" cy="11" r="1.5"/></svg>Etapy projektu a spotkania Akademii</h2>
+    <div class="kol" id="kolumny"></div>
+  </div>
+</section>
+
+<!-- ========== BLOK 5: SAMOOCENA ========== -->
+<section class="slajd przerywnik" data-blok="Samoocena">
+  <div class="tr"><div class="blok">Blok 5</div><h1>Samoocena kompetencji</h1>
+    <p>W tym bloku pokazujemy dwanaście kompetencji lidera projektu, które rozwija Akademia, i sposób wypełnienia samooceny na stronie Akademii.</p>
+    <div class="tem"><div><b>A</b>Dwanaście kompetencji</div><div><b>B</b>Jak wypełnić samoocenę</div></div>
+  </div>
+</section>
+<section class="slajd mapa" data-mapa="5" data-blok="Samoocena"></section>
+
+<section class="slajd" data-blok="Samoocena">
+  <div class="tr"><span class="pas">Część A</span>
+    <h2 class="tyt"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><circle cx="12" cy="7.5" r="4"/><circle cx="7.5" cy="15" r="4"/><circle cx="16.5" cy="15" r="4"/><circle class="af" cx="12" cy="12.5" r="1.4"/></svg>Dwanaście kompetencji lidera projektu</h2>
+    <div class="obsz" id="kompetencje"></div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Samoocena">
+  <div class="tr"><span class="pas">Część B</span>
+    <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><rect x="7" y="7" width="3" height="3" rx="0.5"/><rect x="7" y="13" width="3" height="3" rx="0.5"/><path d="M13 8.5h4M13 14.5h4"/><path class="a" d="M7.2 8.5l1.1 1.1 2.2-2.4"/></svg>Jak wypełnić samoocenę</h2>
+    <div class="obsz">
+      <div class="siatka k2" style="flex:1">
+        <div class="karta odsl"><div class="wiersz"><span class="nr">1</span><h3>Kiedy</h3></div><p>Samoocenę wypełniasz indywidualnie, na stronie Akademii, przed następnym spotkaniem. Zajmuje około 15 minut.</p></div>
+        <div class="karta odsl"><div class="wiersz"><span class="nr">2</span><h3>Co oceniasz</h3></div><p>Oceniasz, jak dziś wykonujesz działania opisane w każdej kompetencji. Ocena dotyczy tego, co robisz, a nie tego, co wiesz.</p></div>
+        <div class="karta odsl"><div class="wiersz"><span class="nr">3</span><h3>Kto widzi wyniki</h3></div><p>Swój profil widzisz od razu po zapisaniu. Wyniki indywidualne widzi prowadzący, a Zarząd widzi tylko zestawienie całej grupy.</p></div>
+        <div class="karta odsl"><div class="wiersz"><span class="nr">4</span><h3>Po co</h3></div><p>Tę samą samoocenę wypełnisz na zakończenie Akademii, na spotkaniu D13, i porównasz oba profile.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== BLOK 6: KARTA PROJEKTU ========== -->
+<section class="slajd przerywnik" data-blok="Karta projektu">
+  <div class="tr"><div class="blok">Blok 6</div><h1>Karta projektu</h1>
+    <p>W tym bloku poznajemy kartę projektu, zespoły zaczynają ją wypełniać dla swoich projektów i przedstawiają pierwsze ustalenia sponsorowi.</p>
+    <div class="tem"><div><b>A</b>Po co jest karta projektu</div><div><b>B</b>Wartość projektu w karcie</div><div><b>C</b>Zadanie Z01</div><div><b>D</b>Prezentacje zespołów</div></div>
+  </div>
+</section>
+<section class="slajd mapa" data-mapa="6" data-blok="Karta projektu"></section>
+
+<section class="slajd" data-blok="Karta projektu">
+  <div class="tr"><span class="pas">Część A</span>
+    <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/><path class="a" d="M9 13h7M9 17h5"/></svg>Po co jest karta projektu</h2>
+    <div class="obsz" style="flex-direction:row;gap:24px">
+      <div class="karta gl" style="flex:1">
+        <h3>Do czego służy</h3>
+        <ol class="pk">
+          <li>Karta zapisuje uzgodnienie zespołu ze sponsorem: po co jest projekt, jaki rezultat ma przynieść i ile jest wart.</li>
+          <li>Akceptacja karty przez sponsora rozpoczyna realizację projektu.</li>
+          <li>Po akceptacji karta jest punktem odniesienia: każdą zmianę celu, zakresu albo kosztu porównujemy z kartą.</li>
+        </ol>
+      </div>
+      <div class="karta" style="flex:1">
+        <h3>Z czego się składa</h3>
+        <ol class="pk">
+          <li class="odsl">Problem i jego uzasadnienie.</li>
+          <li class="odsl">Cel i rezultaty projektu.</li>
+          <li class="odsl">Wartość projektu: strata, korzyść, koszt i okres zwrotu.</li>
+          <li class="odsl">Kryteria sukcesu, zakres i granice projektu.</li>
+          <li class="odsl">Sponsor, zespół i warunki zakończenia projektu.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Karta projektu">
+  <div class="tr"><span class="pas">Część B</span>
+    <h2 class="tyt"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h12v3M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2"/><circle class="af" cx="16.5" cy="14" r="1.4"/></svg>Wartość projektu w karcie: osiem kroków</h2>
+    <div class="obsz">
+      <div class="siatka k4" style="flex:1" id="kroki8"></div>
+      <div class="ramka m">Strona karty prowadzi przez kroki po kolei. Każdy krok ma objaśnienie, a kroki, które nie dotyczą projektu, zespół może pominąć z podaniem powodu.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slajd zadanie" data-blok="Karta projektu" data-tytul="Zadanie Z01 · karta zadania">
+  <div class="tr"><span class="pas">Zadanie Z01 · grupowe</span>
+    <h2 class="tyt" style="margin-bottom:16px">Karta projektu: problem i strata</h2>
+    <div class="zad-g">
+      <div class="zad-cw">
+        <div class="f"><span>Praca w zespołach, pisze jedna osoba</span><span>15 minut</span>
+          <button class="glos" data-akcja="glos"><span class="gl-ik"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z"/><path class="a" d="M15.5 9a4 4 0 0 1 0 6M18.5 6a8 8 0 0 1 0 12"/></svg></span><span class="gl-t">Odsłuchaj instrukcję</span></button></div>
+        <div class="cel">Opiszcie problem, który rozwiązuje wasz projekt, wskażcie, kogo dotyczy, i oszacujcie stratę, którą powoduje.</div>
+        <ol>
+          <li>Osoba, która pisze, otwiera kartę projektu na stronie Akademii.</li>
+          <li>Opiszcie problem: co się dzieje, jak często i od kiedy.</li>
+          <li>Wskażcie, kogo problem dotyczy, i zaznaczcie składniki straty z pierwszym szacunkiem.</li>
+          <li>Kliknijcie „Zatwierdź krok”.</li>
+        </ol>
+      </div>
+      <div class="zad-pr">
+        <div class="mm">Zadanie na stronie Akademii</div><div class="kod">Z01</div><div class="et">Karta projektu</div>
+        <div class="zeg" data-min="15"></div>
+        <div class="qrw"><div class="q q-adres" data-adres="https://apmptbs.pl/karta.html"><svg viewBox="0 0 29 29" shape-rendering="crispEdges"><path fill="#1F4460" d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM9 0h1v1h-1zM12 0h1v1h-1zM14 0h1v1h-1zM19 0h1v1h-1zM22 0h1v1h-1zM23 0h1v1h-1zM24 0h1v1h-1zM25 0h1v1h-1zM26 0h1v1h-1zM27 0h1v1h-1zM28 0h1v1h-1zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM9 1h1v1h-1zM10 1h1v1h-1zM12 1h1v1h-1zM13 1h1v1h-1zM17 1h1v1h-1zM18 1h1v1h-1zM19 1h1v1h-1zM22 1h1v1h-1zM28 1h1v1h-1zM0 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM6 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM11 2h1v1h-1zM15 2h1v1h-1zM18 2h1v1h-1zM19 2h1v1h-1zM20 2h1v1h-1zM22 2h1v1h-1zM24 2h1v1h-1zM25 2h1v1h-1zM26 2h1v1h-1zM28 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM6 3h1v1h-1zM11 3h1v1h-1zM13 3h1v1h-1zM16 3h1v1h-1zM18 3h1v1h-1zM19 3h1v1h-1zM20 3h1v1h-1zM22 3h1v1h-1zM24 3h1v1h-1zM25 3h1v1h-1zM26 3h1v1h-1zM28 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM9 4h1v1h-1zM11 4h1v1h-1zM12 4h1v1h-1zM13 4h1v1h-1zM16 4h1v1h-1zM18 4h1v1h-1zM19 4h1v1h-1zM22 4h1v1h-1zM24 4h1v1h-1zM25 4h1v1h-1zM26 4h1v1h-1zM28 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM9 5h1v1h-1zM11 5h1v1h-1zM12 5h1v1h-1zM14 5h1v1h-1zM15 5h1v1h-1zM16 5h1v1h-1zM17 5h1v1h-1zM19 5h1v1h-1zM20 5h1v1h-1zM22 5h1v1h-1zM28 5h1v1h-1zM0 6h1v1h-1zM1 6h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM23 6h1v1h-1zM24 6h1v1h-1zM25 6h1v1h-1zM26 6h1v1h-1zM27 6h1v1h-1zM28 6h1v1h-1zM12 7h1v1h-1zM15 7h1v1h-1zM17 7h1v1h-1zM18 7h1v1h-1zM19 7h1v1h-1zM0 8h1v1h-1zM2 8h1v1h-1zM4 8h1v1h-1zM6 8h1v1h-1zM9 8h1v1h-1zM10 8h1v1h-1zM12 8h1v1h-1zM16 8h1v1h-1zM17 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM24 8h1v1h-1zM27 8h1v1h-1zM1 9h1v1h-1zM4 9h1v1h-1zM7 9h1v1h-1zM8 9h1v1h-1zM9 9h1v1h-1zM10 9h1v1h-1zM13 9h1v1h-1zM15 9h1v1h-1zM16 9h1v1h-1zM20 9h1v1h-1zM22 9h1v1h-1zM25 9h1v1h-1zM28 9h1v1h-1zM0 10h1v1h-1zM1 10h1v1h-1zM2 10h1v1h-1zM5 10h1v1h-1zM6 10h1v1h-1zM8 10h1v1h-1zM9 10h1v1h-1zM14 10h1v1h-1zM15 10h1v1h-1zM16 10h1v1h-1zM17 10h1v1h-1zM21 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM27 10h1v1h-1zM28 10h1v1h-1zM1 11h1v1h-1zM2 11h1v1h-1zM5 11h1v1h-1zM11 11h1v1h-1zM13 11h1v1h-1zM14 11h1v1h-1zM16 11h1v1h-1zM17 11h1v1h-1zM21 11h1v1h-1zM23 11h1v1h-1zM27 11h1v1h-1zM0 12h1v1h-1zM1 12h1v1h-1zM2 12h1v1h-1zM3 12h1v1h-1zM4 12h1v1h-1zM5 12h1v1h-1zM6 12h1v1h-1zM9 12h1v1h-1zM10 12h1v1h-1zM14 12h1v1h-1zM15 12h1v1h-1zM17 12h1v1h-1zM19 12h1v1h-1zM20 12h1v1h-1zM21 12h1v1h-1zM22 12h1v1h-1zM23 12h1v1h-1zM25 12h1v1h-1zM27 12h1v1h-1zM28 12h1v1h-1zM0 13h1v1h-1zM2 13h1v1h-1zM3 13h1v1h-1zM5 13h1v1h-1zM8 13h1v1h-1zM10 13h1v1h-1zM12 13h1v1h-1zM14 13h1v1h-1zM15 13h1v1h-1zM20 13h1v1h-1zM21 13h1v1h-1zM22 13h1v1h-1zM25 13h1v1h-1zM28 13h1v1h-1zM1 14h1v1h-1zM4 14h1v1h-1zM6 14h1v1h-1zM8 14h1v1h-1zM9 14h1v1h-1zM10 14h1v1h-1zM13 14h1v1h-1zM18 14h1v1h-1zM22 14h1v1h-1zM23 14h1v1h-1zM24 14h1v1h-1zM25 14h1v1h-1zM27 14h1v1h-1zM28 14h1v1h-1zM1 15h1v1h-1zM2 15h1v1h-1zM4 15h1v1h-1zM7 15h1v1h-1zM8 15h1v1h-1zM9 15h1v1h-1zM15 15h1v1h-1zM17 15h1v1h-1zM20 15h1v1h-1zM21 15h1v1h-1zM22 15h1v1h-1zM24 15h1v1h-1zM25 15h1v1h-1zM27 15h1v1h-1zM0 16h1v1h-1zM1 16h1v1h-1zM2 16h1v1h-1zM5 16h1v1h-1zM6 16h1v1h-1zM9 16h1v1h-1zM10 16h1v1h-1zM16 16h1v1h-1zM17 16h1v1h-1zM19 16h1v1h-1zM20 16h1v1h-1zM21 16h1v1h-1zM22 16h1v1h-1zM25 16h1v1h-1zM27 16h1v1h-1zM28 16h1v1h-1zM2 17h1v1h-1zM4 17h1v1h-1zM5 17h1v1h-1zM9 17h1v1h-1zM11 17h1v1h-1zM13 17h1v1h-1zM15 17h1v1h-1zM16 17h1v1h-1zM17 17h1v1h-1zM18 17h1v1h-1zM22 17h1v1h-1zM25 17h1v1h-1zM26 17h1v1h-1zM28 17h1v1h-1zM0 18h1v1h-1zM2 18h1v1h-1zM4 18h1v1h-1zM5 18h1v1h-1zM6 18h1v1h-1zM11 18h1v1h-1zM14 18h1v1h-1zM15 18h1v1h-1zM16 18h1v1h-1zM20 18h1v1h-1zM22 18h1v1h-1zM24 18h1v1h-1zM27 18h1v1h-1zM28 18h1v1h-1zM1 19h1v1h-1zM3 19h1v1h-1zM4 19h1v1h-1zM5 19h1v1h-1zM8 19h1v1h-1zM10 19h1v1h-1zM12 19h1v1h-1zM13 19h1v1h-1zM14 19h1v1h-1zM16 19h1v1h-1zM17 19h1v1h-1zM19 19h1v1h-1zM20 19h1v1h-1zM22 19h1v1h-1zM23 19h1v1h-1zM25 19h1v1h-1zM27 19h1v1h-1zM0 20h1v1h-1zM2 20h1v1h-1zM3 20h1v1h-1zM5 20h1v1h-1zM6 20h1v1h-1zM7 20h1v1h-1zM8 20h1v1h-1zM11 20h1v1h-1zM14 20h1v1h-1zM15 20h1v1h-1zM17 20h1v1h-1zM19 20h1v1h-1zM20 20h1v1h-1zM21 20h1v1h-1zM22 20h1v1h-1zM23 20h1v1h-1zM24 20h1v1h-1zM8 21h1v1h-1zM11 21h1v1h-1zM12 21h1v1h-1zM14 21h1v1h-1zM15 21h1v1h-1zM19 21h1v1h-1zM20 21h1v1h-1zM24 21h1v1h-1zM26 21h1v1h-1zM27 21h1v1h-1zM28 21h1v1h-1zM0 22h1v1h-1zM1 22h1v1h-1zM2 22h1v1h-1zM3 22h1v1h-1zM4 22h1v1h-1zM5 22h1v1h-1zM6 22h1v1h-1zM13 22h1v1h-1zM19 22h1v1h-1zM20 22h1v1h-1zM22 22h1v1h-1zM24 22h1v1h-1zM25 22h1v1h-1zM27 22h1v1h-1zM28 22h1v1h-1zM0 23h1v1h-1zM6 23h1v1h-1zM9 23h1v1h-1zM11 23h1v1h-1zM12 23h1v1h-1zM15 23h1v1h-1zM17 23h1v1h-1zM18 23h1v1h-1zM20 23h1v1h-1zM24 23h1v1h-1zM25 23h1v1h-1zM0 24h1v1h-1zM2 24h1v1h-1zM3 24h1v1h-1zM4 24h1v1h-1zM6 24h1v1h-1zM8 24h1v1h-1zM11 24h1v1h-1zM16 24h1v1h-1zM17 24h1v1h-1zM20 24h1v1h-1zM21 24h1v1h-1zM22 24h1v1h-1zM23 24h1v1h-1zM24 24h1v1h-1zM27 24h1v1h-1zM0 25h1v1h-1zM2 25h1v1h-1zM3 25h1v1h-1zM4 25h1v1h-1zM6 25h1v1h-1zM9 25h1v1h-1zM13 25h1v1h-1zM15 25h1v1h-1zM16 25h1v1h-1zM19 25h1v1h-1zM21 25h1v1h-1zM24 25h1v1h-1zM26 25h1v1h-1zM0 26h1v1h-1zM2 26h1v1h-1zM3 26h1v1h-1zM4 26h1v1h-1zM6 26h1v1h-1zM8 26h1v1h-1zM9 26h1v1h-1zM11 26h1v1h-1zM12 26h1v1h-1zM15 26h1v1h-1zM16 26h1v1h-1zM20 26h1v1h-1zM23 26h1v1h-1zM24 26h1v1h-1zM25 26h1v1h-1zM28 26h1v1h-1zM0 27h1v1h-1zM6 27h1v1h-1zM9 27h1v1h-1zM10 27h1v1h-1zM12 27h1v1h-1zM16 27h1v1h-1zM17 27h1v1h-1zM20 27h1v1h-1zM22 27h1v1h-1zM27 27h1v1h-1zM0 28h1v1h-1zM1 28h1v1h-1zM2 28h1v1h-1zM3 28h1v1h-1zM4 28h1v1h-1zM5 28h1v1h-1zM6 28h1v1h-1zM8 28h1v1h-1zM10 28h1v1h-1zM11 28h1v1h-1zM13 28h1v1h-1zM15 28h1v1h-1zM16 28h1v1h-1zM18 28h1v1h-1zM19 28h1v1h-1zM20 28h1v1h-1zM24 28h1v1h-1zM27 28h1v1h-1zM28 28h1v1h-1z"/></svg></div><p>Wejście:<br><b>apmptbs.pl</b><br>Zaloguj się swoim kodem.</p></div>
+        <a class="zbtn m" href="karta.html" target="_blank" rel="noopener">Otwórz zadanie Z01</a>
+        <div class="uw">Po zakończeniu kliknijcie „Zatwierdź krok”. Formularz wypełnia jedna osoba z zespołu.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Karta projektu">
+  <div class="tr"><span class="pas">Część D</span>
+    <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="12" rx="1.5"/><path d="M12 15v3M8 21l4-3 4 3"/><path class="a" d="M7 11l3-3 2 2 4-4"/></svg>Prezentacje zespołów</h2>
+    <div class="obsz">
+      <div class="siatka k3" style="flex:1">
+        <div class="karta"><span class="nr">P1</span><h3>Gospodarka środkami trwałymi</h3><p>Lider projektu: Hanna Bartkowska</p></div>
+        <div class="karta"><span class="nr">P2</span><h3>PTBS Asystent: wsparcie obsługi korespondencji</h3><p>Lider projektu: Piotr Szymański</p></div>
+        <div class="karta"><span class="nr">P3</span><h3>Optymalizacja procesu zamówień</h3><p>Lider projektu: Michał Gadziński</p></div>
+      </div>
+      <div class="ramka m"><b>Każdy zespół ma około 6 minut</b> i przedstawia kolejno: jaki jest problem, kogo dotyczy, jaką stratę szacunkowo powoduje i co projekt ma rozwiązać. Po każdej prezentacji sponsor komentuje ustalenia zespołu.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== BLOK 7: ZAMKNIĘCIE ========== -->
+<section class="slajd przerywnik" data-blok="Zamknięcie">
+  <div class="tr"><div class="blok">Blok 7</div><h1>Zamknięcie spotkania</h1>
+    <p>W tym bloku podsumowujemy ustalenia, określamy status karty projektu i zadania do następnego spotkania.</p>
+    <div class="tem"><div><b>A</b>Do zabrania ze spotkania</div><div><b>B</b>Karta projektu do akceptacji</div><div><b>C</b>Zadania do następnego spotkania</div><div><b>D</b>Następne spotkanie</div></div>
+  </div>
+</section>
+<section class="slajd mapa" data-mapa="7" data-blok="Zamknięcie"></section>
+
+<section class="slajd" data-blok="Zamknięcie">
+  <div class="tr"><span class="pas">Część A</span>
+    <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><path d="M5 3h14v12l-6 6H5zM13 21v-6h6"/><path class="a" d="M8.5 8h7M8.5 11.5h5"/></svg>Do zabrania ze spotkania</h2>
+    <div class="obsz">
+      <ol class="pk" style="gap:20px">
+        <li class="odsl">Projekt jest tymczasowym przedsięwzięciem, które ma wytworzyć określony rezultat i przekazać go do codziennej pracy Spółki.</li>
+        <li class="odsl">Wartość projektu liczymy od straty, którą powoduje problem, do korzyści netto po odjęciu kosztu projektu i utrzymania rozwiązania.</li>
+        <li class="odsl">Oszczędność twardą i oszczędność miękką wykazujemy w karcie osobno.</li>
+        <li class="odsl">Każda kwota w karcie ma wskazane źródło danych i założenie.</li>
+        <li class="odsl">Projekt przechodzi przez sześć etapów, a zespoły przerabiają je na kolejnych spotkaniach Akademii na własnych projektach.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Zamknięcie">
+  <div class="tr"><span class="pas">Część B</span>
+    <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path class="a" d="M8 12.5l2.8 2.8L16 9.5"/></svg>Karta projektu: od wersji roboczej do akceptacji</h2>
+    <div class="obsz">
+      <div class="siatka k3" style="flex:1">
+        <div class="karta odsl"><span class="nr">1</span><h3>Dziś, D00</h3><p>Zespół zaczyna kartę: opisuje problem, wskazuje, kogo dotyczy, i robi pierwszy szacunek straty.</p></div>
+        <div class="karta odsl"><span class="nr">2</span><h3>Spotkanie D01</h3><p>Przegląd roboczych wersji kart: założenia wyliczeń, brakujące dane, zakres i interesariusze. Sponsor zgłasza uwagi.</p></div>
+        <div class="karta mi odsl"><span class="nr m">3</span><h3>Spotkanie D02</h3><p>Sponsor akceptuje kartę projektu. Od tej chwili zmiany celu, zakresu albo kosztu przechodzą przez kontrolę zmian.</p></div>
+      </div>
+      <div class="ramka m odsl">Do akceptacji sponsora karta jest dokumentem roboczym: zespół może ją zmieniać i uzupełniać, gdy zbierze nowe dane.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Zamknięcie">
+  <div class="tr"><span class="pas">Część C</span>
+    <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 2.5h6v3H9z"/><path class="a" d="M8.5 12.5l2.5 2.5 4.5-4.5"/></svg>Zadania do następnego spotkania</h2>
+    <div class="obsz">
+      <div class="siatka k2" style="flex:1">
+        <div class="karta"><div class="wiersz"><span class="ik"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><rect x="7" y="7" width="3" height="3" rx="0.5"/><rect x="7" y="13" width="3" height="3" rx="0.5"/><path d="M13 8.5h4M13 14.5h4"/><path class="a" d="M7.2 8.5l1.1 1.1 2.2-2.4"/></svg></span><h3>Samoocena kompetencji</h3></div><p>Każdy uczestnik indywidualnie, na stronie Akademii, przed spotkaniem D01.</p></div>
+        <div class="karta"><div class="wiersz"><span class="ik"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/><path class="a" d="M9 13h7M9 17h5"/></svg></span><h3>Karta projektu</h3></div><p>Każdy zespół wypełnia kartę w takim zakresie, na jaki pozwalają dane, i oznacza dane, których brakuje.</p></div>
+      </div>
+      <div class="ramka m"><b>Brakuje danych o liczbie zdarzeń, na przykład o liczbie pism albo postępowań?</b> Zacznijcie je liczyć od jutra. Pomiar próbny trwa tydzień albo dwa, a karta musi być gotowa do akceptacji na spotkaniu D02.</div>
+    </div>
+  </div>
+</section>
+
+<section class="slajd" data-blok="Zamknięcie">
+  <div class="tr"><span class="pas">Część D</span>
+    <h2 class="tyt"><svg class="zi zi-r-skok" viewBox="0 0 24 24"><rect x="7" y="8" width="10" height="8" rx="2"/><circle class="a" cx="9.5" cy="4.5" r="1.5"/><circle class="a" cx="14.5" cy="4.5" r="1.5"/><circle class="a" cx="9.5" cy="19.5" r="1.5"/><circle class="a" cx="14.5" cy="19.5" r="1.5"/><circle class="a" cx="3.5" cy="12" r="1.5"/><circle class="a" cx="20.5" cy="12" r="1.5"/></svg>Następne spotkanie: D01 Wprowadzenie i inicjacja</h2>
+    <div class="obsz">
+      <div class="siatka k2" style="flex:1">
+        <div class="karta gl"><h3>Termin</h3><p id="termin-d01" style="font-size:calc(var(--s)*30px);font-weight:700;color:var(--g)"></p><p>Przed spotkaniem zespoły wypełniają kartę projektu, a uczestnicy samoocenę.</p></div>
+        <div class="karta"><h3>Co będziemy robić</h3>
+          <ol class="pk">
+            <li>Przegląd roboczych wersji kart projektów i założeń wyliczeń.</li>
+            <li>Interesariusze projektu i sposób ich zaangażowania.</li>
+            <li>Rola lidera projektu i rola sponsora.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slajd przerywnik" data-blok="Zamknięcie" data-tytul="Dziękuję">
+  <div class="tr" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start">
+    <div class="blok">Akademia Zarządzania Projektami PTBS</div>
+    <h1 style="font-size:calc(var(--s)*84px)">Dziękuję</h1>
+    <p>Do zobaczenia na spotkaniu D01. Pytania między spotkaniami kierujcie na adres marcin.zoltak@zmianologi.ca.</p>
+  </div>
+</section>
+
+<footer class="st">
+  <div class="l"><svg class="znak-zml" viewBox="0 0 250 270" aria-hidden="true"><path transform="scale(10)" d="M 9.529 26.499 C 9.363 26.450 9.289 26.378 9.204 26.187 C 9.087 25.924 9.045 25.558 8.999 24.396 C 8.976 23.800 8.937 23.182 8.914 23.024 L 8.691 19.771 C 8.375 18.312 8.226 17.077 8.145 15.271 C 8.101 14.268 8.056 13.704 7.994 13.339 C 7.898 12.779 7.906 12.501 8.026 12.146 C 8.119 11.870 8.599 11.387 9.098 11.065 C 9.300 10.935 9.618 10.686 9.803 10.513 C 9.988 10.340 10.201 10.172 10.277 10.141 C 10.548 10.027 10.883 10.094 11.072 10.298 C 11.249 10.491 11.296 10.723 11.502 12.438 C 11.540 12.747 11.619 13.745 11.773 15.833 C 11.807 16.303 11.884 16.988 11.943 17.354 C 12.016 17.804 12.062 18.298 12.084 18.875 C 12.102 19.345 12.138 19.799 12.164 19.884 C 12.228 20.093 12.392 20.280 12.541 20.312 C 12.798 20.369 13.554 19.941 14.078 19.443 C 14.253 19.277 14.555 19.046 14.750 18.928 C 14.945 18.810 15.273 18.571 15.479 18.396 C 15.685 18.222 16.008 17.985 16.197 17.871 C 16.385 17.756 16.686 17.546 16.865 17.404 C 17.044 17.262 17.343 17.064 17.529 16.965 C 17.715 16.865 17.993 16.671 18.148 16.534 C 18.303 16.396 18.553 16.204 18.704 16.107 C 18.856 16.010 19.087 15.861 19.220 15.777 C 19.352 15.692 19.588 15.506 19.744 15.363 C 19.908 15.212 20.186 15.019 20.405 14.902 C 20.613 14.792 20.883 14.612 21.006 14.504 C 21.129 14.395 21.379 14.206 21.562 14.083 C 21.746 13.960 21.988 13.787 22.101 13.698 C 22.393 13.468 22.529 13.407 22.753 13.407 C 23.159 13.407 23.617 13.749 23.955 14.305 C 24.069 14.492 24.269 14.767 24.400 14.916 C 24.668 15.221 24.750 15.385 24.749 15.613 C 24.748 16.046 24.257 16.602 23.541 16.981 C 23.265 17.128 22.969 17.327 22.783 17.490 C 22.616 17.637 22.264 17.886 22.000 18.042 C 21.736 18.198 21.409 18.423 21.273 18.543 C 21.025 18.760 20.769 18.937 20.416 19.136 C 20.312 19.195 20.092 19.364 19.926 19.512 C 19.761 19.660 19.461 19.879 19.259 19.997 C 19.057 20.115 18.762 20.325 18.602 20.463 C 18.262 20.758 17.993 20.941 17.637 21.119 C 17.495 21.191 17.261 21.355 17.117 21.484 C 16.855 21.719 16.608 21.892 16.245 22.097 C 16.139 22.157 15.902 22.336 15.717 22.495 C 15.532 22.654 15.172 22.908 14.916 23.059 C 14.660 23.210 14.326 23.446 14.175 23.582 C 14.024 23.719 13.734 23.919 13.531 24.026 C 13.325 24.136 13.026 24.344 12.854 24.498 C 12.684 24.649 12.364 24.876 12.142 25.001 C 11.859 25.161 11.626 25.338 11.359 25.594 C 10.975 25.963 10.564 26.220 10.000 26.446 C 9.749 26.546 9.702 26.551 9.529 26.499 Z M 13.999 16.797 C 13.786 16.683 13.673 16.430 13.622 15.957 C 13.599 15.740 13.552 15.372 13.518 15.138 C 13.407 14.386 13.375 14.037 13.333 13.146 C 13.311 12.665 13.274 12.093 13.252 11.875 C 13.229 11.657 13.190 11.226 13.165 10.917 C 13.139 10.607 13.072 10.045 13.014 9.667 C 12.944 9.206 12.899 8.690 12.879 8.104 C 12.847 7.168 12.818 7.034 12.604 6.833 C 12.336 6.581 11.778 6.823 10.847 7.598 C 10.713 7.709 10.379 7.948 10.104 8.130 C 9.829 8.311 9.475 8.572 9.317 8.708 C 9.160 8.845 8.887 9.041 8.712 9.144 C 8.536 9.247 8.264 9.442 8.106 9.579 C 7.949 9.715 7.646 9.922 7.434 10.039 C 7.221 10.157 6.957 10.332 6.847 10.430 C 6.527 10.712 6.340 10.845 5.910 11.097 C 5.688 11.226 5.388 11.437 5.243 11.565 C 5.098 11.693 4.804 11.901 4.591 12.028 C 4.377 12.155 4.087 12.365 3.945 12.496 C 3.803 12.626 3.584 12.806 3.458 12.896 C 3.332 12.986 3.098 13.166 2.937 13.297 C 2.777 13.429 2.593 13.556 2.528 13.580 C 2.060 13.758 1.438 13.398 1.038 12.717 C 0.921 12.518 0.735 12.250 0.625 12.123 C 0.317 11.766 0.250 11.635 0.250 11.384 C 0.250 10.911 0.700 10.394 1.452 10.001 C 1.714 9.865 1.989 9.681 2.154 9.531 C 2.303 9.396 2.638 9.147 2.899 8.978 C 3.160 8.809 3.453 8.598 3.551 8.510 C 3.843 8.247 4.044 8.105 4.391 7.915 C 4.572 7.817 4.851 7.620 5.011 7.478 C 5.171 7.336 5.484 7.122 5.707 7.003 C 5.953 6.871 6.250 6.665 6.462 6.478 C 6.655 6.308 7.002 6.057 7.233 5.919 C 7.464 5.781 7.774 5.557 7.922 5.422 C 8.069 5.287 8.355 5.079 8.556 4.960 C 8.757 4.841 9.046 4.631 9.197 4.494 C 9.349 4.357 9.693 4.115 9.964 3.955 C 10.234 3.796 10.582 3.554 10.738 3.418 C 10.893 3.281 11.183 3.082 11.381 2.974 C 11.585 2.863 11.874 2.657 12.047 2.497 C 12.216 2.342 12.530 2.115 12.745 1.994 C 13.001 1.848 13.274 1.644 13.537 1.399 C 13.857 1.101 14.012 0.992 14.312 0.851 C 15.003 0.526 15.317 0.468 15.566 0.620 C 15.867 0.804 15.913 1.111 16.042 3.833 C 16.083 4.688 16.110 5.075 16.228 6.479 C 16.301 7.356 16.307 7.400 16.439 8.083 C 16.633 9.080 16.751 10.207 16.793 11.438 C 16.838 12.786 16.851 12.939 16.967 13.577 C 17.069 14.144 17.055 14.548 16.921 14.857 C 16.803 15.130 16.270 15.660 15.779 15.994 C 15.577 16.131 15.289 16.352 15.139 16.486 C 14.989 16.620 14.808 16.762 14.736 16.802 C 14.559 16.901 14.188 16.898 13.999 16.797 Z"/></svg><b>ZMIANOLOGICA</b><span class="bl" id="nazwaBloku"></span></div>
+  <div class="r">
+    <div class="nrs" id="nrSlajdu"></div>
+    <button class="pb" data-akcja="wstecz" title="Wstecz (strzałka w lewo)"><svg class="zi zi-r-przesun" viewBox="0 0 24 24"><path d="M19 12H5"/><path class="a" d="M11 6l-6 6 6 6"/></svg></button>
+    <button class="pb" data-akcja="dalej" title="Dalej (strzałka w prawo, spacja)"><svg class="zi zi-r-przesun" viewBox="0 0 24 24"><path d="M5 12h14"/><path class="a" d="M13 6l6 6-6 6"/></svg></button>
+    <button class="pb" data-akcja="spis" title="Spis slajdów (M)"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><path class="a" d="M4 12h16"/></svg></button>
+    <button class="pb" data-akcja="pelny" title="Pełny ekran (F)"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><path class="a" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button class="pb" data-akcja="wskaznik" title="Wskaźnik (L)"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle class="af" cx="12" cy="12" r="1.8"/></svg></button>
+    <button class="pb" data-akcja="ukryj" title="Ukryj slajd w pokazie (H)"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle class="a" cx="12" cy="12" r="3"/></svg></button>
+  </div>
+</footer>
+</div></div>
+<div id="kropka"></div>
+<div class="spis-tlo" id="spisTlo"></div>
+<aside class="spis" id="spis" aria-label="Spis slajdów">
+  <div class="spis-g"><div class="spis-r"><h2>Spis slajdów</h2><button class="pb" id="spisZamknij" title="Zamknij (Esc)"><svg class="zi zi-r-obrot" viewBox="0 0 24 24"><path class="a" d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <input id="spisIdz" type="number" min="1" placeholder="Idź do slajdu: wpisz numer i naciśnij Enter"></div>
+  <div class="spis-l" id="spisLista"></div>
+</aside>
+
+<script>
+const IK={"ankieta": {"r": "rys", "s": "<rect x=\"4\" y=\"3\" width=\"16\" height=\"18\" rx=\"2\"/><rect x=\"7\" y=\"7\" width=\"3\" height=\"3\" rx=\"0.5\"/><rect x=\"7\" y=\"13\" width=\"3\" height=\"3\" rx=\"0.5\"/><path d=\"M13 8.5h4M13 14.5h4\"/><path class=\"a\" d=\"M7.2 8.5l1.1 1.1 2.2-2.4\"/>"}, "budzet": {"r": "miga", "s": "<path d=\"M3 7a2 2 0 0 1 2-2h12v3M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2\"/><circle class=\"af\" cx=\"16.5\" cy=\"14\" r=\"1.4\"/>"}, "cel": {"r": "puls", "s": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle class=\"af\" cx=\"12\" cy=\"12\" r=\"1.8\"/>"}, "cwiczenie": {"r": "drgaj", "s": "<path d=\"M14 3H5a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-6M7 8h5M7 12h3\"/><path class=\"a\" d=\"M19 4l2 2-8 8-3 1 1-3z\"/>"}, "dalej": {"r": "przesun", "s": "<path d=\"M5 12h14\"/><path class=\"a\" d=\"M13 6l6 6-6 6\"/>"}, "dokument": {"r": "rys", "s": "<path d=\"M6 3h8l5 5v13H6zM14 3v5h5\"/><path class=\"a\" d=\"M9 13h7M9 17h5\"/>"}, "dzwiek": {"r": "miga", "s": "<path d=\"M4 9.5v5h3.5L12 18V6L7.5 9.5z\"/><path class=\"a\" d=\"M15.5 9a4 4 0 0 1 0 6M18.5 6a8 8 0 0 1 0 12\"/>"}, "fazy": {"r": "przesun", "s": "<path d=\"M2 7h3.5l3 5-3 5H2l3-5zM8.5 7H12l3 5-3 5H8.5l3-5z\"/><path class=\"a\" d=\"M15 7h3.5l3 5-3 5H15l3-5z\"/>"}, "interesariusze": {"r": "puls", "s": "<circle class=\"a\" cx=\"12\" cy=\"12\" r=\"3\"/><circle cx=\"12\" cy=\"3.5\" r=\"1.6\"/><circle cx=\"20.5\" cy=\"12\" r=\"1.6\"/><circle cx=\"12\" cy=\"20.5\" r=\"1.6\"/><circle cx=\"3.5\" cy=\"12\" r=\"1.6\"/><path d=\"M12 5.1V9M18.9 12H15M12 18.9V15M5.1 12H9\"/>"}, "kamien-milowy": {"r": "skok", "s": "<path d=\"M2 19h20M12 15v4\"/><path class=\"a\" d=\"M12 6l4.5 4.5L12 15l-4.5-4.5z\"/>"}, "kompetencja": {"r": "puls", "s": "<circle cx=\"12\" cy=\"7.5\" r=\"4\"/><circle cx=\"7.5\" cy=\"15\" r=\"4\"/><circle cx=\"16.5\" cy=\"15\" r=\"4\"/><circle class=\"af\" cx=\"12\" cy=\"12.5\" r=\"1.4\"/>"}, "kompromis": {"r": "drgaj", "s": "<path d=\"M12 3v18M7 21h10M4 7h16\"/><path class=\"a\" d=\"M4 7l-2.5 6a2.5 2.5 0 0 0 5 0zM20 7l-2.5 6a2.5 2.5 0 0 0 5 0z\"/>"}, "kontrola": {"r": "puls", "s": "<path d=\"M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z\"/><circle class=\"a\" cx=\"12\" cy=\"12\" r=\"3\"/>"}, "link": {"r": "drgaj", "s": "<path d=\"M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1\"/><path class=\"a\" d=\"M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1\"/>"}, "lupa": {"r": "puls", "s": "<circle cx=\"10.5\" cy=\"10.5\" r=\"6.5\"/><path class=\"a\" d=\"M15.5 15.5L21 21\"/>"}, "mapa": {"r": "puls", "s": "<path d=\"M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14\"/><circle class=\"af\" cx=\"12\" cy=\"11\" r=\"1.5\"/>"}, "menu": {"r": "rys", "s": "<path d=\"M4 7h16M4 17h16\"/><path class=\"a\" d=\"M4 12h16\"/>"}, "motywacja": {"r": "drgaj", "s": "<path d=\"M12 22a7 7 0 0 0 7-7c0-4.5-3-7-4.5-11-2.5 2-3 4.5-3 6-1-1-2-2-2.2-4C7 8.5 5 11.5 5 15a7 7 0 0 0 7 7z\"/><path class=\"a\" d=\"M12 19a2.5 2.5 0 0 0 2.5-2.5c0-1.5-1-2.3-1.5-3.5-.8.8-1 1.5-1 2-.6-.5-1-1-1-2-1 1-1.5 2-1.5 3.5A2.5 2.5 0 0 0 12 19z\"/>"}, "notatka": {"r": "rys", "s": "<path d=\"M5 3h14v12l-6 6H5zM13 21v-6h6\"/><path class=\"a\" d=\"M8.5 8h7M8.5 11.5h5\"/>"}, "odpowiedzialnosc": {"r": "skok", "s": "<path d=\"M2 15h4l5 2.5h4.5a1.5 1.5 0 0 0 0-3H12M6 20.5l3-1.5h7l5.5-4a1.5 1.5 0 0 0-2-2.2L16 15\"/><rect class=\"a\" x=\"9.5\" y=\"3\" width=\"6\" height=\"6\" rx=\"1\"/>"}, "opor": {"r": "przesun", "s": "<path d=\"M17 5v14M20.5 8v8\"/><path class=\"a\" d=\"M3 12h10M10 9l3 3-3 3\"/>"}, "pelny-ekran": {"r": "puls", "s": "<path class=\"a\" d=\"M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5\"/>"}, "pelny-ekran-zamknij": {"r": "puls", "s": "<path class=\"a\" d=\"M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5\"/>"}, "petla": {"r": "rys", "s": "<path d=\"M20 12a8 8 0 1 1-8-8\"/><path class=\"a\" d=\"M12 4a8 8 0 0 1 8 8M17.6 9.8L20 12l2.3-2.4\"/>"}, "porownanie": {"r": "rosnij", "s": "<path d=\"M2 21h20\"/><rect x=\"4.5\" y=\"10\" width=\"6\" height=\"11\" rx=\"1\"/><rect class=\"a\" x=\"13.5\" y=\"5\" width=\"6\" height=\"16\" rx=\"1\"/>"}, "prezentacja": {"r": "rys", "s": "<rect x=\"3\" y=\"3\" width=\"18\" height=\"12\" rx=\"1.5\"/><path d=\"M12 15v3M8 21l4-3 4 3\"/><path class=\"a\" d=\"M7 11l3-3 2 2 4-4\"/>"}, "rozmowa": {"r": "miga", "s": "<path d=\"M3 3h11a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H8l-3 2.5V11H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z\"/><path class=\"a\" d=\"M18 9h3a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-1v2.5L17 17h-6a1 1 0 0 1-1-1v-2\"/>"}, "ryzyko": {"r": "miga", "s": "<path d=\"M10.3 3.9L2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z\"/><path class=\"a\" d=\"M12 9v4.5\"/><circle class=\"af\" cx=\"12\" cy=\"17\" r=\"1\"/>"}, "sponsor": {"r": "skok", "s": "<circle cx=\"10\" cy=\"8\" r=\"3\"/><path d=\"M4 21c0-3.6 2.7-6 6-6s6 2.4 6 6\"/><path class=\"a\" d=\"M18.5 10V3M16 5.5L18.5 3 21 5.5\"/>"}, "spotkanie": {"r": "skok", "s": "<rect x=\"7\" y=\"8\" width=\"10\" height=\"8\" rx=\"2\"/><circle class=\"a\" cx=\"9.5\" cy=\"4.5\" r=\"1.5\"/><circle class=\"a\" cx=\"14.5\" cy=\"4.5\" r=\"1.5\"/><circle class=\"a\" cx=\"9.5\" cy=\"19.5\" r=\"1.5\"/><circle class=\"a\" cx=\"14.5\" cy=\"19.5\" r=\"1.5\"/><circle class=\"a\" cx=\"3.5\" cy=\"12\" r=\"1.5\"/><circle class=\"a\" cx=\"20.5\" cy=\"12\" r=\"1.5\"/>"}, "start": {"r": "drgaj", "s": "<path d=\"M5 21V3\"/><path class=\"a\" d=\"M5 4h11l-2.5 3.5L16 11H5\"/>"}, "szkolenie": {"r": "drgaj", "s": "<path d=\"M2 9l10-5 10 5-10 5zM6 11v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5\"/><path class=\"a\" d=\"M22 9v6\"/><circle class=\"af\" cx=\"22\" cy=\"16.5\" r=\"1\"/>"}, "termin": {"r": "rys", "s": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\"/><path d=\"M3 10h18M8 3v4M16 3v4\"/><path class=\"a\" d=\"M8.5 15l2.5 2.5 4.5-4.5\"/>"}, "wartosc": {"r": "puls", "s": "<path d=\"M6.5 3h11L22 9 12 21 2 9zM2 9h20\"/><path class=\"a\" d=\"M8.5 9L12 21l3.5-12M9 3l3 6 3-6\"/>"}, "wdrozenie": {"r": "skok", "s": "<path d=\"M4 13v6a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6\"/><path class=\"a\" d=\"M12 3v10M8.5 9.5L12 13l3.5-3.5\"/>"}, "wskaznik": {"r": "wahadlo", "s": "<path d=\"M3 17a9 9 0 0 1 18 0M12 8v1.5M6.5 10.5l1 1M17.5 10.5l-1 1\"/><circle class=\"f\" cx=\"12\" cy=\"17\" r=\"1.3\"/><path class=\"a ov\" style=\"transform-origin:12px 17px\" d=\"M12 17l4-5\"/>"}, "wspolpraca": {"r": "puls", "s": "<rect x=\"2\" y=\"9\" width=\"11\" height=\"6\" rx=\"3\"/><rect class=\"a\" x=\"11\" y=\"9\" width=\"11\" height=\"6\" rx=\"3\"/>"}, "wstecz": {"r": "przesun", "s": "<path d=\"M19 12H5\"/><path class=\"a\" d=\"M11 6l-6 6 6 6\"/>"}, "wynik": {"r": "puls", "s": "<path d=\"M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4M12 14v3M9 17h6l1 4H8z\"/><path class=\"a\" d=\"M7 4h10v5a5 5 0 0 1-10 0z\"/>"}, "zadanie": {"r": "rys", "s": "<rect x=\"5\" y=\"4\" width=\"14\" height=\"17\" rx=\"2\"/><path d=\"M9 2.5h6v3H9z\"/><path class=\"a\" d=\"M8.5 12.5l2.5 2.5 4.5-4.5\"/>"}, "zamknij": {"r": "obrot", "s": "<path class=\"a\" d=\"M6 6l12 12M18 6L6 18\"/>"}, "zasoby": {"r": "skok", "s": "<rect x=\"3\" y=\"14\" width=\"7\" height=\"6\" rx=\"1\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"6\" rx=\"1\"/><rect class=\"a\" x=\"8.5\" y=\"6.5\" width=\"7\" height=\"6\" rx=\"1\"/><path d=\"M2 21h20\"/>"}, "zatwierdzenie": {"r": "rys", "s": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path class=\"a\" d=\"M8 12.5l2.8 2.8L16 9.5\"/>"}, "zaufanie": {"r": "rys", "s": "<path d=\"M12 3l8 3v6c0 5-3.5 8-8 9.5C7.5 20 4 17 4 12V6z\"/><path class=\"a\" d=\"M8.5 12l2.5 2.5 4.5-4.5\"/>"}, "zespol": {"r": "skok", "s": "<circle class=\"a\" cx=\"12\" cy=\"7.5\" r=\"2.8\"/><path d=\"M7.2 19.5c0-3.3 2.2-5.5 4.8-5.5s4.8 2.2 4.8 5.5\"/><circle cx=\"5\" cy=\"9.5\" r=\"2.2\"/><circle cx=\"19\" cy=\"9.5\" r=\"2.2\"/><path d=\"M1.5 18.5c0-2.8 1.5-4.5 3.5-4.5M22.5 18.5c0-2.8-1.5-4.5-3.5-4.5\"/>"}};
+const ikona=(id)=>{const i=IK[id]; return i?`<svg class="zi zi-r-${i.r}" viewBox="0 0 24 24">${i.s}</svg>`:'';};
+
+/* ===== dane ===== */
+const TERMINY=[['D01','Wprowadzenie i inicjacja','wtorek, 24 listopada 2026','Przegląd kart projektów, interesariusze, rola lidera i sponsora.'],['D02','Organizacja projektu','wtorek, 1 grudnia 2026','Akceptacja kart przez sponsora, role i odpowiedzialności, podział prac.'],['D03','Planowanie','wtorek, 8 grudnia 2026','Harmonogram i kamienie milowe, zasoby, budżet i ryzyka.'],['D04','Start realizacji','wtorek, 15 grudnia 2026','Rytm pracy zespołu, spotkania projektowe, zbieranie danych.']];
+const MAPA=[['Otwarcie','Słowo sponsora projektów Akademii.','sponsor'],['Organizacja','Cele spotkania, sposób pracy, terminy i strona Akademii.','termin'],['Czym jest projekt','Definicja projektu i droga od straty do korzyści.','wartosc'],['Etapy projektu','Sześć etapów projektu i spotkania Akademii.','fazy'],['Samoocena','Dwanaście kompetencji lidera projektu.','kompetencja'],['Karta projektu','Pierwsza część karty i prezentacje zespołów.','dokument'],['Zamknięcie','Ustalenia, status karty i zadania.','zatwierdzenie']];
+const ETAPY={
+ praca:{suma:'Każde spotkanie zaczyna się od przeglądu tego, co zespoły zrobiły w projektach, a kończy zadaniem na kolejny tydzień pracy w projekcie.',el:[
+  ['Szkolenie','szkolenie','Na spotkaniu prowadzący przedstawia wiedzę i narzędzia potrzebne na kolejnym etapie projektu.','Ten krok przygotowuje zespół do następnej części pracy w projekcie.'],
+  ['Ćwiczenie na projekcie','cwiczenie','Jeszcze w trakcie spotkania zespół stosuje narzędzie na dokumentach własnego projektu.','Zespół wychodzi ze spotkania z pierwszą wersją dokumentu.'],
+  ['Praca w projekcie','zespol','Między spotkaniami zespół wprowadza to, czego się nauczył, do swojego projektu i uzupełnia dokument danymi.','To jest zasadnicza część pracy: projekt posuwa się naprzód w Spółce.'],
+  ['Konsultacja','rozmowa','Zespół omawia z prowadzącym konkretne problemy, które pojawiły się w pracy nad projektem.','Konsultacja dotyczy problemów projektu, a nie powtórzenia treści spotkania.'],
+  ['Przegląd','lupa','Na następnym spotkaniu zespoły pokazują, co zrobiły, i poprawiają to, co wymaga zmiany.','Po przeglądzie zaczyna się kolejna część szkolenia.']]},
+ cykl:{suma:'Projekt przechodzi przez sześć etapów. Każdy etap kończy się dokumentem albo decyzją, od której zależy następny etap.',el:[
+  ['Inicjowanie','start','Zespół uzgadnia ze sponsorem, po co jest projekt, jaki rezultat ma przynieść i ile jest wart.','Powstaje karta projektu i mapa interesariuszy.','D00–D01'],
+  ['Planowanie','kamien-milowy','Zespół przekłada cel na prace, ich kolejność, czas, zasoby, koszty i ryzyka.','Powstaje macierz odpowiedzialności, plan projektu i rejestr ryzyk.','D02–D03'],
+  ['Realizacja','odpowiedzialnosc','Zespół wykonuje zaplanowane prace w stałym rytmie i zbiera dane o stanie obecnym.','Powstaje diagnoza stanu obecnego, czyli kamień milowy KM1.','D04–D06'],
+  ['Monitorowanie i sterowanie','wskaznik','Zespół porównuje plan z wykonaniem i reaguje na odchylenia, ryzyka i zmiany. Ten etap trwa równolegle z realizacją.','Powstają raporty statusu, rejestr decyzji i zmian oraz zatwierdzona koncepcja rozwiązania, czyli KM2.','D06–D10'],
+  ['Wdrożenie','wdrozenie','Zespół uruchamia rozwiązanie w pracy Spółki, najpierw w ograniczonym zakresie, w pilotażu.','Powstaje plan pilotażu, rozwiązanie gotowe do pilotażu (KM3) i uruchomiony pilotaż (KM4).','D10–D11'],
+  ['Zamknięcie','zatwierdzenie','Zespół odbiera rezultat według kryteriów, przekazuje rozwiązanie właścicielowi w Spółce i spisuje wnioski.','Powstaje dokument zamknięcia, wnioski z projektu i prezentacja dla Zarządu.','D11–D13']]}};
+const KOLUMNY=[['Inicjowanie',[['D00','Start Akademii'],['D01','Wprowadzenie i inicjacja']],''],['Planowanie',[['D02','Organizacja projektu'],['D03','Planowanie']],'Sponsor akceptuje kartę na D02'],['Realizacja',[['D04','Start realizacji'],['D05','Lider projektu I'],['D06','Monitorowanie']],'KM1 diagnoza stanu obecnego'],['Sterowanie',[['D07','Ryzyko w realizacji'],['D08','Zmiany w projekcie'],['D09','Lider projektu II']],'KM2 koncepcja zatwierdzona'],['Wdrożenie',[['D10','Sterowanie i przygotowanie wdrożenia'],['D11','Wdrożenie i odbiór']],'KM3 gotowość, KM4 pilotaż'],['Zamknięcie',[['D12','Wnioski i standard'],['D13','Finał']],'Prezentacje przed Zarządem']];
+const KOMP=[['M1','Inicjuje projekt','start'],['M2','Planuje projekt','kamien-milowy'],['M3','Organizuje realizację','odpowiedzialnosc'],['M4','Steruje realizacją','wskaznik'],['M5','Wdraża rozwiązanie','wdrozenie'],['M6','Zamyka etap i projekt','zatwierdzenie'],
+ ['S1','Ustala zasady współpracy i rozlicza ustalenia','wspolpraca'],['S2','Buduje relacje i zaufanie w zespole','zaufanie'],['S3','Motywuje i podtrzymuje zaangażowanie','motywacja'],['S4','Rozwiązuje konflikty i negocjuje','kompromis'],['S5','Komunikuje się z interesariuszami','interesariusze'],['S6','Wprowadza zmianę i pracuje z oporem','opor']];
+const KROKI8=[['Opis problemu','Co się dzieje, jak często, kogo dotyczy i od kiedy.'],['Składniki straty','Wybór z katalogu: czas pracy, wydatki, utracony przychód, błędy, ryzyko.'],['Wyliczenie straty','Liczba zdarzeń w roku × koszt jednego zdarzenia, ze źródłem danych.'],['Twarda i miękka','Podział straty na koszt w wynikach i uwolniony czas pracy.'],['Skuteczność','Jaką część straty usunie rozwiązanie: wariant ostrożny i realny.'],['Koszt projektu','Czas pracy zespołu, wydatki i roczny koszt utrzymania.'],['Wynik','Korzyść roczna netto i okres zwrotu, liczone przez stronę.'],['Założenia','Źródło i założenie każdej liczby, do weryfikacji przez sponsora.']];
+
+/* ===== budowa slajdów z danych ===== */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+$$('.slajd.mapa').forEach(s=>{ const n=+s.dataset.mapa;
+  s.dataset.tytul='Mapa spotkania';
+  s.innerHTML=`<div class="tr"><span class="pas">Mapa spotkania</span><h2 class="tyt">${ikona('mapa')}Przebieg spotkania D00</h2><div class="obsz"><div class="siatka k4" style="flex:1;grid-template-rows:1fr 1fr">${MAPA.map((m,i)=>`<div class="karta ${i+1===n?'tu':(i+1<n?'za':'')}"><div class="gora"><span class="nr ${i+1===n?'m':''}">${i+1}</span><span class="tutaj">Jesteśmy tutaj</span></div><h3>${m[0]}</h3><p>${m[1]}</p></div>`).join('')}</div></div></div>`; });
+$('#terminy').innerHTML=TERMINY.map(t=>`<div class="karta"><div class="wiersz"><span class="ik">${ikona('termin')}</span><h3>${t[0]}</h3></div><h3>${t[1]}</h3><p>${t[3]}</p><p style="font-size:calc(var(--s)*26px);font-weight:700;color:var(--g);margin-top:auto">${t[2]}</p></div>`).join('');
+$('#termin-d01').textContent=TERMINY[0][2];
+$('#kolumny').innerHTML=KOLUMNY.map((k,i)=>`<div class="karta odsl"><span class="nr">${i+1}</span><h3>${k[0]}</h3>${k[1].map(s=>`<div class="sp"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('')}${k[2]?`<div class="km">${k[2]}</div>`:''}</div>`).join('');
+const kk=k=>`<div class="karta"><span class="ik ${k[0][0]==='S'?'spol':''}">${ikona(k[2])}</span><span class="kod">${k[0]}</span><p>${k[1]}</p></div>`;
+$('#kompetencje').innerHTML=`<div class="grupa">Kompetencje merytoryczne: kolejne etapy projektu</div><div class="komp" style="flex:1">${KOMP.slice(0,6).map(kk).join('')}</div><div class="grupa">Kompetencje społeczne: praca z ludźmi przez cały projekt</div><div class="komp" style="flex:1">${KOMP.slice(6).map(kk).join('')}</div>`;
+$('#kroki8').innerHTML=KROKI8.map((k,i)=>`<div class="karta odsl" style="padding:18px"><div class="wiersz"><span class="nr">${i+1}</span><h3 style="font-size:calc(var(--s)*24px)">${k[0]}</h3></div><p style="font-size:calc(var(--s)*21px)">${k[1]}</p></div>`).join('');
+/* zegar na karcie zadania */
+$$('.zeg').forEach(z=>{ const m=+z.dataset.min, C=2*Math.PI*56, f=Math.min(m,60)/60;
+  z.innerHTML=`<svg viewBox="0 0 128 128"><circle cx="64" cy="64" r="56" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="8"/><circle cx="64" cy="64" r="56" fill="none" stroke="#E8B62C" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C*f} ${C}"/></svg><div class="tx"><b>${m}</b><span>MIN</span></div>`; });
+/* kody QR */
+function qr(){}
+/* etapy: koło albo oś, z panelem omówienia */
+$$('[data-etapy]').forEach(box=>{ const D=ETAPY[box.dataset.etapy], n=D.el.length;
+  const panel=`<div class="panel"><div class="pn"><span class="nr m" data-p="nr">·</span><div><div class="et" data-p="et">${n} kroków</div><h3 data-p="t">${box.dataset.uklad==='kolo'?'Cykl pracy w Akademii':'Etapy projektu'}</h3></div></div><p data-p="o">${D.suma}</p><p data-p="w"></p><div class="sp" data-p="s" style="display:none"></div></div>`;
+  if(box.dataset.uklad==='kolo'){ const R=245,cx=320,cy=310,r=58; let s='';
+    for(let i=0;i<n;i++){ const a1=-Math.PI/2+2*Math.PI*i/n, a2=-Math.PI/2+2*Math.PI*(i+1)/n, d=(r+12)/R;
+      const p=(a)=>[cx+R*Math.cos(a),cy+R*Math.sin(a)], A=p(a1+d), B=p(a2-d-0.05), T=p(a2-d);
+      s+=`<path class="luk" d="M${A[0]} ${A[1]} A${R} ${R} 0 0 1 ${B[0]} ${B[1]}"/>`;
+      const ang=a2-d+Math.PI/2; s+=`<path class="grot" transform="translate(${T[0]} ${T[1]}) rotate(${ang*180/Math.PI})" d="M-10 -9 L4 0 L-10 9 Z"/>`; }
+    for(let i=0;i<n;i++){ const a=-Math.PI/2+2*Math.PI*i/n, x=cx+R*Math.cos(a), y=cy+R*Math.sin(a), e=D.el[i];
+      s+=`<g class="wez" data-i="${i}"><circle class="t" cx="${x}" cy="${y}" r="${r}"/><svg x="${x-24}" y="${y-30}" width="48" height="48" viewBox="0 0 24 24" class="zi zi-r-${IK[e[1]].r}" style="--zi-grubosc:1.5">${IK[e[1]].s}</svg><text x="${x}" y="${y+r+30}" text-anchor="middle" font-size="26">${e[0]==='Ćwiczenie na projekcie'?'Ćwiczenie':e[0]}</text></g>`; }
+    box.innerHTML=`<svg class="kolo" viewBox="0 0 640 640">${s}</svg>${panel}`;
+  } else {
+    box.innerHTML=`<div class="pasek">${D.el.map((e,i)=>`<div class="kr" data-i="${i}">${ikona(e[1])}<span>${i+1}. ${e[0]}</span></div>`).join('')}</div>${panel}`;
+  }
+  box.closest('.slajd').dataset.kroki=n; box.closest('.slajd').ustaw=(k)=>{ const P=x=>box.querySelector(`[data-p="${x}"]`);
+    box.querySelectorAll('[data-i]').forEach(w=>w.classList.toggle('akt',+w.dataset.i===k-1));
+    if(k<1||k>n){ P('nr').textContent='·'; P('et').textContent=`${n} kroków`; P('t').textContent=box.dataset.uklad==='kolo'?'Cykl pracy w Akademii':'Etapy projektu'; P('o').textContent=D.suma; P('w').textContent=''; P('s').style.display='none'; return; }
+    const e=D.el[k-1]; P('nr').textContent=k; P('et').textContent=box.dataset.uklad==='kolo'?`Krok ${k} z ${n}`:`Etap ${k} z ${n} · spotkania ${e[4]}`; P('t').textContent=e[0]; P('o').textContent=e[2]; P('w').textContent=''; P('s').textContent=e[3]; P('s').style.display=''; };
+});
+
+/* ===== silnik prezentacji ===== */
+/* dopasowanie: treść wypełnia obszar slajdu (A2.1) */
+function przepelniony(s){ const el=[...s.querySelectorAll('.tr,.obsz,.karta,.panel,.zad-cw,.ramka,.etapy,.os,.kol,.obl,.lancuch,table')];
+  return el.some(e=>e.scrollHeight>e.clientHeight+1||e.scrollWidth>e.clientWidth+1); }
+function przepelnionyWszystkie(s){ if(!s.ustaw) return przepelniony(s); const n=+s.dataset.kroki; for(let k=0;k<=n;k++){ s.ustaw(k); if(przepelniony(s)){ s.ustaw(0); return true; } } s.ustaw(0); return false; }
+function dopasuj(){ SL.forEach(s=>{ if(s.classList.contains('przerywnik')||s.classList.contains('start-sl')) return;
+  s.classList.add('mierz'); let lo=0.7, hi=1.65; s.style.setProperty('--s',hi);
+  if(!przepelnionyWszystkie(s)) lo=hi; else { for(let i=0;i<9;i++){ const m=(lo+hi)/2; s.style.setProperty('--s',m); if(przepelnionyWszystkie(s)) hi=m; else lo=m; } }
+  s.style.setProperty('--s',lo.toFixed(3)); s.classList.remove('mierz'); }); rysujKrok(); }
+
+const SL=$$('.slajd'), N=SL.length, scena=$('#scena');
+const KLUCZ='ukryte:'+location.pathname.replace(/_v\d+(?=\.html$)/,'');
+let ukryte=new Set(); try{ ukryte=new Set(JSON.parse(localStorage.getItem(KLUCZ)||'[]')); }catch(e){}
+let biez=0, krok=0;
+const pelny=()=>!!document.fullscreenElement;
+function odsl(s){ return [...s.querySelectorAll('.odsl')]; }
+function maks(s){ return s.dataset.kroki ? +s.dataset.kroki+1 : odsl(s).length; }
+function rysujKrok(){ const s=SL[biez]; if(s.ustaw){ s.ustaw(krok); return; } odsl(s).forEach((e,i)=>e.classList.toggle('widoczny',i<krok)); }
+function pokaz(i,k){ biez=Math.max(0,Math.min(N-1,i)); SL.forEach((s,j)=>s.classList.toggle('biez',j===biez)); const s=SL[biez];
+  krok=k==='koniec'?maks(s):0; rysujKrok();
+  scena.classList.toggle('ciemna',s.classList.contains('przerywnik'));
+  scena.classList.toggle('bez-nag',s.classList.contains('przerywnik')||s.classList.contains('start-sl'));
+  $('#nazwaBloku').textContent=s.dataset.blok||'';
+  $('#nrSlajdu').innerHTML=`${biez+1} / ${N}${ukryte.has(biez+1)?'<small>ukryty w pokazie</small>':''}`;
+  const u=document.querySelector('[data-akcja="ukryj"]'); u.classList.toggle('szary',ukryte.has(biez+1)); u.disabled=pelny();
+  history.replaceState(null,'','#'+(biez+1));
+  if(s.classList.contains('start-sl')){ const l=s.querySelector('.logo-z'); l.classList.remove('wejscie'); void l.offsetWidth; l.classList.add('wejscie'); }
+  zaznaczSpis(); }
+function nastepny(od,kier){ let j=od+kier; while(pelny()&&j>=0&&j<N&&ukryte.has(j+1)) j+=kier; return j; }
+function dalej(){ const s=SL[biez]; if(krok<maks(s)){ krok++; rysujKrok(); return; } const j=nastepny(biez,1); if(j<N) pokaz(j); }
+function wstecz(){ if(krok>0){ krok--; rysujKrok(); return; } const j=nastepny(biez,-1); if(j>=0) pokaz(j,'koniec'); }
+function skaluj(){ const w=innerWidth,h=innerHeight,s=Math.min(w/1600,h/900); scena.style.transform=`translate(${(w-1600*s)/2}px,${(h-900*s)/2}px) scale(${s})`; }
+addEventListener('resize',skaluj);
+/* pełny ekran */
+function przelaczPelny(){ if(pelny()) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(()=>{}); }
+document.addEventListener('fullscreenchange',()=>{ if(pelny()&&ukryte.has(biez+1)){ let j=nastepny(biez,1); if(j>=N) j=nastepny(biez,-1); if(j>=0&&j<N) pokaz(j); } else pokaz(biez,krok?'koniec':0);
+  document.querySelector('[data-akcja="pelny"]').innerHTML=ikona(pelny()?'pelny-ekran-zamknij':'pelny-ekran'); });
+/* wskaźnik */
+let wsk=false; const kropka=$('#kropka');
+function przelaczWsk(){ wsk=!wsk; scena.classList.toggle('wsk',wsk); kropka.style.display=wsk?'block':'none'; document.querySelector('[data-akcja="wskaznik"]').classList.toggle('wl',wsk); }
+addEventListener('mousemove',e=>{ if(wsk){ kropka.style.left=e.clientX+'px'; kropka.style.top=e.clientY+'px'; } });
+/* ukrywanie slajdu */
+function przelaczUkryj(){ if(pelny()) return; const n=biez+1; ukryte.has(n)?ukryte.delete(n):ukryte.add(n); try{ localStorage.setItem(KLUCZ,JSON.stringify([...ukryte])); }catch(e){} pokaz(biez,krok?'koniec':0); budujSpis(); }
+/* spis slajdów */
+function tytul(s){ if(s.dataset.tytul) return s.dataset.tytul; const h=s.querySelector('.tyt,h1'); return h?h.textContent.trim():'Slajd'; }
+function budujSpis(){ let b='', h=''; SL.forEach((s,i)=>{ if(s.dataset.blok!==b){ b=s.dataset.blok; h+=`<div class="sp-blok">${b}</div>`; }
+  const dop=s.classList.contains('zadanie')?'zadanie':''; h+=`<div class="sp-poz ${s.classList.contains('przerywnik')?'sp-prz':''} ${ukryte.has(i+1)?'sp-ukr':''}" data-n="${i}"><span class="sp-nr">${i+1}</span><span class="sp-t">${tytul(s)}</span>${dop?`<span class="sp-dop">${dop}</span>`:''}</div>`; });
+  $('#spisLista').innerHTML=h; zaznaczSpis(); }
+function zaznaczSpis(){ $$('.sp-poz').forEach(p=>p.classList.toggle('sp-biez',+p.dataset.n===biez)); }
+function spis(otw){ $('#spis').classList.toggle('otw',otw); $('#spisTlo').classList.toggle('otw',otw); if(otw){ const b=$('.sp-poz.sp-biez'); if(b) b.scrollIntoView({block:'center'}); } }
+const spisOtwarty=()=>$('#spis').classList.contains('otw');
+$('#spisLista').addEventListener('click',e=>{ const p=e.target.closest('.sp-poz'); if(p){ pokaz(+p.dataset.n); spis(false); } });
+$('#spisTlo').addEventListener('click',()=>spis(false)); $('#spisZamknij').addEventListener('click',()=>spis(false));
+$('#spisIdz').addEventListener('keydown',e=>{ if(e.key==='Enter'){ const n=+e.target.value; if(n>=1&&n<=N){ pokaz(n-1); spis(false); e.target.value=''; } } e.stopPropagation(); });
+/* instrukcja głosowa */
+function glos(b){ const t=b.querySelector('.gl-t'); const a=new Audio('PTBS_2026_APM_D00_audio/instrukcje/z01.mp3');
+  if(b._a){ b._a.pause(); b._a=null; t.textContent='Odsłuchaj instrukcję'; return; }
+  a.play().then(()=>{ b._a=a; t.textContent='Zatrzymaj'; a.onended=()=>{ b._a=null; t.textContent='Odsłuchaj instrukcję'; }; }).catch(()=>{ t.textContent='Nagranie instrukcji jest w przygotowaniu'; setTimeout(()=>t.textContent='Odsłuchaj instrukcję',2500); }); }
+/* zdarzenia */
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-akcja]');
+  if(b){ const a=b.dataset.akcja; e.stopPropagation();
+    if(a==='dalej') dalej(); else if(a==='wstecz') wstecz(); else if(a==='spis') spis(!spisOtwarty()); else if(a==='pelny') przelaczPelny(); else if(a==='wskaznik') przelaczWsk(); else if(a==='ukryj') przelaczUkryj(); else if(a==='glos') glos(b);
+    return; }
+  if(e.target.closest('a,button,input,.spis,.st,.nag')) return;
+  if(e.target.closest('#scena')) dalej(); });
+document.addEventListener('keydown',e=>{ if(spisOtwarty()){ if(e.key==='Escape'||e.key==='m'||e.key==='M') spis(false); return; }
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); dalej(); }
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); wstecz(); }
+  else if(e.key==='f'||e.key==='F') przelaczPelny(); else if(e.key==='l'||e.key==='L') przelaczWsk(); else if(e.key==='h'||e.key==='H') przelaczUkryj(); else if(e.key==='m'||e.key==='M') spis(true); });
+skaluj(); budujSpis(); dopasuj(); if(document.fonts) document.fonts.ready.then(dopasuj);
+pokaz(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+addEventListener('hashchange',()=>{ const n=(parseInt(location.hash.slice(1))||1)-1; if(n!==biez) pokaz(n); });
+</script>
+</body>
+</html>
