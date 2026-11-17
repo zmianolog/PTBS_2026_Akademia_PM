@@ -90,7 +90,10 @@ function panelPodgladu(el, parametry) {
 }
 
 /* ===== stan dokumentu wspólny dla strony dokumentu i strony projektu ===== */
-function pustaWartosc(v) { return v == null || v === '' || (Array.isArray(v) && !v.some(r => Object.entries(r).some(([k, x]) => x !== '' && x != null && !['km', 'sp'].includes(k)))); }
+function pustaWartosc(v) {
+  if (v && typeof v === 'object' && !Array.isArray(v)) return !Object.values(v).some(l => Array.isArray(l) && l.some(x => x && String(x.t || '').trim()));
+  return v == null || v === '' || (Array.isArray(v) && !v.some(r => Object.entries(r).some(([k, x]) => x !== '' && x != null && !['km', 'sp'].includes(k))));
+}
 function zmienionePoAkceptacji(D) { if (!D.akc) return []; return Object.entries(D.pola).filter(([k, p]) => (p.dw || 0) > D.akc.wersja).map(([k]) => k); }
 function stanDokumentu(D) {
   const zm = zmienionePoAkceptacji(D);
@@ -120,4 +123,18 @@ function kafelNarzedzia(t, url) {
   const n = PROGRAM.toolkit[t], akt = narzedzieAktywne(t), ik = IKONY[n.ik] || IKONY.dokument;
   const tresc = `<span class="nk-ik"><svg class="zi zi-r-${ik.r}" viewBox="0 0 24 24">${ik.s}</svg></span><span class="nk-t"><b>${t} ${n.n}</b><small>${n.o}</small></span>`;
   return akt ? `<a class="nk akt" href="${url}">${tresc}</a>` : `<div class="nk" title="Narzędzie będzie aktywne od spotkania ${n.od}">${tresc}</div>`;
+}
+
+/* ===== wyjaśnienie pola: po co, jak ustalić, skąd dane, przykłady, najczęstszy błąd ===== */
+function htmlWyjasnienia(w) {
+  if (!w) return '';
+  const e = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const b = (t, x) => x ? `<div class="wy-b"><b>${t}</b><div>${e(x)}</div></div>` : '';
+  let h = b('Po co', w.po) + b('Jak ustalić', w.jak) + b('Z czego składa się dobry opis', w.opis);
+  if (w.pytania) h += `<div class="wy-b"><b>Pytania do każdego rodzaju straty</b><ul>${PYTANIA_STRAT.map(p => `<li><b>${e(p[0])}.</b> ${e(p[1])}</li>`).join('')}</ul></div>
+    <div class="wy-b"><b>Skąd wziąć dane w PTBS</b><ul>${ZRODLA.map(z => `<li><b>${e(z[0])}:</b> ${e(z[1])}.</li>`).join('')}</ul></div>
+    <div class="wy-b"><b>Gdy danych brakuje</b><ul>${BRAK_DANYCH.map(x => `<li>${e(x)}</li>`).join('')}</ul></div>`;
+  else h += b('Skąd dane', w.skad);
+  h += b('Przykład 1', w.p1) + b('Przykład 2', w.p2) + b('Najczęstszy błąd', w.blad);
+  return h;
 }

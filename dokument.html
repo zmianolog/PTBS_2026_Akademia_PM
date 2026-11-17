@@ -45,7 +45,19 @@ textarea.wej{min-height:78px;resize:vertical}
 .tab textarea.wej{min-height:44px}
 .tab .staly{font-size:14px;font-weight:600;padding:8px 2px}
 .tab .usun{min-height:46px;border:2px solid var(--g);background:var(--g);border-radius:8px;cursor:pointer;font:600 15px var(--font);color:#fff}
-.tab .suma{font-weight:700;color:var(--g);font-size:14px;margin-top:4px}
+.tab .suma{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:baseline;background:var(--g);color:#fff;border-radius:10px;padding:12px 16px;margin-top:8px;font-size:15px}
+.tab .suma b{font-size:22px;font-weight:800}
+.tab .suma span{opacity:.9}
+.et-w{display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+.etap{border:2px solid var(--ramka);border-radius:10px;padding:12px;margin-top:10px}
+.etap .eg{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-bottom:8px}
+.etap .eg b{color:var(--g);font-size:16px}
+.etap .eg span{font-size:13px;color:var(--tekst2)}
+.etap .ekm{font-size:13px;font-weight:700;color:var(--mt);background:#FFF4D6;border-radius:6px;padding:3px 8px;display:inline-block;margin-bottom:8px}
+.dz{display:grid;grid-template-columns:28px 1fr 46px 46px 46px;gap:6px;align-items:start;margin-top:6px}
+.dz .nrd{font-weight:700;color:var(--g);padding-top:10px;text-align:right}
+.dz button{min-height:46px;border:2px solid var(--g);background:var(--g);border-radius:8px;cursor:pointer;font:700 16px var(--font);color:#fff}
+.dz button:disabled{opacity:.35;cursor:default}
 .btn-maly{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 22px;border:2px solid var(--g);border-radius:8px;background:var(--g);color:#fff;font:600 15px/1.2 var(--font);cursor:pointer}
 .btn-maly:hover{background:var(--g2);border-color:var(--g2)}
 .btn-maly:disabled{opacity:.4;cursor:not-allowed}
@@ -87,7 +99,7 @@ textarea.wej{min-height:78px;resize:vertical}
 #podgladDok .w-tab th{background:var(--jasny);color:var(--g);text-align:left;border:1px solid var(--ramka);padding:5px 6px}
 #podgladDok .w-tab td{border:1px solid var(--ramka);padding:5px 6px;vertical-align:top;white-space:pre-wrap}
 #podgladDok .w-tab td.l{text-align:right;white-space:nowrap}
-#podgladDok .w-suma{font-weight:700;color:var(--g);margin-top:4px}
+#podgladDok .w-suma{font-weight:700;color:#fff;background:var(--g);border-radius:8px;padding:8px 12px;margin-top:6px;display:inline-block;font-size:15px}
 .okno-tlo{position:fixed;inset:0;background:rgba(20,30,40,.55);z-index:40;display:flex;align-items:center;justify-content:center;padding:16px}
 .okno{background:#fff;border-radius:14px;max-width:980px;width:100%;max-height:90vh;overflow:auto;padding:18px}
 .okno .dwie{display:grid;gap:12px}
@@ -125,7 +137,7 @@ textarea.wej{min-height:78px;resize:vertical}
   .w-tab th{background:#F0F6FB;color:#1F4460;text-align:left;border:0.75pt solid #C9D3DC;padding:3pt 4pt}
   .w-tab td{border:0.75pt solid #C9D3DC;padding:3pt 4pt;vertical-align:top;white-space:pre-wrap}
   .w-tab td.l{text-align:right;white-space:nowrap}
-  .w-suma{font-weight:700;color:#1F4460;margin-top:2pt}
+  .w-suma{font-weight:700;color:#1F4460;margin-top:3pt;border:1.2pt solid #1F4460;border-radius:3pt;padding:3pt 6pt;display:inline-block}
 }
 </style>
 </head>
@@ -137,7 +149,7 @@ textarea.wej{min-height:78px;resize:vertical}
     <div><span class="nadtytul" id="kodDok">T01</span><h1 id="tytul">Dokument</h1></div>
     <div id="stanDok"></div>
   </div>
-  <div class="przyciski" style="grid-template-columns:1fr 1fr;max-width:640px"><button class="zml-btn" id="drukBtn">Drukuj lub zapisz PDF</button><button class="zml-btn" id="rejBtn">Rejestr zmian</button></div>
+  <div class="przyciski" style="grid-template-columns:1fr 1fr 1fr;max-width:900px"><button class="zml-btn" id="instrBtn">Instrukcja</button><button class="zml-btn" id="drukBtn">Drukuj lub zapisz PDF</button><button class="zml-btn" id="rejBtn">Rejestr zmian</button></div>
   <div id="tresc"></div>
 </main>
 <div id="stopka"></div>
@@ -160,7 +172,7 @@ if (APM.wymagajLogowania()) (async () => {
   const dt = s => s ? new Date(s).toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
   const wszystkiePola = DEF.sekcje.flatMap(s => (s.pola || []).flatMap(p => p.dod ? [p, p.dod] : [p]));
   const defPola = id => wszystkiePola.find(p => p.id === id);
-  const wart = id => { const p = D.pola[id]; if (p) return p.v; const df = defPola(id); if (df && df.dom) return df.dom(ZESP); if (df && df.stale) return df.wiersze.map(w => Object.assign({}, w)); return df && df.typ === 'tabela' ? [] : ''; };
+  const wart = id => { const p = D.pola[id]; if (p) return p.v; const df = defPola(id); if (df && df.typ === 'etapy') return {}; if (df && df.dom) return df.dom(ZESP); if (df && df.stale) return df.wiersze.map(w => Object.assign({}, w)); return df && df.typ === 'tabela' ? [] : ''; };
   const pusty = pustaWartosc;
 
   /* ----- tryb podglądu: wybór osoby ----- */
@@ -202,9 +214,16 @@ if (APM.wymagajLogowania()) (async () => {
     if (!p.stale && !dis && !(p.max && w.length >= p.max)) h += `<div><button class="btn-maly" data-dodaj="${p.id}">Dodaj wiersz</button></div>`;
     if (p.suma) {
       const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0);
-      h += p.sumaWg ? `<div class="suma">Razem: ${zl(s())} · oszczędności twarde: ${zl(s('twarda'))} · miękkie: ${zl(s('miękka'))}</div>` : `<div class="suma">Razem: ${zl(s())}</div>`;
+      h += `<div class="suma"><span>${p.sumaEt || 'Razem'}:</span> <b>${zl(s())} rocznie</b>${p.sumaWg ? `<span>oszczędności twarde: ${zl(s('twarda'))}</span><span>miękkie: ${zl(s('miękka'))}</span>` : ''}</div>`;
     }
     return h + '</div>';
+  }
+  function etapyHtml(p, dis) {
+    const v = wart(p.id) || {};
+    return ETAPY_KARTY.map(e => { const L = v[e.id] || [];
+      return `<div class="etap"><div class="eg"><b>${e.n}</b><span>${e.sp}</span></div><div class="ekm">${e.km}</div>
+        ${L.map((x, i) => `<div class="dz"><span class="nrd">${i + 1}.</span>${wejscie({ typ: 'obszar' }, x.t || '', dis, `${p.id}|${e.id}|${i}`)}${dis ? '' : `<button data-egora="${e.id}|${i}" title="W górę" ${i ? '' : 'disabled'}>↑</button><button data-edol="${e.id}|${i}" title="W dół" ${i < L.length - 1 ? '' : 'disabled'}>↓</button><button data-eusun="${e.id}|${i}" title="Usuń działanie">×</button>`}</div>`).join('')}
+        ${dis ? '' : `<div style="margin-top:8px"><button class="btn-maly" data-edod="${e.id}">+ Dodaj działanie</button></div>`}</div>`; }).join('');
   }
   function sumy() {
     const t = id => (wart(id) || []), s = (id, f) => t(id).filter(f || (() => 1)).reduce((a, r) => a + (+r.kw || 0), 0);
@@ -221,9 +240,9 @@ if (APM.wymagajLogowania()) (async () => {
     return `${inny ? `<span class="edytuje">edytuje: ${esc(e.kto)}</span>` : ''}<div class="meta">${p ? `<span>Ostatnia zmiana: ${esc(p.kto)}, ${dt(p.kiedy)}</span>` : (defPola(id) && defPola(id).dom ? '<span>Wartość wpisana z programu Akademii; zespół może ją zmienić</span>' : '<span>Pole jeszcze niewypełnione</span>')}${p ? `<button data-hist="${id}">Historia zmian</button>` : ''}</div>`;
   }
   function pole(p, dis) {
-    if (p.typ === 'wyliczenie') return `<div class="pole" id="pole-${p.id}"><div class="et">${p.et}</div><div class="pod">${p.pod}</div><div data-wyl>${wyliczenie()}</div></div>`;
-    const tresc = p.typ === 'tabela' ? tabela(p, dis) : wejscie(p, wart(p.id), dis);
-    return `<div class="pole" id="pole-${p.id}"><div class="et">${p.et}</div>${p.pod ? `<div class="pod">${p.pod}</div>` : ''}<div data-in="${p.id}">${tresc}</div><div data-meta="${p.id}">${metaPola(p.id)}</div><div data-nowsza="${p.id}"></div></div>`
+    if (p.typ === 'wyliczenie') return `<div class="pole" id="pole-${p.id}"><div class="et et-w">${p.et}${p.wyj ? `<button class="wy-btn" data-wyj="${p.id}" aria-expanded="false">Wyjaśnienie</button>` : ''}</div><div class="wy ukryty" id="wy-${p.id}">${htmlWyjasnienia(p.wyj)}</div><div data-wyl>${wyliczenie()}</div></div>`;
+    const tresc = p.typ === 'tabela' ? tabela(p, dis) : p.typ === 'etapy' ? etapyHtml(p, dis) : wejscie(p, wart(p.id), dis);
+    return `<div class="pole" id="pole-${p.id}"><div class="et et-w">${p.et}${p.wyj ? `<button class="wy-btn" data-wyj="${p.id}" aria-expanded="false">Wyjaśnienie</button>` : ''}</div><div class="wy ukryty" id="wy-${p.id}">${htmlWyjasnienia(p.wyj)}</div><div data-in="${p.id}">${tresc}</div><div data-meta="${p.id}">${metaPola(p.id)}</div><div data-nowsza="${p.id}"></div></div>`
       + (p.dod ? pole(p.dod, dis) : '');
   }
   function uwagiSekcji(s) {
@@ -285,6 +304,11 @@ if (APM.wymagajLogowania()) (async () => {
   };
   function wartoscZDom(id) {
     const df = defPola(id);
+    if (df.typ === 'etapy') {
+      const v = JSON.parse(JSON.stringify(wart(id) || {}));
+      document.querySelectorAll(`[data-p^="${id}|"]`).forEach(el => { const [, e, i] = el.dataset.p.split('|'); (v[e] = v[e] || [])[+i] = { t: el.value }; });
+      return v;
+    }
     if (df.typ === 'tabela') {
       const w = (wart(id) || []).map(r => Object.assign({}, r));
       document.querySelectorAll(`[data-p^="${id}|"]`).forEach(el => { const [, i, c] = el.dataset.p.split('|'); const kol = df.kol.find(k => k.id === c); w[+i] = w[+i] || {}; w[+i][c] = kol.typ === 'liczba' ? (el.value === '' ? '' : +el.value) : el.value; });
@@ -327,6 +351,12 @@ if (APM.wymagajLogowania()) (async () => {
     root.querySelectorAll('[data-dodaj]').forEach(b => b.addEventListener('click', async () => { const id = b.dataset.dodaj, w = wartoscZDom(id); w.push({}); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
     root.querySelectorAll('[data-usun]').forEach(b => b.addEventListener('click', async () => { const [id, i] = b.dataset.usun.split('|'); const w = wartoscZDom(id); w.splice(+i, 1); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
     root.querySelectorAll('[data-hist]').forEach(b => b.addEventListener('click', () => historia(b.dataset.hist)));
+    root.querySelectorAll('[data-wyj]').forEach(b => b.addEventListener('click', () => { const w = $('#wy-' + b.dataset.wyj), o = w.classList.toggle('ukryty'); b.setAttribute('aria-expanded', String(!o)); b.textContent = o ? 'Wyjaśnienie' : 'Zwiń wyjaśnienie'; }));
+    const etapZmien = async (fn) => { const id = 'etapy', v = wartoscZDom(id); fn(v); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, v); const box = $(`[data-in="${id}"]`); box.innerHTML = etapyHtml(defPola(id), false); podepnijPola(box); };
+    root.querySelectorAll('[data-edod]').forEach(b => b.addEventListener('click', () => etapZmien(v => { (v[b.dataset.edod] = v[b.dataset.edod] || []).push({ t: '' }); })));
+    root.querySelectorAll('[data-eusun]').forEach(b => b.addEventListener('click', () => { const [e, i] = b.dataset.eusun.split('|'); etapZmien(v => v[e].splice(+i, 1)); }));
+    root.querySelectorAll('[data-egora]').forEach(b => b.addEventListener('click', () => { const [e, i] = b.dataset.egora.split('|'); etapZmien(v => { const L = v[e]; [L[+i - 1], L[+i]] = [L[+i], L[+i - 1]]; }); }));
+    root.querySelectorAll('[data-edol]').forEach(b => b.addEventListener('click', () => { const [e, i] = b.dataset.edol.split('|'); etapZmien(v => { const L = v[e]; [L[+i + 1], L[+i]] = [L[+i], L[+i + 1]]; }); }));
   }
   const poleZOpt = el => el && el.dataset && el.dataset.p ? poleZ(el) : null;
   function podepnij() {
@@ -374,6 +404,7 @@ if (APM.wymagajLogowania()) (async () => {
     $('#rZamknij').onclick = zamknijOkno;
   }
   $('#rejBtn').addEventListener('click', rejestr);
+  $('#instrBtn').addEventListener('click', () => window.open(`instrukcja.html?t=${T}`, '_blank'));
 
   /* ----- zmiany innych osób ----- */
   const naZmiane = nowe => {
@@ -399,10 +430,13 @@ if (APM.wymagajLogowania()) (async () => {
       if (D.kroki[p.id] === 'pom') return `<div class="w-pole"><div class="w-et">${p.et}</div><div class="w-pom">Krok pominięty: nie dotyczy projektu.</div></div>`;
       const v = wart(p.id);
       let t;
-      if (p.typ === 'tabela') {
+      if (p.typ === 'etapy') {
+        t = pusty(v) ? brak : ETAPY_KARTY.map(e => { const L = ((v || {})[e.id] || []).filter(x => String(x.t || '').trim());
+          return `<div class="w-pole"><div class="w-et">${e.n} (${e.sp}) · ${e.km}</div>${L.length ? `<ol style="margin:2px 0 0;padding-left:20px">${L.map(x => `<li>${esc(x.t)}</li>`).join('')}</ol>` : '<div class="w-pom">brak działań</div>'}</div>`; }).join('');
+      } else if (p.typ === 'tabela') {
         const w = (v || []).filter(r => p.stale || !pusty([r]));
         t = w.length ? `<table class="w-tab"><tr>${p.kol.map(c => `<th>${c.t}</th>`).join('')}</tr>${w.map(r => `<tr>${p.kol.map(c => `<td class="${c.typ === 'liczba' ? 'l' : ''}">${c.typ === 'liczba' && r[c.id] !== '' && r[c.id] != null ? zl(r[c.id]) : esc(r[c.id] ?? '')}</td>`).join('')}</tr>`).join('')}</table>` : brak;
-        if (w.length && p.suma) { const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0); t += `<div class="w-suma">Razem: ${zl(s())}${p.sumaWg ? ` · twarde: ${zl(s('twarda'))} · miękkie: ${zl(s('miękka'))}` : ''}</div>`; }
+        if (w.length && p.suma) { const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0); t += `<div class="w-suma">${p.sumaEt || 'Razem'}: ${zl(s())} rocznie${p.sumaWg ? ` · twarde: ${zl(s('twarda'))} · miękkie: ${zl(s('miękka'))}` : ''}</div>`; }
       } else t = pusty(v) ? brak : `<div class="w-v">${esc(v)}</div>`;
       return `<div class="w-pole"><div class="w-et">${p.et}</div>${t}</div>` + (p.dod ? wP(p.dod) : '');
     };
