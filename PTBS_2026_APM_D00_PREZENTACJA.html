@@ -816,7 +816,7 @@ const pelny=()=>!!document.fullscreenElement;
 function odsl(s){ return [...s.querySelectorAll('.odsl')]; }
 function maks(s){ return s.dataset.kroki ? +s.dataset.kroki+1 : odsl(s).length; }
 function rysujKrok(){ const s=SL[biez]; if(s.ustaw){ s.ustaw(krok); return; } odsl(s).forEach((e,i)=>e.classList.toggle('widoczny',i<krok)); }
-function pokaz(i,k){ biez=Math.max(0,Math.min(N-1,i)); SL.forEach((s,j)=>s.classList.toggle('biez',j===biez)); const s=SL[biez];
+function pokaz(i,k){ const pop=biez; biez=Math.max(0,Math.min(N-1,i)); SL.forEach((s,j)=>s.classList.toggle('biez',j===biez)); if(pop!==biez&&SL[pop]) SL[pop].querySelectorAll('iframe').forEach(f=>{ f.src=f.getAttribute('src'); }); const s=SL[biez];
   krok=k==='koniec'?maks(s):0; rysujKrok();
   scena.classList.toggle('ciemna',s.classList.contains('przerywnik'));
   scena.classList.toggle('bez-nag',s.classList.contains('przerywnik')||s.classList.contains('start-sl'));
