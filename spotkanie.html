@@ -87,7 +87,7 @@ if(APM.wymagajLogowania()){
     ${z[3]?`<div class="akcja"><a class="zml-btn" href="${z[3]}">Przejdź do zadania</a></div>`:''}</div></div>`).join('')}</div></div>`:'<div class="blok"><p>Zadania pojawią się na spotkaniu.</p></div>';
   /* Narzędziownik: narzędzia przypisane do spotkania */
   const UCZ=APM.rola()==='uczestnik';
-  const NT=[...s.tn,...s.tu];
+  const NT=[...new Set([...Object.keys(PROGRAM.toolkit).filter(t=>PROGRAM.toolkit[t].od===s.kod),...s.tn,...s.tu])];
   const narz=NT.length?`<div class="nk-siatka">${NT.map(t=>kafelNarzedzia(t,UCZ?`dokument.html?t=${t}`:'projekt.html')).join('')}</div>`:'<div class="blok"><p>Na tym spotkaniu nie pracujemy z narzędziami.</p></div>';
   const ZAK=[['materialy','Materiały szkoleniowe',mat],['zadania','Zadania',zad],['narzedziownik','Narzędziownik',narz]];
   $('#tresc').innerHTML=`<span class="nadtytul">${SPOT.etapy[s.etap]}</span>
