@@ -76,7 +76,7 @@ const DANE = (() => {
 const OSOBY_PODGLADU = Object.entries(PROGRAM.zespoly).flatMap(([z, e]) => e.czlonkowie.map(c => ({ imie: c.imie, rola: 'uczestnik', zespol: z })))
   .concat([{ imie: 'Konrad Gieżek', rola: 'zarzad', zespol: '' }, { imie: 'Marcin Żółtak', rola: 'prowadzacy', zespol: '' }]);
 function ja() {
-  if (PODGLAD) { const i = +(sessionStorage.getItem('apm_podglad_osoba') || 0), o = OSOBY_PODGLADU[i] || OSOBY_PODGLADU[0]; sessionStorage.setItem('apm_podglad_rola', o.rola); return o; }
+  if (PODGLAD) { const i = +(sessionStorage.getItem('apm_podglad_osoba') || localStorage.getItem('apm_podglad_osoba') || 0), o = OSOBY_PODGLADU[i] || OSOBY_PODGLADU[0]; sessionStorage.setItem('apm_podglad_rola', o.rola); return o; }
   return { imie: localStorage.getItem('apm_imie') || APM.kod(), rola: APM.rola(), zespol: localStorage.getItem('apm_zespol') || '' };
 }
 
@@ -86,7 +86,7 @@ function panelPodgladu(el, parametry) {
   const JA = ja();
   el.innerHTML = `<div class="podglad"><b>Tryb podglądu</b><span>Dane zapisują się tylko w tej przeglądarce. Otwórz tę stronę w drugiej karcie jako inna osoba, aby sprawdzić wspólną pracę.</span>
     <a href="akademia.html?podglad=0" style="margin-left:auto;font-weight:600;color:var(--g)">Wyłącz podgląd</a><label>Osoba: <select id="osobaPodgladu">${OSOBY_PODGLADU.map((o, i) => `<option value="${i}" ${o.imie === JA.imie ? 'selected' : ''}>${o.imie} · ${o.rola === 'zarzad' ? 'Zarząd' : o.rola === 'prowadzacy' ? 'prowadzący' : 'zespół ' + o.zespol}</option>`).join('')}</select></label></div>`;
-  el.querySelector('#osobaPodgladu').addEventListener('change', e => { sessionStorage.setItem('apm_podglad_osoba', e.target.value); const o = OSOBY_PODGLADU[+e.target.value]; sessionStorage.setItem('apm_podglad_rola', o.rola); location.search = parametry(o); });
+  el.querySelector('#osobaPodgladu').addEventListener('change', e => { sessionStorage.setItem('apm_podglad_osoba', e.target.value); localStorage.setItem('apm_podglad_osoba', e.target.value); const o = OSOBY_PODGLADU[+e.target.value]; sessionStorage.setItem('apm_podglad_rola', o.rola); location.search = parametry(o); });
 }
 
 /* ===== stan dokumentu wspólny dla strony dokumentu i strony projektu ===== */
