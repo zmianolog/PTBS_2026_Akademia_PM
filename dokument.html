@@ -88,6 +88,7 @@ textarea.wej{min-height:78px;resize:vertical}
 #podgladDok{border:2px solid var(--ramka);border-radius:12px;padding:20px;margin-top:14px;font-size:15px;line-height:1.5}
 #podgladDok .w-gl{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--g);padding-bottom:8px;margin-bottom:12px}
 #podgladDok .w-gl img{height:44px}
+.pdf-dok .w-gl img{height:34px} .pdf-dok h2{font-size:15px} .pdf-dok .w-tab{font-size:11px}
 #podgladDok .w-gl .w-ak{font-size:13px;color:var(--tekst2);text-align:right}
 #podgladDok .w-gl .w-ak b{color:var(--g)}
 #podgladDok h1{font-size:22px}
@@ -458,7 +459,7 @@ if (APM.wymagajLogowania()) (async () => {
     };
     const wS = s => {
       if (s.akceptacja) return `<div class="w-sek"><h2>${s.nr}. ${s.t}</h2>${D.akc ? `<div class="w-pole"><div class="w-et">Decyzja sponsora</div><div>${esc(D.akc.decyzja)} · ${esc(D.akc.kto)}, ${dt(D.akc.kiedy)} · wersja ${D.akc.wersja}${D.akc.uwagi ? '<br>Uwagi: ' + esc(D.akc.uwagi) : ''}</div></div>` : `<div class="w-pole">${brak}</div>`}${D.potw ? `<div class="w-pole"><div class="w-et">Potwierdzenie wartości po diagnozie (KM1)</div><div>${esc(D.potw.kto)}, ${dt(D.potw.kiedy)}${D.potw.uwagi ? '<br>Uwagi: ' + esc(D.potw.uwagi) : ''}</div></div>` : ''}</div>`;
-      return `<div class="w-sek"><h2>${s.nr}. ${s.t}</h2>${s.pola.map(wP).join('')}${ekran && JA.rola === 'prowadzacy' ? uwagiSekcji(s) : ''}</div>`;
+      const PP = s.pola.map(wP); return `<div class="w-sek"><div class="w-glowa"><h2>${s.nr}. ${s.t}</h2>${PP[0] || ''}</div>${PP.slice(1).join('')}${ekran && JA.rola === 'prowadzacy' ? uwagiSekcji(s) : ''}</div>`;
     };
     return `<div class="w-gl"><img src="logo_ptbs.png" alt="PTBS"><div class="w-ak"><b>Akademia Zarządzania Projektami PTBS</b><br>${T} · ${DEF.nazwa}</div></div>
       <h1>${DEF.nazwa}: ${esc(wart('nazwa_proj') || ZESPOLY[ZESP].projekt)}</h1>
@@ -478,6 +479,29 @@ if (APM.wymagajLogowania()) (async () => {
   rysuj();
   try { DANE.otworz(ID, naZmiane); } catch (e) {}
   if (P.get('druk') === '1') setTimeout(() => { wydruk(); window.print(); }, 400);
+  /* pdf=1: strona tworzy plik PDF z pełnym dokumentem i otwiera go w przeglądarce PDF */
+  if (P.get('pdf') === '1') {
+    const [, st] = stanDok();
+    document.body.insertAdjacentHTML('beforeend', '<div id="pdfInfo" style="position:fixed;inset:0;background:#fff;z-index:50;display:flex;align-items:center;justify-content:center;font:700 18px var(--font);color:var(--g)">Przygotowuję plik PDF…</div>');
+    const s = document.createElement('script'); s.src = 'html2pdf.min.js';
+    s.onload = async () => {
+      const el = document.createElement('div'); el.id = 'podgladDok'; el.className = 'pdf-dok'; el.innerHTML = budujWydruk(false);
+      el.style.cssText = 'width:700px;box-sizing:border-box;border:0;padding:0;margin:0;font-size:12px;line-height:1.45;background:#fff';
+      document.body.appendChild(el);
+      const stopka = `${T} ${DEF.nazwa} - ${ZESP} - wersja ${D.wersja} - ${st} - ${dt(new Date().toISOString())}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ł/g, 'l').replace(/Ł/g, 'L');
+      const nazwa = `PTBS_2026_APM_${T}_${ZESP}_wersja_${D.wersja}.pdf`;
+      try {
+        const pdf = await html2pdf().set({ margin: [12, 12, 16, 12], filename: nazwa, image: { type: 'jpeg', quality: 0.95 }, html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['css'], avoid: ['.w-pole', 'tr', '.macierz', '.w-suma', '.w-glowa'] } }).from(el).toPdf().get('pdf');
+        const n = pdf.internal.getNumberOfPages();
+        for (let i = 1; i <= n; i++) { pdf.setPage(i); pdf.setFontSize(8); pdf.setTextColor(90, 104, 115); pdf.text(stopka, 12, 289); pdf.text(`Strona ${i} z ${n}`, 198, 289, { align: 'right' }); }
+        pdf.setProperties({ title: nazwa });
+        if (window.__pdfTest) { window.__pdfData = pdf.output('datauristring'); return; }
+        location.replace(pdf.output('bloburl', { filename: nazwa }));
+      } catch (e) { console.error(e); $('#pdfInfo').textContent = 'Nie udało się przygotować pliku PDF. Użyj przycisku „Drukuj lub zapisz PDF”.'; }
+    };
+    document.head.appendChild(s);
+  }
 })();
 </script>
 </body>

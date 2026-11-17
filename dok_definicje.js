@@ -59,24 +59,9 @@ const WSPOLPRACA = [
 const sposobWspolpracy = r => { const w = WSPOLPRACA.find(x => x.wpl === r.wpl && x.zai === r.zai); return w ? w.n : ''; };
 const wlascicielProcesu = z => { const c = ZESPOLY[z].czlonkowie.find(c => /właściciel/i.test(c.rola)); return c ? c.imie : ''; };
 
-/* zestawienie dla sponsora: najważniejsze dane z dokumentu; w(id) zwraca wartość pola */
-const zlF = n => new Intl.NumberFormat('pl-PL').format(Math.round(+n || 0)) + ' zł';
-const sumaT = (v, f) => (Array.isArray(v) ? v : []).filter(f || (() => 1)).reduce((a, r) => a + (+r.kw || 0), 0);
-const ZESTAWIENIE_T01 = [
-  ['Problem', w => w('pr_co')],
-  ['Strata rocznie', w => sumaT(w('w1')) ? zlF(sumaT(w('w1'))) : ''],
-  ['Korzyści rocznie', w => sumaT(w('w3')) ? `${zlF(sumaT(w('w3')))}, w tym twarde ${zlF(sumaT(w('w3'), r => r.rodz === 'twarda'))}` : ''],
-  ['Ramowy budżet', w => sumaT(w('w5')) ? zlF(sumaT(w('w5'))) : ''],
-  ['Korzyść netto w pierwszym roku', w => (sumaT(w('w3')) || sumaT(w('w5'))) ? `twarde: ${zlF(sumaT(w('w3'), r => r.rodz === 'twarda') - sumaT(w('w5')))}; twarde i miękkie: ${zlF(sumaT(w('w3')) - sumaT(w('w5')))}` : ''],
-  ['Pewność szacunku', w => w('w7')],
-  ['Rezultat (cel)', w => [w('cel'), w('cel_m') && 'Miernik: ' + w('cel_m'), (w('cel_o') || w('cel_d')) && `Z ${w('cel_o') || '?'} do ${w('cel_d') || '?'}`, w('cel_t') && 'Termin pomiaru: ' + w('cel_t')].filter(Boolean).join('\n')],
-  ['Produkt projektu', w => w('rez_p')],
-  ['Właściciel rozwiązania', w => w('zak_w')]
-];
-
 const DOKUMENTY = {
   T01: {
-    nazwa: 'Karta projektu', zestawienie: ZESTAWIENIE_T01,
+    nazwa: 'Karta projektu',
     instr: {
       po: 'Karta opisuje, jaki problem rozwiązuje projekt, ile ten problem kosztuje Spółkę, jaki produkt wytworzy zespół, jaki rezultat ma przynieść projekt i kto przejmie rozwiązanie po zakończeniu projektu. Na podstawie karty sponsor decyduje, czy zespół rozpoczyna diagnozę.',
       kto: 'Wypełnia cały zespół projektowy. Każdy członek zespołu może zmieniać każde pole; strona zapisuje autora i datę każdej zmiany w rejestrze zmian.',
