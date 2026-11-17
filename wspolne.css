@@ -148,3 +148,17 @@ p{margin:0 0 12px}
 .wy-b b{color:var(--g)}
 .wy-b ul{margin:4px 0 0;padding-left:20px}
 .wy-b li{margin:3px 0}
+
+/* przewodnik po stronie w nagłówku */
+.przewodnik-w{position:relative;flex:none}
+.przewodnik{width:48px;height:48px;padding:0;border:0;background:none;cursor:pointer;display:block}
+.przewodnik svg{width:100%;height:100%;overflow:visible;display:block}
+.przewodnik .oddech{transform-box:view-box;transform-origin:132px 125px;animation:prz-oddech 3.6s ease-in-out infinite}
+.przewodnik .puls{transform-box:view-box;transform-origin:132px 125px;animation:prz-puls 2.8s ease-out infinite}
+.przewodnik .oczy.mrug{transform:translate(76px,92px) scaleY(.12);transform-box:fill-box;transform-origin:center}
+@keyframes prz-oddech{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes prz-puls{0%{transform:scale(1);opacity:.5}70%,100%{transform:scale(1.25);opacity:0}}
+.przewodnik-dymek{position:absolute;right:0;top:calc(100% + 8px);white-space:nowrap;background:#fff;border:2px solid var(--g);border-radius:10px;padding:6px 12px;font:700 14px var(--font);color:var(--g);opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:20}
+.przewodnik-dymek.akt{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.przewodnik .oddech,.przewodnik .puls{animation:none}.przewodnik .puls{opacity:0}}
+.naglowek .marka{margin-right:auto}

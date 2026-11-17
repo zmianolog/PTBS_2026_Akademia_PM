@@ -53,8 +53,22 @@ const APM = (() => {
       <a class="marka" href="akademia.html">${znak()}<span>Akademia<br><b>Zarządzania Projektami PTBS</b></span></a>
       <button class="menu-btn" id="menuBtn" aria-expanded="false">Menu</button>
       <nav class="menu" id="menu">${MENU.filter(m=>!m.role||m.role.includes(rola())||(m.podglad&&podglad())).map(m=>`<a href="${m.plik}${m.podglad&&podglad()?'?podglad=1':''}" class="${m.plik===biez?'biezaca':''}">${(m.nazwaR&&m.nazwaR[rola()])||m.nazwa}</a>`).join('')}</nav>
+      ${przewodnikBtn()}
     </div></header>`;
+    $('#przewodnikBtn').addEventListener('click',()=>{ const d=$('#przewodnikDymek'); d.classList.add('akt'); clearTimeout(d._t); d._t=setTimeout(()=>d.classList.remove('akt'),2600); });
+    (function mrugaj(){ setTimeout(()=>{ const o=document.querySelector('#przewodnikBtn .oczy'); if(o){ o.classList.add('mrug'); setTimeout(()=>o.classList.remove('mrug'),140); } mrugaj(); }, 2200+Math.random()*3800); })();
     $('#menuBtn').addEventListener('click',()=>{ const m=$('#menu'); m.classList.toggle('otwarte'); $('#menuBtn').setAttribute('aria-expanded',m.classList.contains('otwarte')); });
+  }
+  /* Przewodnik po stronie: postać-koło w nagłówku; scenariusze pomocy powstaną po D00 */
+  function przewodnikBtn(){
+    const B='fill="#fff"';
+    return `<div class="przewodnik-w"><button class="przewodnik" id="przewodnikBtn" aria-label="Jak korzystać z tej strony" title="Jak korzystać z tej strony">
+      <svg viewBox="58 51 148 148" aria-hidden="true"><circle class="puls" cx="132" cy="125" r="68" fill="none" stroke="#1F4460" stroke-width="4"/>
+      <g class="oddech"><circle cx="132" cy="125" r="66" fill="#1F4460"/>
+      <g class="oczy" transform="translate(76 92)"><path d="M36 22a6 6 0 1 1-12 0 6 6 0 0 1 12 0ZM88 22a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z" ${B}/></g>
+      <g transform="translate(76 80)"><path d="M26.55 6.15c-5.8.27-15.2 4.49-14.96 10.34.01.18.3.27.43.12 2.76-2.96 22.32-5.95 29.2-4.36.64.14 1.12-.48.72-.93-3.43-3.85-10.2-5.43-15.4-5.18ZM86.45 6.15c5.8.27 15.2 4.49 14.96 10.34-.01.18-.3.27-.43.12-2.76-2.96-22.32-5.95-29.2-4.36-.64.14-1.12-.48-.72-.93 3.43-3.85 10.2-5.43 15.4-5.18Z" ${B}/></g>
+      <g transform="translate(78 130)"><path d="M40 16c0 5.37 6.16 9 14 9s14-3.63 14-9c0-1.1-.95-2-2-2-1.3 0-1.87.9-2 2-1.24 2.94-4.32 4.72-10 5-5.68-.28-8.76-2.06-10-5-.13-1.1-.7-2-2-2-1.05 0-2 .9-2 2Z" ${B}/></g></g></svg>
+    </button><div class="przewodnik-dymek" id="przewodnikDymek" role="status">Jeszcze nie dzisiaj</div></div>`;
   }
   function stopka(){
     $('#stopka').outerHTML = `<footer class="stopka"><div class="wewn"><span>ZMIANOLOGICA · dr Marcin Żółtak</span><button class="link" id="wyloguj">Wyloguj z tego urządzenia</button></div></footer>`;
