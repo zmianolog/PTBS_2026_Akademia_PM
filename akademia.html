@@ -40,12 +40,10 @@
   </section>
 
   <section class="sekcja">
-    <h2>Przebieg Akademii</h2>
-    <p class="lead">Akademia trwa około pięciu miesięcy i składa się z dwóch części. Część pierwsza przygotowuje projekty do realizacji, a część druga prowadzi je przez realizację do podsumowania. Każdy etap obejmuje szkolenie oraz wprowadzenie jego treści do projektów zespołów. Program obejmuje czternaście spotkań szkoleniowych, od D00 do D13; ich szczegółowy opis jest w zakładce „Programy szkoleniowe”.</p>
-    <div class="grupa-tyt">Część I</div>
-    <div class="siatka k3" id="etapy1"></div>
-    <div class="grupa-tyt">Część II</div>
-    <div class="siatka k3" id="etapy2"></div>
+    <h2>Etapy projektu</h2>
+    <p class="lead">Akademia trwa około pięciu miesięcy i obejmuje czternaście spotkań szkoleniowych, od D00 do D13. Zespoły prowadzą swoje projekty przez sześć etapów. Najpierw zespół ustala, jaki problem rozwiązuje, potem zbiera dane i sprawdza, jak duża jest strata, a dopiero na tej podstawie opracowuje i wdraża rozwiązanie. Pięć etapów przypada na czas Akademii, szósty zaczyna się po jej zakończeniu, kiedy rozwiązanie działa w codziennej pracy. Szczegółowy opis spotkań jest w zakładce „Programy szkoleniowe”.</p>
+    <div class="siatka k3" id="etapy"></div>
+    <div class="ramka-info" style="margin-top:14px"><h3>Przez cały projekt: monitorowanie i sterowanie</h3><p>Od spotkania D04 zespoły porównują plan z wykonaniem, aktualizują ryzyka, kontrolują zmiany i przygotowują raporty dla sponsorów. Te działania nie są osobnym etapem, tylko towarzyszą wszystkim etapom do zakończenia projektu.</p></div>
   </section>
 
   <section class="sekcja">
@@ -83,10 +81,13 @@ if(APM.wymagajLogowania()){
    ['Przegląd','Na następnym spotkaniu zespoły pokazują, co zrobiły w projektach, i poprawiają to, co wymaga zmiany.'],
    ['Kolejna część szkolenia','Po przeglądzie zaczyna się kolejna część szkolenia, poświęcona następnemu etapowi projektu.']];
   $('#petla').innerHTML=P.map((p,i)=>`<div class="karta"><span class="nr">${i+1}</span><div class="nz">${p[0]}</div><div class="df">${p[1]}</div></div>`).join('');
-  const E=[["Diagnoza i przygotowanie", "Spotkanie startowe D00: cel i przebieg Akademii, model dwunastu kompetencji, zasady pracy i konsultacji.", "Uczestnicy wypełniają samoocenę kompetencji, a zespoły poznają swoje projekty i sponsorów."], ["Uruchomienie projektów", "D01–D02: interesariusze i sposób ich zaangażowania, cel i rezultat projektu, karta projektu, dobór członków zespołu, role i odpowiedzialności, zasady współpracy zespołu, podział prac.", "Zespoły przygotowują karty swoich projektów, mapy interesariuszy, macierze odpowiedzialności i zasady pracy zespołu."], ["Planowanie", "D03: harmonogram ze ścieżką krytyczną i kamieniami milowymi, zasoby, budżet i zakupy, kryteria odbioru oraz ocena ryzyk i reakcje na nie.", "Zespoły przygotowują plany swoich projektów i rejestry ryzyk, a sponsorzy je zatwierdzają."], ["Realizacja", "D04–D06: organizacja pracy i spotkania projektowe, rola lidera (delegowanie, egzekwowanie ustaleń, zaufanie, motywowanie), porównanie planu z wykonaniem i raport statusu.", "Zespoły zbierają dane o stanie obecnym z udziałem interesariuszy, kończą diagnozę (KM1) i przygotowują raporty statusu."], ["Sterowanie i przygotowanie wdrożenia", "D07–D10: aktualizacja ryzyk w realizacji, wybór wariantu i zmiany w projekcie, konflikty, negocjacje i opór wobec zmiany, działania korygujące, plan pilotażu.", "Zespoły porównują warianty rozwiązania, uzyskują zatwierdzenie koncepcji (KM2), przygotowują rozwiązanie do pilotażu (KM3) i uruchamiają pilotaż (KM4)."], ["Wdrożenie i zamknięcie", "D11–D13: uruchomienie pilotażu, odbiór rezultatu, zamknięcie projektu, wnioski i prezentacje.", "Zespoły uruchamiają pilotaż, zamykają prace projektowe, przedstawiają rezultaty Zarządowi i ponownie wypełniają samoocenę."]];
-
-  const ke=(e,i)=>`<div class="karta"><span class="nr">${i+1}</span><div class="nz">${e[0]}</div><div class="df"><b>${i===0?'Przygotowanie':'Szkolenie'}:</b> ${e[1]}</div><div class="df"><b>W projektach:</b> ${e[2]}</div></div>`;
-  $('#etapy1').innerHTML=E.slice(0,3).map(ke).join(''); $('#etapy2').innerHTML=E.slice(3).map((e,i)=>ke(e,i+3)).join('');
+  const E=[["Uruchomienie","D00–D02","Zespół ustala ze sponsorem problem, cel, rezultat i szacunkową wartość projektu, rozpoznaje interesariuszy, dobiera członków zespołu i dzieli role.","Karta projektu, mapa interesariuszy, macierz odpowiedzialności.","Sponsor akceptuje kartę projektu (D02)"],
+   ["Diagnoza","D03–D06","Zespół planuje diagnozę, zbiera dane o stanie obecnym z udziałem interesariuszy i sprawdza na danych, jak duża jest strata.","Plan diagnozy, ramowy plan projektu, rejestr ryzyk, diagnoza stanu obecnego.","KM1 · Diagnoza gotowa, sponsor potwierdza wartość projektu (D06)"],
+   ["Koncepcja rozwiązania","D07–D08","Zespół uzupełnia plan na podstawie diagnozy, opracowuje warianty rozwiązania, ocenia ich ryzyka i przygotowuje decyzję sponsora.","Pełny plan projektu, porównanie wariantów, zatwierdzona koncepcja.","KM2 · Sponsor zatwierdza koncepcję (D08)"],
+   ["Przygotowanie wdrożenia","D09–D10","Zespół uzgadnia rozwiązanie z działami, których ono dotyczy, pracuje z oporem wobec zmiany i przygotowuje pilotaż.","Plan pilotażu, rozwiązanie gotowe do pilotażu.","KM3 · Gotowość do pilotażu (D10), KM4 · Pilotaż uruchomiony"],
+   ["Wdrożenie","D11–D13","Zespół uruchamia pilotaż i poprawia rozwiązanie, aż użytkownicy zaczną z niego korzystać, a następnie odbiera rezultat i przekazuje rozwiązanie właścicielowi w Spółce.","Ocena pilotażu, dokument zamknięcia z planem pomiaru korzyści, wnioski, prezentacja dla Zarządu.","Przekazanie rozwiązania właścicielowi (D13)"],
+   ["Działanie i korzyści","po Akademii","Rozwiązanie działa w codziennej pracy. Właściciel rozwiązania mierzy korzyści i porównuje je z wartością zapisaną w karcie projektu.","Pomiar korzyści według planu pomiaru.","Korzyści potwierdzone pomiarem"]];
+  $('#etapy').innerHTML=E.map((e,i)=>`<div class="karta"><span class="nr">${i+1}</span><div class="nz">${e[0]}</div><div class="df"><b>Spotkania:</b> ${e[1]}</div><div class="df"><b>Zespół:</b> ${e[2]}</div><div class="df"><b>Powstaje:</b> ${e[3]}</div><div class="stopka-karty">${e[4]}</div></div>`).join('');
   const kk=k=>`<div class="karta zi-host">${APM.ikona(k.ik,spol(k))}<div class="nz">${k.n}</div><div class="df">${k.d}</div><div class="df"><b>${APM.kiedy(k)}</b></div><div class="stopka-karty">${k.faza}</div></div>`;
   $('#kM').innerHTML=M.map(kk).join(''); $('#kS').innerHTML=S.map(kk).join('');
 }
