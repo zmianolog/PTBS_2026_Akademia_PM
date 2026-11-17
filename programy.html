@@ -101,9 +101,9 @@ if(APM.wymagajLogowania()){
   const teraz=new Date();
   const najbl=PROG.sesje.find(s=>{const d=czas(TERMINY[s.kod]); return d&&d>=teraz;});
   const stan=s=>{const d=czas(TERMINY[s.kod]); if(!d) return ''; if(d<teraz) return 'odbyta'; return najbl&&najbl.kod===s.kod?'najblizsza':'zaplanowana';};
-  const termin=s=>{const d=czas(TERMINY[s.kod]); if(!d) return '<span class="term pusty">DD.MM.RR / GG:MM</span>'; const p=n=>String(n).padStart(2,'0'); return `<span class="term">${p(d.getDate())}.${p(d.getMonth()+1)}.${String(d.getFullYear()).slice(2)} / ${p(d.getHours())}:${p(d.getMinutes())}</span>`;};
+  const termin=s=>{const d=czas(TERMINY[s.kod]); if(!d) return '<span class="term pusty">termin wkrótce</span>'; const p=n=>String(n).padStart(2,'0'); return `<span class="term">${p(d.getDate())}.${p(d.getMonth()+1)}.${String(d.getFullYear()).slice(2)} / ${p(d.getHours())}:${p(d.getMinutes())}</span>`;};
   const STN={odbyta:'odbyta',najblizsza:'najbliższa',zaplanowana:'zaplanowana'};
-  const data=t=>{const d=czas(t); return d?d.toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+', godz. '+d.toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'}):'<span class="term pusty">DD.MM.RR / GG:MM</span>';};
+  const data=t=>{const d=czas(t); return d?d.toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+', godz. '+d.toLocaleTimeString('pl-PL',{hour:'2-digit',minute:'2-digit'}):'<span class="term pusty">zostanie podany wkrótce</span>';};
   let h='';
   PROG.sesje.forEach(s=>{
     const st=stan(s), nar=s.tn.map(t=>kw(t,1)).join('')+s.tu.map(t=>kw(t,0)).join(''), ik=(s.wiod.length?s.wiod.map(mini).join(''):'<span>wszystkie kompetencje</span>')+(nar?'<i class="sep"></i>'+nar:'');
