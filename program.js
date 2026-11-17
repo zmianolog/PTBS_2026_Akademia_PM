@@ -190,7 +190,7 @@ const PROGRAM = {
  "toolkit": {
   "T01": {
    "n": "Karta projektu",
-   "o": "Cel, rezultaty, kryteria sukcesu, zakres i granice, sponsor, warunki zakończenia.",
+   "o": "Problem, wartość projektu, produkt, rezultat (cel), zakres, interesariusze, etapy i właściciel rozwiązania.",
    "od": "D00",
    "ik": "dokument"
   },

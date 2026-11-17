@@ -183,7 +183,7 @@ table.tb td:not(:first-child){width:39%}
 .panel .et{font-size:calc(var(--s)*20px);font-weight:800;color:#B68C20;text-transform:uppercase;letter-spacing:.06em}
 .panel .sp{margin-top:auto;font-size:calc(var(--s)*23px);background:var(--jasny);border-radius:12px;padding:12px 16px;color:var(--g);line-height:1.38}
 .os{flex:1;display:flex;flex-direction:column;gap:20px;min-height:0}
-.os .pasek{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.os .pasek{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
 .os .kr{background:#fff;border:2px solid var(--ramka);border-radius:16px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-size:calc(var(--s)*21px);font-weight:700;color:var(--g);line-height:1.2;position:relative}
 .os .kr.akt{border:3px solid var(--m);background:var(--ms)}
 .os .kr .zi{--zi-rozmiar:40px}
@@ -306,7 +306,7 @@ table.tb td:not(:first-child){width:39%}
       <ol class="pk" style="gap:22px">
         <li class="odsl">Po spotkaniu wyjaśnisz, czym projekt różni się od działalności bieżącej Spółki.</li>
         <li class="odsl">Po spotkaniu opiszesz drogę od problemu i straty, którą problem powoduje, do korzyści finansowej z projektu.</li>
-        <li class="odsl">Po spotkaniu rozpoznasz pięć etapów projektu i wskażesz spotkania Akademii, na których zespoły przez nie przechodzą.</li>
+        <li class="odsl">Po spotkaniu rozpoznasz sześć etapów projektu i wskażesz spotkania Akademii, na których zespoły przez nie przechodzą.</li>
         <li class="odsl">Po spotkaniu zaczniesz razem z zespołem kartę projektu: opiszesz problem, wskażesz, kogo dotyczy, i oszacujesz stratę.</li>
       </ol>
     </div>
@@ -341,7 +341,7 @@ table.tb td:not(:first-child){width:39%}
 <section class="slajd przerywnik" data-blok="Organizacja">
   <div class="tr"><div class="blok">Blok 2</div><h1>Organizacja Akademii</h1>
     <p>W tym bloku pokazujemy, jak pracujemy w Akademii, kiedy odbywają się wszystkie spotkania i jak korzystać ze strony Akademii.</p>
-    <div class="tem"><div><b>A</b>Jak pracujemy</div><div><b>B</b>Spotkania Akademii i terminy</div><div><b>C</b>Strona Akademii i kody dostępu</div></div>
+    <div class="tem"><div><b>A</b>Jak pracujemy</div><div><b>B</b>Spotkania Akademii i terminy</div><div><b>C</b>Strona Akademii i kody dostępu</div><div><b>D</b>Praca na stronie Akademii</div><div><b>E</b>Konsultacje</div></div>
   </div>
 </section>
 <section class="slajd mapa" data-mapa="2" data-blok="Organizacja"></section>
@@ -386,6 +386,18 @@ table.tb td:not(:first-child){width:39%}
         </ol>
       </div>
     </div>
+  </div>
+</section>
+<section class="slajd" data-blok="Organizacja">
+  <div class="tr"><span class="pas">Część D</span>
+    <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/><path class="a" d="M7 9h10M7 13h6"/></svg>Praca na stronie Akademii</h2>
+    <div class="obsz"><div class="siatka k3" style="flex:1"><div class="karta odsl"><div class="wiersz"><span class="nr">1</span><h3>Narzędziownik</h3></div><p>W menu „Narzędziownik” zespół widzi narzędzia swojego projektu, ułożone według spotkań. Dziś aktywna jest karta projektu.</p></div><div class="karta odsl"><div class="wiersz"><span class="nr">2</span><h3>Wyjaśnienie przy każdym polu</h3></div><p>Przycisk „Wyjaśnienie” pokazuje, po co jest pole, jak je wypełnić, skąd wziąć dane i dwa przykłady.</p></div><div class="karta odsl"><div class="wiersz"><span class="nr">3</span><h3>Zapis automatyczny</h3></div><p>Strona zapisuje dane sama. Napis „Dane zapisane” potwierdza zapis. Cały zespół pracuje na jednej karcie.</p></div><div class="karta odsl"><div class="wiersz"><span class="nr">4</span><h3>Rejestr zmian</h3></div><p>Strona zapisuje, kto, kiedy i co zmienił w każdym polu. Wpisów nie można poprawić ani usunąć.</p></div><div class="karta odsl"><div class="wiersz"><span class="nr">5</span><h3>Przekazanie do akceptacji</h3></div><p>Gdy karta jest gotowa, zespół klika „Przekaż kartę do akceptacji”. Sponsor otwiera kartę w PDF i akceptuje.</p></div><div class="karta odsl"><div class="wiersz"><span class="nr">6</span><h3>Wyloguj</h3></div><p>Na wspólnym komputerze po pracy kliknij „Wyloguj” w menu, żeby następna osoba nie pracowała pod Twoim kodem.</p></div></div></div>
+  </div>
+</section>
+<section class="slajd" data-blok="Organizacja">
+  <div class="tr"><span class="pas">Część E</span>
+    <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path class="a" d="M8.5 15l2.5 2.5 4.5-4.5"/></svg>Konsultacje między spotkaniami</h2>
+    <div class="obsz"><div class="siatka k2" style="flex:1"><div class="karta odsl"><div class="wiersz"><span class="nr">1</span><h3>Kiedy i gdzie</h3></div><p>W piątki, w slotach po 30 minut: 12:00, 12:30 i 13:00, w Teams. Strona pokazuje terminy z dwóch najbliższych tygodni.</p></div><div class="karta odsl"><div class="wiersz"><span class="nr">2</span><h3>Jak się zapisać</h3></div><p>W menu „Konsultacje” członek zespołu wybiera wolny slot i zapisuje zespół. Każdy zespół ma jeden slot w tygodniu.</p></div><div class="karta odsl"><div class="wiersz"><span class="nr">3</span><h3>Z czym przyjść</h3></div><p>Przy zapisie zespół wpisuje problem projektowy, na przykład „krok 3 karty: korzyść miękka”. Konsultacja dotyczy tego problemu.</p></div><div class="karta odsl"><div class="wiersz"><span class="nr">4</span><h3>Odwołanie i krótkie pytania</h3></div><p>Zapis można odwołać najpóźniej dzień wcześniej. Krótkie pytania kierujcie mailem; odpowiadam w ciągu dwóch dni roboczych.</p></div></div></div>
   </div>
 </section>
 
@@ -470,30 +482,6 @@ table.tb td:not(:first-child){width:39%}
   </div>
 </section>
 
-<section class="slajd" data-blok="Czym jest projekt">
-  <div class="tr"><span class="pas">Część E</span>
-    <h2 class="tyt"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h12v3M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2"/><circle class="af" cx="16.5" cy="14" r="1.4"/></svg>Przykład wyliczenia krok po kroku</h2>
-    <div class="obl">
-      <div class="karta odsl">
-        <h3>Strata dziś, w skali roku</h3>
-        <div class="lin"><span>Lokale zwalniane w roku</span><span>20</span></div>
-        <div class="lin"><span>Utracony czynsz: 20 × 45 dni × 60 zł</span><span>54 000 zł</span></div>
-        <div class="lin"><span>Czas koordynacji: 20 × 6 h × 60 zł/h</span><span>7 200 zł</span></div>
-        <div class="przyk" style="margin-top:auto">Stawka godzinowa 60 zł to koszt pracodawcy za godzinę efektywnej pracy, bez kosztów biura.</div>
-      </div>
-      <div class="karta odsl">
-        <h3>Korzyść po projekcie, w skali roku</h3>
-        <div class="lin"><span>Czynsz: 20 × 20 dni krócej × 60 zł</span><span>24 000 zł</span></div>
-        <div class="lin"><span>Koordynacja: 20 × 3 h mniej × 60 zł/h</span><span>3 600 zł</span></div>
-        <div class="lin"><span>Koszt projektu: 3 osoby × 40 h × 60 zł/h</span><span>7 200 zł</span></div>
-        <div class="wyn">
-          <div class="lin"><span>Okres zwrotu, tylko oszczędność twarda</span><span>3,6 mies.</span></div>
-          <div class="lin"><span>Okres zwrotu, twarda i miękka</span><span>3,1 mies.</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="slajd" data-blok="Czym jest projekt">
   <div class="tr"><span class="pas">Część F</span>
@@ -544,7 +532,7 @@ table.tb td:not(:first-child){width:39%}
     <div class="obsz">
       <div class="siatka k2" style="flex:1">
         <div class="karta odsl"><div class="wiersz"><span class="nr">1</span><h3>Kiedy</h3></div><p>Samoocenę wypełniasz indywidualnie, na stronie Akademii, przed następnym spotkaniem. Zajmuje około 15 minut.</p></div>
-        <div class="karta odsl"><div class="wiersz"><span class="nr">2</span><h3>Co oceniasz</h3></div><p>Oceniasz, jak dziś wykonujesz działania opisane w każdej kompetencji. Ocena dotyczy tego, co robisz, a nie tego, co wiesz.</p></div>
+        <div class="karta odsl"><div class="wiersz"><span class="nr">2</span><h3>Co oceniasz</h3></div><p>Przy każdej kompetencji wybierasz jeden z czterech poziomów: 1 Do wprowadzenia, 2 W trakcie nauki, 3 Stosuję samodzielnie, 4 Obszar silny. Ocena dotyczy tego, co robisz, a nie tego, co wiesz.</p></div>
         <div class="karta odsl"><div class="wiersz"><span class="nr">3</span><h3>Kto widzi wyniki</h3></div><p>Swój profil widzisz od razu po zapisaniu. Wyniki indywidualne widzi prowadzący, a Zarząd widzi tylko zestawienie całej grupy.</p></div>
         <div class="karta odsl"><div class="wiersz"><span class="nr">4</span><h3>Po co</h3></div><p>Tę samą samoocenę wypełnisz na zakończenie Akademii, na spotkaniu D13, i porównasz oba profile.</p></div>
       </div>
@@ -569,21 +557,24 @@ table.tb td:not(:first-child){width:39%}
         <h3>Do czego służy</h3>
         <ol class="pk">
           <li>Karta zapisuje uzgodnienie zespołu ze sponsorem: po co jest projekt, jaki rezultat ma przynieść i ile jest wart.</li>
-          <li>Akceptacja karty przez sponsora rozpoczyna realizację projektu.</li>
+          <li>Sponsor akceptuje kartę na spotkaniu D02. Po akceptacji zespół zaczyna diagnozę.</li>
           <li>Po akceptacji karta jest punktem odniesienia: każdą zmianę celu, zakresu albo kosztu porównujemy z kartą.</li>
         </ol>
       </div>
       <div class="karta" style="flex:1">
-        <h3>Z czego się składa</h3>
-        <ol class="pk">
-          <li class="odsl">Problem i jego uzasadnienie.</li>
-          <li class="odsl">Cel i rezultaty projektu.</li>
-          <li class="odsl">Wartość projektu: strata, korzyść, koszt i okres zwrotu.</li>
-          <li class="odsl">Kryteria sukcesu, zakres i granice projektu.</li>
-          <li class="odsl">Sponsor, zespół i warunki zakończenia projektu.</li>
+        <h3>Z czego się składa: dziesięć sekcji</h3>
+        <ol class="pk" style="columns:2;column-gap:28px;display:block">
+          <li class="odsl">Metryczka</li><li class="odsl">Problem</li><li class="odsl">Wartość projektu</li><li class="odsl">Produkt projektu</li><li class="odsl">Rezultat projektu (cel)</li>
+          <li class="odsl">Zakres</li><li class="odsl">Interesariusze</li><li class="odsl">Etapy i kluczowe działania</li><li class="odsl">Właściciel rozwiązania</li><li class="odsl">Akceptacja sponsora</li>
         </ol>
       </div>
     </div>
+  </div>
+</section>
+<section class="slajd" data-blok="Karta projektu">
+  <div class="tr"><span class="pas">Część A</span>
+    <h2 class="tyt"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path class="a" d="M10 9l5 3-5 3z"/></svg>Film: karta projektu</h2>
+    <div class="obsz"><iframe src="PTBS_2026_APM_D00_FILM_1_Karta_projektu.html" title="Film: karta projektu" style="flex:1;width:100%;border:0;border-radius:12px;background:#F5F5F7" allow="fullscreen; autoplay"></iframe></div>
   </div>
 </section>
 
@@ -592,8 +583,14 @@ table.tb td:not(:first-child){width:39%}
     <h2 class="tyt"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h12v3M3 7v11a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2"/><circle class="af" cx="16.5" cy="14" r="1.4"/></svg>Wartość projektu w karcie: osiem kroków</h2>
     <div class="obsz">
       <div class="siatka k4" style="flex:1" id="kroki8"></div>
-      <div class="ramka m">Strona karty prowadzi przez kroki po kolei. Każdy krok ma objaśnienie, a kroki, które nie dotyczą projektu, zespół może pominąć z podaniem powodu.</div>
+      <div class="ramka m">Strona prowadzi przez kroki po kolei. Każde pole ma przycisk „Wyjaśnienie” z opisem i dwoma przykładami. Krok, który nie dotyczy projektu, zespół pomija przyciskiem „Pomiń krok”.</div>
     </div>
+  </div>
+</section>
+<section class="slajd" data-blok="Karta projektu">
+  <div class="tr"><span class="pas">Część B</span>
+    <h2 class="tyt"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path class="a" d="M10 9l5 3-5 3z"/></svg>Film: wartość projektu krok po kroku</h2>
+    <div class="obsz"><iframe src="PTBS_2026_APM_D00_FILM_2_Wartosc_projektu.html" title="Film: wartość projektu krok po kroku" style="flex:1;width:100%;border:0;border-radius:12px;background:#F5F5F7" allow="fullscreen; autoplay"></iframe></div>
   </div>
 </section>
 
@@ -741,11 +738,12 @@ const ikona=(id)=>{const i=IK[id]; return i?`<svg class="zi zi-r-${i.r}" viewBox
 
 /* ===== dane ===== */
 const MAPA=[['Otwarcie','Cele, plan spotkania i słowo sponsora projektów Akademii.','10 min'],['Organizacja','Sposób pracy w Akademii, terminy spotkań, strona Akademii i kody.','10 min'],['Czym jest projekt','Definicja, etapy projektu, wasze doświadczenia i droga od straty do korzyści.','40 min'],['Samoocena','Dwanaście kompetencji lidera projektu i sposób wypełnienia samooceny.','5 min'],['Karta projektu','Karta z wyliczeniem wartości, praca zespołów i prezentacje.','45 min'],['Zamknięcie','Ustalenia, status karty, zadania i następne spotkanie.','10 min']];
-const SPOTKANIA=[['Etap 1','Uruchomienie projektów',[['D01','Wprowadzenie i inicjacja','24.11.2026'],['D02','Organizacja projektu','01.12.2026']],''],
- ['Etap 2','Planowanie',[['D03','Planowanie','08.12.2026']],''],
- ['Etap 3','Realizacja',[['D04','Start realizacji','15.12.2026'],['D05','Lider projektu I','12.01.2027'],['D06','Monitorowanie','19.01.2027']],'KM1'],
- ['Etap 4','Sterowanie i przygotowanie wdrożenia',[['D07','Ryzyko w realizacji','26.01.2027'],['D08','Zmiany w projekcie','02.02.2027'],['D09','Lider projektu II','09.02.2027'],['D10','Sterowanie i przygotowanie wdrożenia','02.03.2027']],'KM2, KM3, KM4'],
- ['Etap 5','Wdrożenie i zamknięcie',[['D11','Wdrożenie i odbiór','16.03.2027'],['D12','Wnioski i standard','23.03.2027'],['D13','Finał','30.03.2027']],'']];
+const SPOTKANIA=[['Etap 1','Uruchomienie',[['D01','Wprowadzenie i inicjacja','24.11.2026'],['D02','Organizacja projektu','01.12.2026']],'akceptacja karty'],
+ ['Etap 2','Diagnoza',[['D03','Planowanie','08.12.2026'],['D04','Start realizacji',''],['D05','Lider projektu I',''],['D06','Monitorowanie','']],'KM1'],
+ ['Etap 3','Koncepcja rozwiązania',[['D07','Ryzyko w realizacji',''],['D08','Zmiany w projekcie','']],'KM2'],
+ ['Etap 4','Przygotowanie wdrożenia',[['D09','Lider projektu II',''],['D10','Sterowanie i przygotowanie wdrożenia','']],'KM3, KM4'],
+ ['Etap 5','Wdrożenie',[['D11','Wdrożenie i odbiór',''],['D12','Wnioski i standard',''],['D13','Finał','']],''],
+ ['Etap 6','Działanie i korzyści',[['po Akademii','Właściciel rozwiązania mierzy rezultat','']],'']];
 const NAJBLIZSZE=['D01','D02','D03'];
 const ETAPY={
  praca:{suma:'Każde spotkanie zaczyna się od przeglądu tego, co zespoły zrobiły w projektach, a kończy zadaniem na kolejny tydzień pracy w projekcie.',el:[
@@ -754,22 +752,23 @@ const ETAPY={
   ['Praca w projekcie','zespol','Między spotkaniami zespół wprowadza to, czego się nauczył, do swojego projektu i uzupełnia dokument danymi.','To jest zasadnicza część pracy: projekt posuwa się naprzód w Spółce.'],
   ['Konsultacja','rozmowa','Zespół omawia z prowadzącym konkretne problemy, które pojawiły się w pracy nad projektem.','Konsultacja dotyczy problemów projektu, a nie powtórzenia treści spotkania.'],
   ['Przegląd','lupa','Na następnym spotkaniu zespoły pokazują, co zrobiły, i poprawiają to, co wymaga zmiany.','Po przeglądzie zaczyna się kolejna część szkolenia.']]},
- cykl:{suma:'Projekt w Akademii przechodzi przez pięć etapów. Każdy etap kończy się dokumentem albo decyzją sponsora, od której zależy następny etap. Etap 0, czyli wybór projektów i zespołów, zakończył się przed dzisiejszym spotkaniem.',el:[
-  ['Uruchomienie projektów','start','Zespół ustala ze sponsorem cel, rezultat i wartość projektu, rozpoznaje interesariuszy, dobiera członków zespołu i dzieli role.','Powstają karta projektu, mapa interesariuszy i macierz odpowiedzialności. Sponsor akceptuje kartę na spotkaniu D02.','D01–D02'],
-  ['Planowanie','kamien-milowy','Zespół przekłada cel na prace, harmonogram, zasoby, budżet, zakupy i ryzyka.','Powstają plan projektu z harmonogramem i budżetem oraz rejestr ryzyk, które zatwierdza sponsor.','D03'],
-  ['Realizacja','odpowiedzialnosc','Zespół pracuje w stałym rytmie, prowadzi spotkania projektowe i zbiera dane o stanie obecnym.','Powstają diagnoza stanu obecnego, czyli kamień milowy KM1, i raport statusu.','D04–D06'],
-  ['Sterowanie i przygotowanie wdrożenia','wskaznik','Zespół porównuje plan z wykonaniem, aktualizuje ryzyka, wybiera wariant rozwiązania i przygotowuje pilotaż.','Powstają zatwierdzona koncepcja (KM2), rozwiązanie gotowe do pilotażu (KM3) i uruchomiony pilotaż (KM4).','D07–D10'],
-  ['Wdrożenie i zamknięcie','zatwierdzenie','Zespół ocenia wyniki pilotażu, odbiera rezultat, przekazuje dalsze wdrożenie właścicielowi w Spółce i spisuje wnioski.','Powstają dokument zamknięcia, wnioski z projektu i prezentacja dla Zarządu.','D11–D13']]}};
+ cykl:{suma:'Projekt w Akademii przechodzi przez sześć etapów. Każdy etap kończy się decyzją sponsora albo kamieniem milowym, od którego zależy następny etap. Szósty etap trwa po zakończeniu Akademii.',el:[
+  ['Uruchomienie','start','Zespół opisuje problem, wartość, produkt, rezultat i zakres projektu, rozpoznaje interesariuszy i ustala sposób pracy.','Sponsor akceptuje kartę projektu na spotkaniu D02. Bez tej decyzji zespół nie zaczyna diagnozy.','D00–D02'],
+  ['Diagnoza','lupa','Zespół zbiera dane o tym, jak proces działa dziś, ustala przyczyny problemu i sprawdza kwoty z karty.','Na KM1 (D06) sponsor potwierdza wartość projektu na podstawie danych z diagnozy.','D03–D06'],
+  ['Koncepcja rozwiązania','kompromis','Zespół projektuje rozwiązanie, które usuwa przyczyny ustalone w diagnozie, i porównuje warianty.','Na KM2 (D08) sponsor wybiera i zatwierdza koncepcję.','D07–D08'],
+  ['Przygotowanie wdrożenia','zatwierdzenie','Zespół wykonuje produkt, przygotowuje ludzi do zmiany i sprawdza rozwiązanie w pilotażu.','Rozwiązanie gotowe do pilotażu (KM3) i uruchomiony pilotaż (KM4).','D09–D10'],
+  ['Wdrożenie','wdrozenie','Zespół wprowadza rozwiązanie w całym zakresie projektu i poprawia to, co wykazał pilotaż.','Przekazanie rozwiązania właścicielowi na spotkaniu D13.','D11–D13'],
+  ['Działanie i korzyści','wskaznik','Właściciel rozwiązania pilnuje jego stosowania i mierzy rezultat.','W terminie z karty właściciel porównuje zmierzony rezultat z celem.','po Akademii']]}};
 const KOMP=[['M1','Inicjuje projekt','start'],['M2','Planuje projekt','kamien-milowy'],['M3','Organizuje realizację','odpowiedzialnosc'],['M4','Steruje realizacją','wskaznik'],['M5','Wdraża rozwiązanie','wdrozenie'],['M6','Zamyka etap i projekt','zatwierdzenie'],
  ['S1','Ustala zasady współpracy i rozlicza ustalenia','wspolpraca'],['S2','Buduje relacje i zaufanie w zespole','zaufanie'],['S3','Motywuje i podtrzymuje zaangażowanie','motywacja'],['S4','Rozwiązuje konflikty i negocjuje','kompromis'],['S5','Komunikuje się z interesariuszami','interesariusze'],['S6','Wprowadza zmianę i pracuje z oporem','opor']];
-const KROKI8=[['Opis problemu','Co się dzieje, jak często, kogo dotyczy i od kiedy.'],['Składniki straty','Wybór z katalogu: czas pracy, wydatki, utracony przychód, błędy, ryzyko.'],['Wyliczenie straty','Liczba zdarzeń w roku × koszt jednego zdarzenia, ze źródłem danych.'],['Twarda i miękka','Podział straty na koszt w wynikach i uwolniony czas pracy.'],['Skuteczność','Jaką część straty usunie rozwiązanie: wariant ostrożny i realny.'],['Koszt projektu','Czas pracy zespołu, wydatki i roczny koszt utrzymania.'],['Wynik','Korzyść roczna netto i okres zwrotu, liczone przez stronę.'],['Założenia','Źródło i założenie każdej liczby, do weryfikacji przez sponsora.']];
+const KROKI8=[['Strata','Ile problem kosztuje Spółkę w roku: czas pracy, wydatki, utracony przychód, błędy, ryzyko.'],['Potrzeba','Jaki stan Spółka chce osiągnąć, bez wskazywania narzędzia.'],['Korzyści po wdrożeniu','Jaką część straty usunie rozwiązanie: oszczędność twarda i miękka.'],['Korzyści bez kwoty','Miara albo wycena ryzyka dla korzyści, których nie da się wycenić.'],['Ramowy budżet','Czas pracy zespołu oraz zakupy i usługi.'],['Korzyść netto','Strona liczy sama: korzyści minus budżet w pierwszym roku.'],['Pewność szacunku','Niska, średnia albo wysoka, z uzasadnieniem.'],['Dane do diagnozy','Jakie dane potwierdzą kwoty na KM1 (D06).']];
 
 /* ===== budowa slajdów z danych ===== */
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 $$('.slajd.mapa').forEach(s=>{ const n=+s.dataset.mapa;
   s.dataset.tytul=n?'Mapa spotkania':'Plan spotkania';
   s.innerHTML=`<div class="tr"><span class="pas">${n?'Mapa spotkania':'Otwarcie'}</span><h2 class="tyt">${ikona('mapa')}${n?'Przebieg spotkania D00':'Plan spotkania'}</h2><div class="obsz"><div class="siatka k3" style="flex:1;grid-template-rows:1fr 1fr">${MAPA.map((m,i)=>`<div class="karta ${i+1===n?'tu':(n&&i+1<n?'za':'')}"><div class="gora"><span class="nr ${i+1===n?'m':''}">${i+1}</span><span class="tutaj">Jesteśmy tutaj</span><span class="czas">ok. ${m[2]}</span></div><h3>${m[0]}</h3><p>${m[1]}</p></div>`).join('')}</div></div></div>`; });
-$('#kolumny').innerHTML=SPOTKANIA.map(e=>`<div class="wrz"><div class="wrz-e"><span>${e[0]}</span><b>${e[1]}</b>${e[3]?`<i>${e[3]}</i>`:''}</div>${e[2].map(s=>`<div class="wrz-s ${NAJBLIZSZE.includes(s[0])?'naj':''}"><b>${s[0]} · ${s[2]}</b><span>${s[1]}</span></div>`).join('')}</div>`).join('');
+$('#kolumny').innerHTML=SPOTKANIA.map(e=>`<div class="wrz"><div class="wrz-e"><span>${e[0]}</span><b>${e[1]}</b>${e[3]?`<i>${e[3]}</i>`:''}</div>${e[2].map(s=>`<div class="wrz-s ${NAJBLIZSZE.includes(s[0])?'naj':''}"><b>${s[0]}${s[2]?' · '+s[2]:''}</b><span>${s[1]}</span></div>`).join('')}</div>`).join('');
 $('#termin-d01').textContent='wtorek, 24 listopada 2026';
 const kk=k=>`<div class="karta"><span class="ik ${k[0][0]==='S'?'spol':''}">${ikona(k[2])}</span><span class="kod">${k[0]}</span><p>${k[1]}</p></div>`;
 $('#kompetencje').innerHTML=`<div class="grupa">Kompetencje merytoryczne: kolejne etapy projektu</div><div class="komp" style="flex:1">${KOMP.slice(0,6).map(kk).join('')}</div><div class="grupa">Kompetencje społeczne: praca z ludźmi przez cały projekt</div><div class="komp" style="flex:1">${KOMP.slice(6).map(kk).join('')}</div>`;

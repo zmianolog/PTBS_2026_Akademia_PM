@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Film 2. Wartość projektu krok po kroku — Akademia Zarządzania Projektami PTBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--g:#1F4460;--g2:#163248;--m:#E8B62C;--jasny:#F0F6FB;--ramka:#DDE2E7;--tekst:#1A2733;--t2:#5A6873;--ziel:#2F7D4F;--font:Montserrat,"Segoe UI",Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:#F5F5F7;font-family:var(--font);color:var(--tekst)}
+.wrap{max-width:1200px;margin:0 auto;padding:16px}
+.nag{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.nag h1{font-size:20px;color:var(--g);margin:0}
+.nag span{font-size:13px;color:var(--t2)}
+#scena{position:relative;width:100%;aspect-ratio:16/9;background:#fff;border:1px solid var(--ramka);border-radius:14px;overflow:hidden}
+#scena:fullscreen{border-radius:0;border:0;width:100vw;height:100vh;aspect-ratio:auto}
+.pasek{position:absolute;left:0;right:0;top:0;height:7%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 2.2%;font-weight:700;font-size:clamp(10px,1.3vw,18px)}
+.pasek b{color:var(--m)}
+.obraz{position:absolute;left:3%;right:3%;top:10%;bottom:24%;display:flex;flex-direction:column;justify-content:center;gap:2.6%}
+.obraz h2{margin:0;color:var(--g);font-size:clamp(16px,3.1vw,44px);line-height:1.15}
+.obraz .lead{margin:0;color:var(--t2);font-size:clamp(12px,1.9vw,27px)}
+.siatka{display:grid;gap:1.6%;}
+.kafel{background:var(--jasny);border:2px solid var(--ramka);border-radius:12px;padding:1.4vw 1.7vw;font-size:clamp(11px,1.65vw,23px);line-height:1.3}
+.kafel b{display:block;color:var(--g);font-size:clamp(12px,1.85vw,26px);margin-bottom:4px}
+.kafel.mocny{background:var(--g);color:#fff;border-color:var(--g)}
+.kafel.mocny b{color:var(--m)}
+.kafel.miod{background:#FFF6DC;border-color:var(--m)}
+.rach{display:grid;grid-template-columns:1fr auto;gap:.5vw 3%;align-items:baseline;font-size:clamp(12px,1.85vw,26px)}
+.rach .k{font-weight:800;color:var(--g);text-align:right;white-space:nowrap}
+.suma{align-self:flex-end;display:inline-flex;gap:14px;align-items:baseline;background:var(--g);color:#fff;border-radius:12px;padding:1vw 2vw;font-size:clamp(12px,1.85vw,26px);font-weight:700}
+.suma .k{color:var(--m);font-size:clamp(16px,2.7vw,38px)}
+.pokaz{opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s}
+.pokaz.wid{opacity:1;transform:none}
+.napis{position:absolute;left:3%;right:19%;bottom:3%;min-height:17%;background:rgba(31,68,96,.94);color:#fff;border-radius:12px;padding:1.2% 2%;font-size:clamp(11px,1.55vw,21px);line-height:1.38;display:flex;align-items:center}
+#postac{position:absolute;right:2.5%;bottom:3%;width:13%;aspect-ratio:1}
+#postac svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 4px 6px rgba(31,68,96,.25))}
+#postac .oddech{transform-box:view-box;transform-origin:132px 125px;animation:odd 3.6s ease-in-out infinite}
+@keyframes odd{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+#postac .usta{transform-box:fill-box;transform-origin:center}
+#postac.mowi .usta{animation:mow .28s ease-in-out infinite alternate}
+@keyframes mow{from{transform:scaleY(.35)}to{transform:scaleY(1.25)}}
+#postac .oczy.mrug{transform:scaleY(.1);transform-box:fill-box;transform-origin:center}
+.kropki{position:absolute;right:3%;top:10%;display:flex;gap:6px}
+.kropki i{width:10px;height:10px;border-radius:50%;background:var(--ramka)}
+.kropki i.akt{background:var(--m)}
+.sterowanie{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.btn{font:700 15px var(--font);color:#fff;background:var(--g);border:0;border-radius:10px;height:46px;cursor:pointer}
+.btn:hover{background:var(--g2)}
+.btn:disabled{opacity:.4;cursor:default}
+.glos{margin-top:8px;font-size:13px;color:var(--t2)}
+/* film osadzony w prezentacji: bez nagłówka, scena i przyciski mieszczą się w ramce */
+body.osadzony{background:transparent}
+.osadzony .nag,.osadzony .glos{display:none}
+.osadzony .wrap{max-width:none;padding:0;height:100vh;display:flex;flex-direction:column}
+.osadzony #scena{flex:1;min-height:0;aspect-ratio:auto}
+.osadzony .sterowanie{margin-top:8px}
+.osadzony .btn{height:40px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="nag"><h1>Film 2. Wartość projektu krok po kroku</h1><span>Akademia Zarządzania Projektami PTBS · film</span></div>
+  <div id="scena">
+    <div class="pasek"><span>Film 2. Wartość projektu krok po kroku</span><span id="nrSceny"></span></div>
+    <div class="kropki" id="kropki"></div>
+    <div class="obraz" id="obraz"></div>
+    <div class="napis" id="napis"></div>
+    <div id="postac">
+      <svg viewBox="58 51 148 148" aria-hidden="true"><g class="oddech"><circle cx="132" cy="125" r="66" fill="#1F4460"/>
+      <g class="oczy" transform="translate(76 92)"><path d="M36 22a6 6 0 1 1-12 0 6 6 0 0 1 12 0ZM88 22a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z" fill="#fff"/></g>
+      <g transform="translate(76 80)"><path d="M26.55 6.15c-5.8.27-15.2 4.49-14.96 10.34.01.18.3.27.43.12 2.76-2.96 22.32-5.95 29.2-4.36.64.14 1.12-.48.72-.93-3.43-3.85-10.2-5.43-15.4-5.18ZM86.45 6.15c5.8.27 15.2 4.49 14.96 10.34-.01.18-.3.27-.43.12-2.76-2.96-22.32-5.95-29.2-4.36-.64.14-1.12-.48-.72-.93 3.43-3.85 10.2-5.43 15.4-5.18Z" fill="#fff"/></g>
+      <g transform="translate(78 130)"><ellipse class="usta" cx="54" cy="19" rx="11" ry="6" fill="#fff"/></g></g></svg>
+    </div>
+  </div>
+  <div class="sterowanie">
+    <button class="btn" id="bPop">Poprzednia scena</button>
+    <button class="btn" id="bGraj">Odtwórz</button>
+    <button class="btn" id="bNast">Następna scena</button>
+    <button class="btn" id="bPelny">Pełny ekran</button>
+  </div>
+  <div class="glos" id="glosInfo"></div>
+</div>
+<script>
+if (window.self !== window.top) document.body.classList.add('osadzony');
+const SCENY = [{"tekst": "Ten film pokazuje, jak zespół liczy wartość projektu w karcie. Przykład dotyczy obsługi zgłoszeń awarii od najemców. Wszystkie kwoty liczymy w skali roku, a godzinę pracy wyceniamy stawką sześćdziesiąt złotych.", "obraz": "<h2>Wartość projektu krok po kroku</h2><p class=\"lead\">Przykład: obsługa zgłoszeń awarii od najemców</p><div class=\"siatka\" style=\"grid-template-columns:repeat(3,1fr)\"><div class=\"kafel pokaz \"><b>Skala</b>Wszystkie kwoty w skali roku.</div><div class=\"kafel pokaz \"><b>Stawka godzinowa</b>60 zł za godzinę pracy.</div><div class=\"kafel pokaz \"><b>Źródło</b>Przy każdej kwocie zespół podaje źródło danych.</div></div>"}, {"tekst": "W kroku pierwszym zespół liczy stratę, którą powoduje problem. Administratorzy przyjmują dwa tysiące sto zgłoszeń rocznie i przy każdym tracą pół godziny na przepisywanie i ponowne telefony. Dwa tysiące sto razy pół godziny razy sześćdziesiąt złotych daje sześćdziesiąt trzy tysiące złotych rocznie. To strata rodzaju A, czyli czas pracy.", "obraz": "<h2>Krok 1. Strata: czas pracy</h2><div class=\"kafel pokaz\"><div class=\"rach\"><span>Zgłoszenia awarii w roku</span><span class=\"k\">2 100</span><span>Czas straty przy jednym zgłoszeniu</span><span class=\"k\">0,5 h</span><span>Stawka godzinowa</span><span class=\"k\">60 zł</span></div></div><div class=\"kafel pokaz\"><div class=\"rach\"><span>2 100 × 0,5 h × 60 zł</span><span class=\"k\"><span data-liczba=\"63000\" data-j=\" zł\">0 zł</span></span></div></div><div class=\"kafel pokaz miod\"><b>Rodzaj A: czas pracy</b>Źródło: rejestr zgłoszeń 2025 i pomiar 20 zgłoszeń · pewność średnia</div>"}, {"tekst": "Do tego dochodzą naprawy zlecane w trybie pilnym z dopłatą: trzydzieści razy w roku po siedemset złotych, czyli dwadzieścia jeden tysięcy złotych. To strata rodzaju B, czyli wydatki zewnętrzne. Strata razem wynosi osiemdziesiąt cztery tysiące złotych rocznie.", "obraz": "<h2>Krok 1. Strata razem</h2><div class=\"kafel pokaz\"><div class=\"rach\"><span>A · Czas pracy: przepisywanie i ponowne telefony</span><span class=\"k\">63 000 zł</span></div></div><div class=\"kafel pokaz\"><div class=\"rach\"><span>B · Naprawy w trybie pilnym: 30 × 700 zł</span><span class=\"k\"><span data-liczba=\"21000\" data-j=\" zł\">0 zł</span></span></div></div><div class=\"suma pokaz\"><span>Strata razem</span><span class=\"k\"><span data-liczba=\"84000\" data-j=\" zł\">0 zł</span></span><span>rocznie</span></div>"}, {"tekst": "W kroku drugim zespół opisuje potrzebę, a w trzecim ocenia, jaką część straty usunie rozwiązanie. Formularz zgłoszeń ma usunąć dwie trzecie przepisywania. To czterdzieści dwa tysiące złotych oszczędności miękkiej, bo dotyczy czasu pracy. Szybsza obsługa ma zmniejszyć liczbę napraw pilnych o dwie trzecie. To czternaście tysięcy złotych oszczędności twardej, bo zmniejsza wydatki.", "obraz": "<h2>Kroki 2 i 3. Potrzeba i korzyści</h2><div class=\"kafel pokaz\"><b>Potrzeba</b>Jedno miejsce przyjmowania zgłoszeń, w którym najemca i dział techniczny widzą etap naprawy.</div><div class=\"kafel pokaz\"><div class=\"rach\"><span>Mniej przepisywania: ⅔ × 63 000 zł · oszczędność miękka</span><span class=\"k\"><span data-liczba=\"42000\" data-j=\" zł\">0 zł</span></span><span>Mniej napraw pilnych: ⅔ × 21 000 zł · oszczędność twarda</span><span class=\"k\"><span data-liczba=\"14000\" data-j=\" zł\">0 zł</span></span></div></div><div class=\"suma pokaz\"><span>Korzyści razem</span><span class=\"k\"><span data-liczba=\"56000\" data-j=\" zł\">0 zł</span></span><span>w tym twarde 14 000 zł</span></div>"}, {"tekst": "Oszczędność twarda zmniejsza wydatki albo zwiększa przychód Spółki. Oszczędność miękka uwalnia czas pracy. Staje się pieniędzmi tylko wtedy, gdy Spółka przeznaczy ten czas na inne zadania. O tym decyduje sponsor.", "obraz": "<h2>Oszczędność twarda i miękka</h2><div class=\"siatka\" style=\"grid-template-columns:repeat(2,1fr)\"><div class=\"kafel pokaz mocny\"><b>Twarda</b>Zmniejsza wydatki albo zwiększa przychód. W przykładzie: mniej dopłat za naprawy pilne, 14 000 zł.</div><div class=\"kafel pokaz miod\"><b>Miękka</b>Uwalnia czas pracy. W przykładzie: 42 000 zł. Pieniądze pojawiają się, gdy Spółka przeznaczy ten czas na inne zadania; decyduje sponsor.</div></div>"}, {"tekst": "W kroku czwartym zespół zapisuje korzyści, którym nie da się przypisać kwoty, na przykład mniejszą liczbę skarg najemców na czas naprawy. Zamiast kwoty zespół podaje miarę, po której pozna zmianę.", "obraz": "<h2>Krok 4. Korzyści bez kwoty</h2><div class=\"siatka\" style=\"grid-template-columns:repeat(3,1fr)\"><div class=\"kafel pokaz \"><b>Korzyść</b>Mniej skarg najemców na czas naprawy.</div><div class=\"kafel pokaz \"><b>Miara</b>Liczba skarg w kwartale.</div><div class=\"kafel pokaz \"><b>Źródło</b>Rejestr skarg najemców.</div></div>"}, {"tekst": "W kroku piątym zespół szacuje ramowy budżet. Czas pracy zespołu, trzy osoby po czterdzieści godzin, to siedem tysięcy dwieście złotych, a formularz na stronie Spółki sześć tysięcy złotych. Razem trzynaście tysięcy dwieście złotych. W kroku szóstym strona sama liczy korzyść netto w pierwszym roku: z oszczędności twardych osiemset złotych, a z twardych i miękkich razem czterdzieści dwa tysiące osiemset złotych.", "obraz": "<h2>Kroki 5 i 6. Budżet i korzyść netto</h2><div class=\"kafel pokaz\"><div class=\"rach\"><span>Czas zespołu: 3 osoby × 40 h × 60 zł</span><span class=\"k\">7 200 zł</span><span>Formularz zgłoszeń na stronie Spółki</span><span class=\"k\">6 000 zł</span><span><b style=\"display:inline;color:var(--g)\">Budżet razem</b></span><span class=\"k\"><span data-liczba=\"13200\" data-j=\" zł\">0 zł</span></span></div></div><div class=\"kafel pokaz\"><div class=\"rach\"><span>Korzyść netto · twarde: 14 000 − 13 200</span><span class=\"k\"><span data-liczba=\"800\" data-j=\" zł\">0 zł</span></span><span>Korzyść netto · twarde i miękkie: 56 000 − 13 200</span><span class=\"k\"><span data-liczba=\"42800\" data-j=\" zł\">0 zł</span></span></div></div>"}, {"tekst": "W kroku siódmym zespół ocenia pewność szacunku. Tu pewność jest średnia, bo czas przepisywania zmierzono tylko na dwudziestu zgłoszeniach. W kroku ósmym zespół wpisuje, jakie dane zbierze w diagnozie, żeby sponsor mógł na spotkaniu D06 potwierdzić wartość projektu.", "obraz": "<h2>Kroki 7 i 8. Pewność i dane do diagnozy</h2><div class=\"siatka\" style=\"grid-template-columns:repeat(1,1fr)\"><div class=\"kafel pokaz \"><b>Pewność szacunku: średnia</b>Liczba zgłoszeń z rejestru; czas przepisywania zmierzony tylko na 20 zgłoszeniach.</div><div class=\"kafel pokaz \"><b>Dane do zebrania w diagnozie</b>Pomiar czasu obsługi 50 zgłoszeń; lista napraw pilnych z przyczynami; potwierdzenie stawki 60 zł.</div><div class=\"kafel pokaz mocny\"><b>Spotkanie D06 · KM1</b>Sponsor potwierdza wartość projektu na podstawie danych z diagnozy.</div></div>"}];
+const PLIK = 'film2';
+const $ = id => document.getElementById(id);
+let nr = 0, gra = false, audio = null, wypow = null, timery = [], glos = null;
+/* lektor: nagranie MP3 z folderu „audio”, jeśli istnieje; w przeciwnym razie głos syntezatora przeglądarki */
+function wybierzGlos() { const g = speechSynthesis.getVoices().filter(v => /^pl/i.test(v.lang));
+  glos = g.find(v => /marek/i.test(v.name)) || g.find(v => /natural|online/i.test(v.name)) || g.find(v => /adam|jacek|krzysztof|male/i.test(v.name)) || g[0] || null;
+  $('glosInfo').textContent = glos ? 'Lektor: ' + glos.name + '. Najlepszy głos (Marek) jest w przeglądarce Microsoft Edge.' : 'Przeglądarka nie ma polskiego głosu lektora; napisy pokazują tekst lektora.'; }
+if ('speechSynthesis' in window) { wybierzGlos(); speechSynthesis.onvoiceschanged = wybierzGlos; }
+function czysc() { timery.forEach(clearTimeout); timery = []; if (audio) { audio.pause(); audio = null; } if ('speechSynthesis' in window) speechSynthesis.cancel(); $('postac').classList.remove('mowi'); }
+function liczba(el) { const cel = +el.dataset.liczba, t0 = performance.now(), dl = 900;
+  (function kl(t) { const p = Math.min(1, (t - t0) / dl), v = Math.round(cel * (1 - Math.pow(1 - p, 3)));
+    el.textContent = v.toLocaleString('pl-PL') + (el.dataset.j || ''); if (p < 1) requestAnimationFrame(kl); })(t0); }
+function rysuj() {
+  const s = SCENY[nr];
+  $('obraz').innerHTML = s.obraz; $('napis').textContent = s.tekst; $('nrSceny').textContent = `Scena ${nr + 1} z ${SCENY.length}`;
+  $('kropki').innerHTML = SCENY.map((_, i) => `<i class="${i === nr ? 'akt' : ''}"></i>`).join('');
+  $('bPop').disabled = nr === 0; $('bNast').disabled = nr === SCENY.length - 1;
+  const el = [...$('obraz').querySelectorAll('.pokaz')], krok = Math.max(700, (s.tekst.length * 62) / Math.max(1, el.length + 1));
+  el.forEach((e, i) => timery.push(setTimeout(() => { e.classList.add('wid'); e.querySelectorAll('[data-liczba]').forEach(liczba); }, gra ? 400 + i * krok : 0)));
+}
+function mow() {
+  const s = SCENY[nr], dalej = () => { $('postac').classList.remove('mowi'); if (!gra) return; timery.push(setTimeout(() => { if (nr < SCENY.length - 1) { nr++; start(); } else { gra = false; $('bGraj').textContent = 'Odtwórz od początku'; } }, 900)); };
+  const a = new Audio(`audio/${PLIK}_${String(nr + 1).padStart(2, '0')}.mp3`);
+  a.onplay = () => $('postac').classList.add('mowi'); a.onended = dalej;
+  a.onerror = () => { if (!('speechSynthesis' in window)) { timery.push(setTimeout(dalej, s.tekst.length * 65)); return; }
+    const u = new SpeechSynthesisUtterance(s.tekst); u.lang = 'pl-PL'; if (glos) u.voice = glos; u.rate = 0.98;
+    u.onstart = () => $('postac').classList.add('mowi'); u.onend = dalej; wypow = u; speechSynthesis.speak(u); };
+  audio = a; a.play().catch(() => a.onerror());
+}
+function start() { czysc(); rysuj(); if (gra) mow(); }
+$('bGraj').onclick = () => { if (gra) { gra = false; czysc(); $('bGraj').textContent = 'Odtwórz'; return; }
+  if ($('bGraj').textContent === 'Odtwórz od początku') nr = 0; gra = true; $('bGraj').textContent = 'Zatrzymaj'; start(); };
+$('bPop').onclick = () => { if (nr > 0) { nr--; start(); } };
+$('bNast').onclick = () => { if (nr < SCENY.length - 1) { nr++; start(); } };
+$('bPelny').onclick = () => document.fullscreenElement ? document.exitFullscreen() : $('scena').requestFullscreen();
+document.addEventListener('fullscreenchange', () => $('bPelny').textContent = document.fullscreenElement ? 'Zamknij pełny ekran' : 'Pełny ekran');
+document.addEventListener('keydown', e => { if (e.key === 'ArrowRight') $('bNast').click(); if (e.key === 'ArrowLeft') $('bPop').click(); if (e.key === ' ') { e.preventDefault(); $('bGraj').click(); } });
+(function mrugaj() { setTimeout(() => { const o = document.querySelector('#postac .oczy'); o.classList.add('mrug'); setTimeout(() => o.classList.remove('mrug'), 140); mrugaj(); }, 2200 + Math.random() * 3800); })();
+rysuj();
+</script>
+</body>
+</html>
