@@ -18,8 +18,14 @@ const MENU = [
   { plik: 'samoocena.html', nazwa: 'Samoocena kompetencji' },
   { plik: 'programy.html', nazwa: 'Programy szkoleniowe' },
   { plik: 'projekt.html', nazwa: 'Narzędziownik', nazwaR: { zarzad: 'Projekty', prowadzacy: 'Projekty' } },
+  { plik: 'konsultacje.html', nazwa: 'Konsultacje', role: ['uczestnik', 'prowadzacy'] },
   { plik: 'wyniki.html', nazwa: 'Wyniki grupy', role: ['zarzad'] }
 ];
+
+/* KONSULTACJE: stałe okno w tygodniu (dzień: 1 = poniedziałek … 5 = piątek), sloty po 30 minut.
+   Strona pokazuje sloty z najbliższych dwóch tygodni. „bez” = dni bez konsultacji w formacie RRRR-MM-DD.
+   „teams” = stały link do spotkania w Teams, widoczny dla zespołu przy jego zapisie. „pula” = godziny konsultacji w bieżącej części. */
+const KONSULTACJE = { dzien: 5, sloty: ['12:00', '12:30', '13:00'], minut: 30, tygodni: 2, bez: [], teams: '', pula: 8 };
 
 /* TERMINY: wpisz datę i godzinę rozpoczęcia spotkania w formacie DD.MM.RR GG:MM, np. D01:'12.01.27 09:00'. Puste = na kafelku widać wzór DD.MM.RR / GG:MM. */
 const TERMINY = { D00:'18.11.26 10:30', D01:'24.11.26 09:00', D02:'01.12.26 09:00', D03:'08.12.26 09:00',

@@ -67,6 +67,17 @@ service cloud.firestore {
       allow list, write: if prowadzacy();
     }
 
+    /* konsultacje: identyfikator RRRR-MM-DD_GGMM; zespół zapisuje się i odwołuje tylko własny zapis */
+    match /konsultacje/{slot} {
+      allow read: if prowadzacy() || zalogowanyKodem();
+      allow create: if zalogowanyKodem() && osoba().rola == 'uczestnik'
+        && request.resource.data.zespol == osoba().get('zespol', '')
+        && request.resource.data.kto == osoba().get('imie', '')
+        && request.resource.data.keys().hasOnly(['zespol', 'kto', 'temat', 'kiedy', 'tydzien']);
+      allow delete: if prowadzacy() || (zalogowanyKodem() && resource.data.zespol == osoba().get('zespol', ''));
+      allow update: if false;
+    }
+
     /* dokumenty projektowe: identyfikator ZESPÓŁ_NARZĘDZIE, na przykład P1_T01 */
     match /dokumenty/{id} {
       allow read: if prowadzacy() || zarzad() || czlonek(id.split('_')[0]);
