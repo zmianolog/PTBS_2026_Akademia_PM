@@ -55,7 +55,7 @@ if (APM.wymagajLogowania()) (async () => {
   const DOK = {};
   await Promise.all(Z.flatMap(z => N.map(async t => { try { DOK[z + '_' + t] = await DANE.czytaj(z + '_' + t); } catch (e) { DOK[z + '_' + t] = null; } })));
   const KL = { akc: 'akc', zm: 'zm', do: 'do', '': 'rob' };
-  const kom = (z, t) => { const D = DOK[z + '_' + t]; if (!D) return '<td><span class="st">brak dostępu</span></td>';
+  const kom = (z, t) => { const D = DOK[z + '_' + t] || { pola: {}, kroki: {}, wersja: 0 };
     const [k, s] = stanDokumentu(D), u = `dokument.html?t=${t}&z=${z}${pg}`;
     return `<td><span class="st ${D.wersja ? KL[k] : ''}">${s}</span><div class="pr"><a class="zml-btn" href="${u}">Podgląd</a><a class="zml-btn" href="${u}&druk=1">PDF</a></div></td>`; };
   $('#tresc').innerHTML = `<h1>Projekty</h1>` + (N.length ? `<div class="przewin"><table class="tp"><tr><th>Narzędzie</th>${Z.map(z => `<th>${z}<small>${esc(PROGRAM.zespoly[z].projekt)}</small></th>`).join('')}</tr>

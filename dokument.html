@@ -153,7 +153,7 @@ if (APM.wymagajLogowania()) (async () => {
   const ZESP = EDYTUJE ? JA.zespol : (P.get('z') || 'P1');
   const ID = ZESP + '_' + T;
   if (!ZESP) { $('#tresc').innerHTML = '<div class="uwaga">Twój kod nie jest jeszcze przypisany do zespołu. Skontaktuj się z prowadzącym.</div>'; return; }
-  let D = await DANE.czytaj(ID);
+  let D; try { D = await DANE.czytaj(ID); } catch (e) { console.warn('APM: odczyt', e); D = { pola: {}, kroki: {}, uwagi: {}, edycja: {}, wersja: 0, doAkc: null, akc: null, potw: null }; }
   const lok = {}; /* stan lokalny pól: bazaW, brudny, timer */
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const zl = n => (Math.round(+n || 0)).toLocaleString('pl-PL') + ' zł';
@@ -426,7 +426,7 @@ if (APM.wymagajLogowania()) (async () => {
   $('#drukBtn').addEventListener('click', () => { wydruk(); setTimeout(() => window.print(), 50); });
 
   rysuj();
-  DANE.otworz(ID, naZmiane);
+  try { DANE.otworz(ID, naZmiane); } catch (e) {}
   if (P.get('druk') === '1') setTimeout(() => { wydruk(); window.print(); }, 400);
 })();
 </script>
