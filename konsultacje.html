@@ -48,7 +48,7 @@
 if (APM.wymagajLogowania()) (async () => {
   APM.naglowek(); APM.stopka();
   if (!PODGLAD) await APM.init();
-  const $ = APM.$, JA = ja(), K = KONSULTACJE, UCZ = JA.rola === 'uczestnik', PROW = JA.rola === 'prowadzacy';
+  const $ = APM.$, JA = ja(), K = KONSULTACJE, UCZ = JA.rola === 'uczestnik' || (JA.rola === 'test' && !!JA.zespol), PROW = JA.rola === 'prowadzacy';
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   if (PODGLAD) panelPodgladu($('#podglad'), () => '?podglad=1');
   const DNI = ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'];

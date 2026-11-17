@@ -38,7 +38,7 @@
 if (APM.wymagajLogowania()) (async () => {
   APM.naglowek(); APM.stopka();
   if (!PODGLAD) await APM.init();
-  const $ = APM.$, JA = ja(), UCZ = JA.rola === 'uczestnik', esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const $ = APM.$, JA = ja(), UCZ = JA.rola === 'uczestnik' || (JA.rola === 'test' && !!JA.zespol), esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   if (PODGLAD) panelPodgladu($('#podglad'), () => '?podglad=1');
   const pg = PODGLAD ? '&podglad=1' : '';
   if (UCZ) {
@@ -67,13 +67,19 @@ if (APM.wymagajLogowania()) (async () => {
     if (D.akc && !czeka) info += `<div class="kto">${esc(D.akc.kto)}, ${dt(D.akc.kiedy)}</div>`;
     if (D.potw) info += `<div class="kto">Wartość potwierdzona po diagnozie: ${esc(D.potw.kto)}, ${dt(D.potw.kiedy)}</div>`;
     const akcBtn = ZARZ ? (km1 ? `<button class="zml-btn" data-potw="${ID}">Akceptuję wartość po diagnozie</button>` : `<button class="zml-btn" data-akc="${ID}" ${czeka ? '' : 'disabled title="Zespół nie przekazał dokumentu do akceptacji"'}>Akceptuję</button>`) : '';
-    return `<td><span class="st ${D.wersja ? KL[k] : ''}">${st}</span>${info}<div class="pr${ZARZ ? '' : ' jeden'}"><a class="zml-btn" href="dokument.html?t=${t}&z=${z}${pg}&pdf=1" target="_blank" rel="noopener">Pełny dokument (PDF)</a>${akcBtn}</div></td>`;
+    const jsonBtn = JA.rola === 'prowadzacy' ? `<button class="zml-btn" data-json="${ID}">Dane dokumentu (JSON)</button>` : '';
+    return `<td><span class="st ${D.wersja ? KL[k] : ''}">${st}</span>${info}<div class="pr${ZARZ ? '' : ' jeden'}"><a class="zml-btn" href="dokument.html?t=${t}&z=${z}${pg}&pdf=1" target="_blank" rel="noopener">Pełny dokument (PDF)</a>${akcBtn}${jsonBtn}</div></td>`;
   }
   function rysuj() {
     $('#tresc').innerHTML = `<h1>Projekty</h1>` + (N.length ? `<div class="przewin"><table class="tp"><tr><th>Dokument</th>${Z.map(z => `<th>${z}<small>${esc(PROGRAM.zespoly[z].projekt)}</small></th>`).join('')}</tr>
       ${N.map(t => `<tr><td class="narz">${t} ${esc(PROGRAM.toolkit[t].n)}</td>${Z.map(z => kom(z, t)).join('')}</tr>`).join('')}</table></div>` : '<p>Żadne narzędzie nie jest jeszcze aktywne.</p>');
     document.querySelectorAll('[data-akc]').forEach(b => b.addEventListener('click', async () => { const ID = b.dataset.akc;
       DOK[ID] = await DANE.zmien(ID, d => { d.akc = { decyzja: 'akceptuję', uwagi: '', kto: JA.imie, kiedy: new Date().toISOString(), wersja: d.wersja }; }); rysuj(); }));
+    document.querySelectorAll('[data-json]').forEach(b => b.addEventListener('click', async () => { const ID = b.dataset.json; let hist = [];
+      try { hist = await DANE.hist(ID); } catch (e) {}
+      const dane = { dokument: ID, pobrano: new Date().toISOString(), dane: DOK[ID] || null, historia: hist };
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(dane, null, 2)], { type: 'application/json' }));
+      a.download = `PTBS_2026_APM_${ID}_${new Date().toISOString().slice(0, 10)}.json`; document.body.appendChild(a); a.click(); a.remove(); }));
     document.querySelectorAll('[data-potw]').forEach(b => b.addEventListener('click', async () => { const ID = b.dataset.potw;
       DOK[ID] = await DANE.zmien(ID, d => { d.potw = { kto: JA.imie, kiedy: new Date().toISOString(), uwagi: '' }; }); rysuj(); }));
   }

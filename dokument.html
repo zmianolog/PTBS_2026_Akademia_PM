@@ -169,7 +169,7 @@ if (APM.wymagajLogowania()) (async () => {
   APM.naglowek(); APM.stopka();
   if (!PODGLAD) await APM.init();
   const $ = APM.$, P = new URLSearchParams(location.search), T = P.get('t') || 'T01', DEF = DOKUMENTY[T];
-  const JA = ja(), EDYTUJE = JA.rola === 'uczestnik';
+  const JA = ja(), EDYTUJE = JA.rola === 'uczestnik' || (JA.rola === 'test' && !!JA.zespol);
   const ZESP = EDYTUJE ? JA.zespol : (P.get('z') || 'P1');
   const ID = ZESP + '_' + T;
   if (!ZESP) { $('#tresc').innerHTML = '<div class="uwaga">Twój kod nie jest jeszcze przypisany do zespołu. Skontaktuj się z prowadzącym.</div>'; return; }

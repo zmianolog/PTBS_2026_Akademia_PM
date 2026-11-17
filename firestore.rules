@@ -29,7 +29,8 @@ service cloud.firestore {
       return zalogowanyKodem() && osoba().rola == 'zarzad';
     }
     function czlonek(z) {
-      return zalogowanyKodem() && osoba().rola == 'uczestnik' && osoba().get('zespol', '') == z;
+      /* rola „test” (kod DEMO-2026) działa jak członek zespołu, do którego kod jest przypisany */
+      return zalogowanyKodem() && osoba().rola in ['uczestnik', 'test'] && osoba().get('zespol', '') == z;
     }
     function zmienione() {
       return request.resource.data.diff(resource.data).affectedKeys();
@@ -70,7 +71,7 @@ service cloud.firestore {
     /* konsultacje: identyfikator RRRR-MM-DD_GGMM; zespół zapisuje się i odwołuje tylko własny zapis */
     match /konsultacje/{slot} {
       allow read: if prowadzacy() || zalogowanyKodem();
-      allow create: if zalogowanyKodem() && osoba().rola == 'uczestnik'
+      allow create: if zalogowanyKodem() && osoba().rola in ['uczestnik', 'test']
         && request.resource.data.zespol == osoba().get('zespol', '')
         && request.resource.data.kto == osoba().get('imie', '')
         && request.resource.data.keys().hasOnly(['zespol', 'kto', 'temat', 'kiedy', 'tydzien']);
