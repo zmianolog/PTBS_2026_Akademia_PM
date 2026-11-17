@@ -59,7 +59,8 @@ const APM = (() => {
   /* każda strona poza startową wymaga zapisanego kodu */
   function wymagajLogowania(){ if(!kod()){ location.replace('index.html'); return false; } return true; }
   /* tryb podglądu dokumentów: włączany adresem z ?podglad=1, wyłączany adresem z ?podglad=0 */
-  function podglad(){ try{ const p=new URLSearchParams(location.search).get('podglad'); if(p==='1') localStorage.setItem('apm_podglad','1'); if(p==='0') localStorage.removeItem('apm_podglad'); return localStorage.getItem('apm_podglad')==='1'; }catch(e){ return false; } }
+  /* kod testowy DEMO-2026 zawsze pracuje w trybie podglądu: widzi całą stronę jako dowolna osoba, bez zmian w danych zespołów */
+  function podglad(){ try{ if(kod()==='DEMO-2026') return true; const p=new URLSearchParams(location.search).get('podglad'); if(p==='1') localStorage.setItem('apm_podglad','1'); if(p==='0') localStorage.removeItem('apm_podglad'); return localStorage.getItem('apm_podglad')==='1'; }catch(e){ return false; } }
   function naglowek(){
     const biez = location.pathname.split('/').pop() || 'index.html';
     $('#naglowek').outerHTML = `<header class="naglowek"><div class="wewn">
