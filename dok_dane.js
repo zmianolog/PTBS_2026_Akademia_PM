@@ -84,15 +84,6 @@ function ja() {
 /* ===== panel trybu podglądu: wybór osoby ===== */
 function panelPodgladu(el, parametry) {
   const JA = ja();
-  /* kod DEMO-2026: panel ukryty, włącza go mały przycisk w prawym dolnym rogu (stan zapamiętany w przeglądarce) */
-  if (APM.kod() === 'DEMO-2026') {
-    let w = document.getElementById('panelPrzel');
-    if (!w) { w = document.createElement('button'); w.id = 'panelPrzel'; w.type = 'button'; w.title = 'Panel podglądu';
-      w.style.cssText = 'position:fixed;right:10px;bottom:10px;width:30px;height:30px;border-radius:50%;border:1px solid #D5DDE5;background:#fff;opacity:.45;cursor:pointer;z-index:50;padding:0;font:600 13px sans-serif;color:#1F4460';
-      w.textContent = 'P'; document.body.appendChild(w);
-      w.addEventListener('click', () => { localStorage.setItem('apm_panel', localStorage.getItem('apm_panel') === '1' ? '0' : '1'); panelPodgladu(el, parametry); }); }
-    if (localStorage.getItem('apm_panel') !== '1') { el.innerHTML = ''; return; }
-  }
   el.innerHTML = `<div class="podglad"><b>Tryb podglądu</b><span>Dane zapisują się tylko w tej przeglądarce. Otwórz tę stronę w drugiej karcie jako inna osoba, aby sprawdzić wspólną pracę.</span>
     ${APM.kod() === 'DEMO-2026' ? '<span style="margin-left:auto;font-weight:600;color:var(--g)">Kod testowy: wybierz osobę, aby zobaczyć stronę jej oczami</span>' : '<a href="akademia.html?podglad=0" style="margin-left:auto;font-weight:600;color:var(--g)">Wyłącz podgląd</a>'}<label>Osoba: <select id="osobaPodgladu">${OSOBY_PODGLADU.map((o, i) => `<option value="${i}" ${o.imie === JA.imie ? 'selected' : ''}>${o.imie} · ${o.rola === 'zarzad' ? 'Zarząd' : o.rola === 'prowadzacy' ? 'prowadzący' : 'zespół ' + o.zespol}</option>`).join('')}</select></label></div>`;
   el.querySelector('#osobaPodgladu').addEventListener('change', e => { sessionStorage.setItem('apm_podglad_osoba', e.target.value); localStorage.setItem('apm_podglad_osoba', e.target.value); const o = OSOBY_PODGLADU[+e.target.value]; sessionStorage.setItem('apm_podglad_rola', o.rola); location.search = parametry(o); });

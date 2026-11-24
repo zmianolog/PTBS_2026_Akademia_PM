@@ -59,6 +59,30 @@ const WSPOLPRACA = [
 const sposobWspolpracy = r => { const w = WSPOLPRACA.find(x => x.wpl === r.wpl && x.zai === r.zai); return w ? w.n : ''; };
 const wlascicielProcesu = z => { const c = ZESPOLY[z].czlonkowie.find(c => /właściciel/i.test(c.rola)); return c ? c.imie : ''; };
 
+/* ===== T02 Mapa interesariuszy ===== */
+const GRUPY_INT = ['decydent', 'dostawca informacji', 'współuczestnik', 'odbiorca aktywny', 'odbiorca pasywny'];
+const POZ_SKUTKI = ['negatywne', 'pozytywne'], POZ_WPL2 = ['większy', 'mniejszy'];
+const POSTEPOWANIE = { 'większy|negatywne': 'Uzgadnianie i ograniczanie skutków', 'większy|pozytywne': 'Wspólna praca',
+  'mniejszy|negatywne': 'Wyjaśnianie i łagodzenie skutków', 'mniejszy|pozytywne': 'Informowanie' };
+const sposobPostepowania = r => POSTEPOWANIE[r.wpl + '|' + r.sk] || '';
+const FORMY_INF = ['spotkanie', 'rozmowa', 'warsztat', 'e-mail lub pismo', 'komunikat'];
+const TRYB = ['indywidualnie', 'grupowo'];
+const nazwyInter = () => (window.WART ? (WART('mapa') || []) : []).map(r => String(r.kto || '').trim()).filter(Boolean);
+/* interesariusze z T02 dla planu diagnozy; gdy mapy jeszcze nie ma, z karty projektu */
+const interZMapy = () => { const P = window.POWIAZANE || {}, z = d => d && d.pola;
+  const m = z(P.T02) && P.T02.pola.mapa ? P.T02.pola.mapa.v : null, k = z(P.T01) && P.T01.pola.inter ? P.T01.pola.inter.v : null;
+  return ((m && m.length ? m : k) || []).map(r => String(r.kto || '').trim()).filter(Boolean); };
+
+/* ===== T12 Plan diagnozy ===== */
+const SKAD_PYT = ['objaw problemu', 'wartość wyjściowa miernika', 'cel projektu', 'strata z karty', 'przypuszczenie o przyczynie'];
+const DZIALANIA_DIAG = ['prośba o dane', 'wywiad', 'obserwacja', 'pomiar próbny', 'analiza dokumentów'];
+const RODZ_ZR = ['DOK', 'SYS', 'ROZ', 'OBS', 'POM', 'ZEW'];
+const POSTAC_ZR = ['plik', 'link', 'notatka', 'planowane', 'do pozyskania', 'wycofane'];
+const kolejnyNr = (w, pref) => { const m = w.reduce((a, r) => { const x = /(\d+)/.exec(String(r.nr || '')); return Math.max(a, x ? +x[1] : 0); }, 0); return pref + String(m + 1).padStart(2, '0'); };
+const numeryZ = (id) => (window.WART ? (WART(id) || []) : []).map(r => r.nr).filter(Boolean);
+const nazwaPliku = r => { if (!r.nr || !r.rodz) return ''; const n = String(r.naz || '').trim().replace(/[\\/:*?"<>|]/g, '').slice(0, 60); return r.nr + '_' + r.rodz.slice(0, 3) + (n ? '_' + n : ''); };
+const escP = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
 const DOKUMENTY = {
   T01: {
     nazwa: 'Karta projektu',
@@ -178,23 +202,23 @@ const DOKUMENTY = {
         { id: 'cel', typ: 'obszar', et: 'Cel w jednym zdaniu',
           wyj: { po: 'Cel to zaplanowany rezultat projektu: zmiana wyniku Spółki, którą ma wywołać produkt z sekcji 4. Rezultat zespół zmierzy po wdrożeniu i porówna z celem.',
             jak: 'Napiszcie jedno zdanie: co ma się zmienić, z jakiej wartości do jakiej i do kiedy. Cel wynika ze straty opisanej w sekcji 3.',
-            opis: 'Czasownik zmiany (skrócić, zmniejszyć, zwiększyć), miernik, wartość obecna, wartość docelowa, termin.',
+            opis: 'Czasownik zmiany (skrócić, zmniejszyć, zwiększyć), miernik, wartość wyjściowa, wartość docelowa, termin.',
             p1: 'Skrócić średni czas od zgłoszenia awarii do jej usunięcia z 9 do 4 dni roboczych do 30 czerwca 2027 r.',
             p2: 'Zmniejszyć liczbę spraw windykacyjnych kierowanych do sądu z 40 do 20 rocznie do 31 grudnia 2027 r.',
             blad: 'Cel bez liczby i terminu, na przykład „usprawnić obsługę awarii”. Takiego celu nie da się sprawdzić.' } },
         { id: 'cel_m', typ: 'tekst', et: 'Miernik',
-          wyj: { po: 'Miernik mówi, co dokładnie zespół będzie liczyć, żeby zmierzyć rezultat. Wartość obecna i docelowa to dwie liczby tego samego miernika.',
+          wyj: { po: 'Miernik mówi, co dokładnie zespół będzie liczyć, żeby zmierzyć rezultat. Wartość wyjściowa i docelowa to dwie liczby tego samego miernika.',
             jak: 'Weźcie stratę z kroku 1 i zapytajcie: co trzeba policzyć, żeby zobaczyć, że ta strata się zmniejsza? Dobry miernik ma jednostkę, określony sposób liczenia (od czego do czego) i da się go policzyć z dostępnych danych.',
-            skad: 'Te same źródła co przy wartości obecnej.',
+            skad: 'Te same źródła co przy wartości wyjściowej.',
             p1: 'Średnia liczba dni roboczych od zgłoszenia awarii do jej usunięcia', p2: 'Liczba spraw windykacyjnych skierowanych do sądu w roku',
             blad: 'Wpisanie działania zamiast miernika, na przykład „uruchomienie formularza”. To jest produkt projektu, a nie miara rezultatu.' } },
-        { id: 'cel_o', typ: 'tekst', et: 'Wartość obecna',
-          wyj: { po: 'Wartość obecna to punkt odniesienia. Bez niej nie da się powiedzieć, o ile projekt poprawił sytuację.',
+        { id: 'cel_o', typ: 'tekst', et: 'Wartość wyjściowa',
+          wyj: { po: 'Wartość wyjściowa to punkt odniesienia. Bez niej nie da się powiedzieć, o ile projekt poprawił sytuację.',
             jak: 'Policzcie miernik z danych z ostatnich 3–12 miesięcy. Jeśli danych nie ma, zmierzcie go sami przez tydzień lub dwa. Te same dane wykorzystajcie w kroku 1 sekcji 3, żeby nie zbierać ich dwa razy.',
             skad: 'Rejestry działów, system księgowy, rejestr skarg najemców; gdy ich brak, własny krótki pomiar.',
             p1: 'Średnio 9 dni roboczych', p2: '40 spraw w 2025 r.' } },
-        { id: 'cel_zr', typ: 'tekst', et: 'Źródło i pewność wartości obecnej',
-          wyj: { po: 'Pokazuje, skąd pochodzi wartość obecna i czy to pomiar, czy szacunek. Szacunek zespół sprawdza w diagnozie.',
+        { id: 'cel_zr', typ: 'tekst', et: 'Źródło i pewność wartości wyjściowej',
+          wyj: { po: 'Pokazuje, skąd pochodzi wartość wyjściowa i czy to pomiar, czy szacunek. Szacunek zespół sprawdza w diagnozie.',
             jak: 'Podajcie źródło, okres i liczbę przypadków oraz pewność: niska, średnia albo wysoka.',
             p1: 'Rejestr zgłoszeń, styczeń–październik 2026, 1 750 zgłoszeń; pewność wysoka', p2: 'Szacunek radcy prawnego; pewność niska, do sprawdzenia w diagnozie' } },
         { id: 'cel_d', typ: 'tekst', et: 'Wartość docelowa',
@@ -222,7 +246,7 @@ const DOKUMENTY = {
                  { id: 'zai', t: 'Zainteresowanie projektem', typ: 'wybor', op: POZ_ZAI, s: .9 },
                  { id: 'spos', t: 'Sposób współpracy', typ: 'auto', f: sposobWspolpracy, s: 1.2 } ],
           dom: z => [ { kto: 'Sponsor (' + SPONSOR + ')', ocz: '', wpl: '', zai: '' }, { kto: 'Właściciel procesu (' + wlascicielProcesu(z) + ')', ocz: '', wpl: '', zai: '' } ],
-          wyj: { po: 'Analiza pokazuje, kto może wpłynąć na projekt albo kogo projekt dotyczy, i jak zespół będzie z każdą z tych osób lub grup współpracował. Pełniejszą analizę zespół zrobi w narzędziu T02 na D02.',
+          wyj: { po: 'Analiza pokazuje, kto może wpłynąć na projekt albo kogo projekt dotyczy, i jak zespół będzie z każdą z tych osób lub grup współpracował. To jest wstępna analiza. Pełną mapę interesariuszy, z pięcioma grupami i przygotowaniem każdego interesariusza, zespół przygotowuje w narzędziu T02 od spotkania D01.',
             jak: 'Wpływ oznacza, czy interesariusz może zatrzymać, opóźnić albo zmienić projekt, na przykład przez decyzję, budżet albo odmowę współpracy. Zainteresowanie oznacza, jak bardzo projekt zmienia jego pracę lub sytuację. Oba oceniacie w trzech poziomach: niski, przeciętny, wysoki. Sposób współpracy strona przypisuje sama: ścisła współpraca, gdy wpływ jest wysoki, a zainteresowanie co najmniej przeciętne, albo gdy wpływ jest przeciętny, a zainteresowanie wysokie; uzgadnianie decyzji, gdy wpływ jest wysoki lub przeciętny, a zainteresowanie niskie; regularne informowanie, gdy wpływ i zainteresowanie są przeciętne albo gdy wpływ jest niski, a zainteresowanie wysokie; obserwowanie, gdy wpływ jest niski, a zainteresowanie niskie lub przeciętne.',
             opis: 'Pytania pomocnicze: kto podejmuje decyzje w sprawie projektu? Czyja praca się zmieni? Kto dostarcza dane albo zasoby? Kto może opóźnić wdrożenie? Kogo dotyczą skutki problemu?',
             p1: 'Administratorzy budynków · obawiają się dodatkowej pracy przy nowym formularzu · wpływ wysoki · zainteresowanie wysokie · ścisła współpraca',
@@ -242,6 +266,136 @@ const DOKUMENTY = {
             p1: 'Kierownik działu technicznego: przejmuje formularz zgłoszeń i co kwartał mierzy czas usuwania awarii.', p2: 'Kierownik działu windykacji: odpowiada za procedurę i raz w roku zestawia liczbę spraw skierowanych do sądu.' } }
       ]},
       { id: 's10', nr: 10, t: 'Akceptacja sponsora', akceptacja: true }
+    ]
+  },
+  T02: {
+    nazwa: 'Mapa interesariuszy ze sposobem zaangażowania',
+    powiazane: ['T01'],
+    instr: {
+      po: 'Mapa pokazuje wszystkich interesariuszy projektu w pięciu grupach, skutki projektu dla każdego z nich, ich wpływ na projekt i sposób, w jaki zespół każdego z nich przygotuje do udziału w projekcie. Mapa jest szersza niż wstępna analiza w sekcji 7 karty projektu i z niej korzysta plan diagnozy (T12).',
+      kto: 'Wypełnia cały zespół projektowy; na spotkaniu pisze jedna osoba. Strona zapisuje autora i datę każdej zmiany.',
+      kiedy: 'Zespół zaczyna mapę na spotkaniu D01 (zadanie Z02) i uzupełnia ją do spotkania D02. Zespół aktualizuje mapę w trakcie projektu, szczególnie na spotkaniu D09.',
+      akc: 'Mapy nie akceptuje sponsor. Zespół uzgadnia ze sponsorem sposób postępowania z decydentami i z interesariuszami, wobec których projekt ma skutki negatywne.',
+      brak: 'Bez mapy zespół łatwo pomija osoby, które muszą wykonać pracę w projekcie albo dostarczyć dane. Te osoby dowiadują się o projekcie za późno i nie mają na niego czasu.'
+    },
+    sekcje: [
+      { id: 's1', nr: 1, t: 'Interesariusze i ocena', pola: [
+        { id: 'mapa', typ: 'tabela', et: 'Interesariusze projektu', macierz: 'skutki',
+          kol: [ { id: 'kto', t: 'Interesariusz', typ: 'obszar', s: 1.4 },
+                 { id: 'gr', t: 'Grupa (można wybrać kilka)', typ: 'wielo', op: GRUPY_INT, s: 1.35 },
+                 { id: 'ocz', t: 'Czego oczekuje lub czego się obawia', typ: 'obszar', s: 1.9 },
+                 { id: 'sk', t: 'Skutki projektu', typ: 'wybor', op: POZ_SKUTKI, s: .95 },
+                 { id: 'wpl', t: 'Wpływ na projekt', typ: 'wybor', op: POZ_WPL2, s: .95 },
+                 { id: 'spos', t: 'Sposób postępowania', typ: 'auto', f: sposobPostepowania, s: 1.15 } ],
+          domEt: 'Lista wpisana z sekcji 7 karty projektu; karta się nie zmienia, a zespół może tę listę zmieniać',
+          dom: (z, P) => { const k = P && P.T01 && P.T01.pola && P.T01.pola.inter ? (P.T01.pola.inter.v || []).filter(r => String(r.kto || '').trim()) : [];
+            return k.length ? k.map(r => ({ kto: r.kto, ocz: r.ocz || '', gr: '', sk: '', wpl: '' }))
+              : [ { kto: 'Sponsor (' + SPONSOR + ')', gr: 'decydent', ocz: '', sk: '', wpl: 'większy' }, { kto: 'Właściciel procesu (' + wlascicielProcesu(z) + ')', gr: '', ocz: '', sk: '', wpl: '' } ]; },
+          wyj: { po: 'Mapa pokazuje, kto decyduje o projekcie, kto dostarcza informacji, kto musi wykonać pracę w projekcie i kto będzie korzystał z rezultatu albo odczuje jego skutki. Od tego zależy, jak zespół przygotuje każdego interesariusza.',
+            jak: 'Wpiszcie interesariuszy i przy każdym zaznaczcie grupę. Decydent decyduje o celu, zakresie, budżecie i akceptacji etapów. Dostawca informacji ma dane, dokumenty albo wiedzę o tym, jak proces działa dziś. Współuczestnik musi wykonać w projekcie określoną pracę, na przykład analizę albo konfigurację systemu. Odbiorca aktywny po wdrożeniu korzysta z rezultatu i pracuje w nowym rozwiązaniu. Odbiorca pasywny odczuwa skutki projektu, choć sam nie korzysta z rozwiązania. Ta sama osoba może należeć do kilku grup. Skutki oznaczają, co projekt zmieni w pracy lub sytuacji interesariusza: pozytywne albo negatywne. Wpływ oznacza, czy interesariusz może zatrzymać, opóźnić albo zmienić projekt: większy albo mniejszy. Sposób postępowania strona przypisuje sama według macierzy pod tabelą.',
+            opis: 'Gdy projekt ma kilku sponsorów, każdy z nich jest decydentem. Sponsorzy muszą porozumieć się co do celu, zakresu i budżetu i zgodzić się na nie, zanim zespół zacznie diagnozę. Zespół wpisuje każdego sponsora w osobnym wierszu.',
+            p1: 'Administratorzy budynków · odbiorca aktywny, dostawca informacji · obawiają się dodatkowej pracy przy nowym formularzu · skutki negatywne · wpływ większy · uzgadnianie i ograniczanie skutków',
+            p2: 'Najemcy czekający na naprawę · odbiorca pasywny · oczekują szybszej naprawy · skutki pozytywne · wpływ mniejszy · informowanie',
+            blad: 'Pominięcie współuczestników, czyli osób, które muszą wykonać pracę w projekcie, choć nie są w zespole. Bez ich czasu i zgody przełożonego zespół nie wykona diagnozy.' } }
+      ]},
+      { id: 's2', nr: 2, t: 'Przygotowanie interesariuszy', pola: [
+        { id: 'prz', typ: 'tabela', et: 'Jak zespół przygotuje każdego interesariusza', zalezy: ['mapa'],
+          kol: [ { id: 'kto', t: 'Interesariusz', typ: 'wybor', op: nazwyInter, s: 1.3 },
+                 { id: 'info', t: 'Jaką informację przekazujemy albo o co prosimy', typ: 'obszar', s: 2.1 },
+                 { id: 'forma', t: 'Forma', typ: 'wybor', op: FORMY_INF, s: 1 },
+                 { id: 'tryb', t: 'Indywidualnie czy grupowo', typ: 'wybor', op: TRYB, s: 1 },
+                 { id: 'kz', t: 'Kto z zespołu', typ: 'tekst', s: 1 },
+                 { id: 'kiedy', t: 'Do kiedy', typ: 'tekst', s: .8 } ],
+          podpowiedz: (w, wart) => {
+            const M = wart('mapa') || [], jest = new Set(w.map(r => r.kto)), brak = M.filter(r => String(r.kto || '').trim() && !jest.has(String(r.kto).trim())).map(r => r.kto.trim());
+            const gr = w.filter(r => r.tryb === 'grupowo' && M.some(m => String(m.kto || '').trim() === r.kto && /współuczestnik|dostawca/.test(m.gr || ''))).map(r => r.kto);
+            let h = '';
+            if (brak.length) h += `<div class="uwaga">Bez zaplanowanego przygotowania: ${brak.map(escP).join('; ')}.</div>`;
+            if (gr.length) h += `<div class="uwaga">Współuczestników i dostawców informacji zespół przygotowuje indywidualnie: uzgadnia z nimi zakres pracy, wynik i termin, a z przełożonym czas pracy. Sprawdźcie: ${[...new Set(gr)].map(escP).join('; ')}.</div>`;
+            return h; },
+          wyj: { po: 'Przygotowanie mówi, co każdy interesariusz musi wiedzieć albo zrobić, w jakiej formie zespół mu to przekaże, kto z zespołu to zrobi i do kiedy.',
+            jak: 'Wybierzcie interesariusza z listy z sekcji 1. Decydentom zespół przedstawia sprawy do decyzji. Dostawców informacji prosi o konkretne dane i uzgadnia termin. Współuczestnikom przedstawia zakres pracy, wynik i termin, a z ich przełożonym uzgadnia czas pracy; potem potwierdza ustalenia na piśmie. Odbiorców aktywnych włącza w sprawdzanie rozwiązania. Odbiorców pasywnych informuje grupowo, co się zmieni i kiedy.',
+            p1: 'Kierownik działu informatyki · prosimy o konfigurację formularza i ocenę czasu pracy · spotkanie · indywidualnie · A. Nowak · do 4.12',
+            p2: 'Najemcy · informujemy o nowym sposobie zgłaszania awarii · komunikat · grupowo · B. Kowalska · przed pilotażem',
+            blad: 'Jeden e-mail do wszystkich interesariuszy. Współuczestnicy i dostawcy informacji nie wiedzą wtedy, czego dokładnie zespół od nich oczekuje i do kiedy.' } }
+      ]}
+    ]
+  },
+  T12: {
+    nazwa: 'Plan diagnozy i zbierania danych',
+    powiazane: ['T02', 'T01'],
+    instr: {
+      po: 'Plan diagnozy mówi, czego zespół chce się dowiedzieć, od których interesariuszy i jakimi działaniami zbierze dane oraz w jakich źródłach te dane zapisze. Wyniki diagnozy zespół przedstawia sponsorowi na kamieniu milowym KM1 (D06).',
+      kto: 'Wypełnia cały zespół projektowy; na spotkaniu pisze jedna osoba. Strona zapisuje autora i datę każdej zmiany.',
+      kiedy: 'Zespół zaczyna plan na spotkaniu D01 (zadanie Z03), uzupełnia go do spotkania D03 i prowadzi wykaz źródeł do KM1. Na spotkaniu D03 zespół przedstawia plan sponsorowi do zatwierdzenia.',
+      akc: 'Sponsor zatwierdza plan diagnozy po spotkaniu D03.',
+      brak: 'Bez planu zespół zbiera dane bez porządku, a te same osoby dostają kilka próśb w różnym czasie. Na pytanie „skąd te dane?” zespół nie wskaże źródła.'
+    },
+    sekcje: [
+      { id: 's1', nr: 1, t: 'Pytania diagnostyczne', pola: [
+        { id: 'pyt', typ: 'tabela', et: 'Czego zespół chce się dowiedzieć',
+          nowyWiersz: w => ({ nr: kolejnyNr(w, 'PD') }),
+          kol: [ { id: 'nr', t: 'Nr', typ: 'staly', s: .55 },
+                 { id: 'tr', t: 'Pytanie', typ: 'obszar', s: 2.4 },
+                 { id: 'sk', t: 'Skąd wynika', typ: 'wybor', op: SKAD_PYT, s: 1.25 },
+                 { id: 'dane', t: 'Jakie dane odpowiedzą na pytanie', typ: 'obszar', s: 1.9 },
+                 { id: 'waz', t: 'Zmienia kwotę w karcie lub kierunek projektu', typ: 'wybor', op: ['tak', 'nie'], s: .95 },
+                 { id: 'st', t: 'Stan', typ: 'wybor', op: ['otwarte', 'w trakcie', 'ustalone'], s: .9 } ],
+          wyj: { po: 'Pytania mówią, czego zespół jeszcze nie wie, a musi wiedzieć, żeby potwierdzić cel projektu, stratę z karty i wartość wyjściową miernika oraz ustalić przyczyny problemu.',
+            jak: 'Wpiszcie od pięciu do ośmiu pytań. Zacznijcie od objawów problemu, od wartości wyjściowej i celu oraz od straty z karty projektu, a dopiero potem od przypuszczeń o przyczynach. Przy każdym pytaniu wpiszcie dane, które na nie odpowiedzą. Numer pytania strona nadaje sama.',
+            p1: 'PD01 · W których etapach obsługi zgłoszenia mija najwięcej dni? · objaw problemu · daty z rejestru zgłoszeń i daty zleceń · tak',
+            p2: 'PD02 · Ile kosztują naprawy zlecane w trybie pilnym? · strata z karty · faktury za naprawy pilne z 2025 r. · tak',
+            blad: 'Pytanie o rozwiązanie zamiast o stan obecny, na przykład „jaki system kupić?”. Diagnoza ustala, co dziś powoduje problem; rozwiązanie zespół wybiera później, na kamieniu KM2.' } }
+      ]},
+      { id: 's2', nr: 2, t: 'Plan działań diagnostycznych', pola: [
+        { id: 'dzi', typ: 'tabela', et: 'Działania ułożone według interesariuszy', zalezy: ['pyt'],
+          nowyWiersz: w => ({ nr: kolejnyNr(w, 'DZ') }),
+          kol: [ { id: 'nr', t: 'Nr', typ: 'staly', s: .55 },
+                 { id: 'kto', t: 'Interesariusz (z mapy T02)', typ: 'wybor', op: interZMapy, s: 1.3 },
+                 { id: 'rodz', t: 'Działanie', typ: 'wybor', op: DZIALANIA_DIAG, s: 1.1 },
+                 { id: 'pd', t: 'Odpowiada na pytania', typ: 'wielo', op: () => numeryZ('pyt'), s: .85 },
+                 { id: 'kz', t: 'Kto z zespołu', typ: 'tekst', s: .95 },
+                 { id: 'term', t: 'Do kiedy', typ: 'tekst', s: .75 },
+                 { id: 'tryb', t: 'Informowanie', typ: 'wybor', op: TRYB, s: 1 },
+                 { id: 'godz', t: 'Czas interesariusza, godz.', typ: 'liczba', s: .7 },
+                 { id: 'zgoda', t: 'Zgoda przełożonego', typ: 'wybor', op: ['uzgodniona', 'do uzgodnienia', 'nie dotyczy'], s: 1 } ],
+          podpowiedz: (w) => {
+            const G = {}; w.forEach(r => { if (r.kto) (G[r.kto] = G[r.kto] || []).push(r); });
+            const wiele = Object.entries(G).filter(([, L]) => L.length > 1);
+            let h = wiele.map(([k, L]) => `<div class="uwaga">Do interesariusza „${escP(k)}” zespół planuje ${L.length} działania (${L.map(r => r.nr).join(', ')}), razem ${L.reduce((a, r) => a + (+r.godz || 0), 0)} godz. jego czasu. Sprawdźcie, czy możecie połączyć je w jedną prośbę albo jedno spotkanie.</div>`).join('');
+            const zg = w.filter(r => r.zgoda === 'do uzgodnienia').map(r => r.nr);
+            if (zg.length) h += `<div class="uwaga">Działania wymagające zgody przełożonego interesariusza: ${zg.join(', ')}. Zespół uzgadnia czas pracy, zanim poprosi o pracę.</div>`;
+            return h; },
+          wyj: { po: 'Plan działań to lista działań diagnostycznych: prośba o dane, wywiad, obserwacja, pomiar próbny albo analiza dokumentów. Każde działanie ma interesariusza, osobę z zespołu i termin. W planie projektu jest to pakiet prac etapu diagnozy, który kończy się kamieniem milowym KM1.',
+            jak: 'Wybierzcie interesariusza z mapy T02 i połączcie pytania do tego samego interesariusza w jedno działanie albo kilka działań w jednym terminie. Przy każdym działaniu wpiszcie, na które pytania odpowiada, kto z zespołu je prowadzi i do kiedy, czy interesariusza informujecie grupowo, czy indywidualnie, ile godzin jego pracy zajmie działanie i czy czas pracy trzeba uzgodnić z jego przełożonym. Ustalcie kolejność: najpierw dane z rejestrów, potem wywiad, który je wyjaśnia.',
+            p1: 'DZ01 · Kierownik działu technicznego · prośba o dane, potem wywiad · PD01, PD02 · A. Nowak · do 18.12 · indywidualnie · 2 godz. · nie dotyczy',
+            p2: 'DZ02 · Administratorzy budynków · obserwacja przyjmowania zgłoszeń · PD03 · B. Kowalska · do 22.12 · grupowo · 4 godz. · do uzgodnienia',
+            blad: 'Osobne prośby do tej samej osoby w różnych terminach. Interesariusz traci czas i chęć do współpracy, a zespół czeka na dane dłużej.' } }
+      ]},
+      { id: 's3', nr: 3, t: 'Wykaz źródeł', pola: [
+        { id: 'zr', typ: 'tabela', et: 'Źródła danych z numerami', zalezy: ['pyt', 'dzi'], bezUsuwania: true,
+          nowyWiersz: w => ({ nr: kolejnyNr(w, 'R') }),
+          kol: [ { id: 'nr', t: 'Nr', typ: 'tekst', s: .55 },
+                 { id: 'naz', t: 'Źródło', typ: 'obszar', s: 1.9 },
+                 { id: 'rodz', t: 'Rodzaj', typ: 'wybor', op: RODZ_ZR, s: .9 },
+                 { id: 'post', t: 'Postać', typ: 'wybor', op: POSTAC_ZR, s: 1.05 },
+                 { id: 'gdzie', t: 'Link albo miejsce', typ: 'obszar', s: 1.15 },
+                 { id: 'dz', t: 'Z działania', typ: 'wybor', op: () => numeryZ('dzi'), s: .75 },
+                 { id: 'pd', t: 'Odpowiada na pytania', typ: 'wielo', op: () => numeryZ('pyt'), s: .85 },
+                 { id: 'os', t: 'Dane osobowe', typ: 'wybor', op: ['tak', 'nie'], s: .75 },
+                 { id: 'plik', t: 'Nazwa pliku', typ: 'auto', f: nazwaPliku, s: 1.3 } ],
+          podpowiedz: (w, wart) => {
+            const P = (wart('pyt') || []).filter(r => r.waz === 'tak' && r.nr), uz = w.filter(r => r.post !== 'wycofane');
+            const malo = P.filter(p => uz.filter(r => String(r.pd || '').split(', ').includes(p.nr)).length < 2).map(p => p.nr);
+            let h = malo.length ? `<div class="uwaga">Reguła dwóch źródeł: pytania ${malo.join(', ')} zmieniają kwotę w karcie albo kierunek projektu, a mają mniej niż dwa źródła. Ustalenie z jednym źródłem zespół oznacza jako „wymaga potwierdzenia”.</div>` : '';
+            if (w.some(r => r.os === 'tak')) h += '<div class="uwaga">Pliki z danymi osobowymi pracowników i najemców zostają w zasobach PTBS. Na stronie Akademii zespół wpisuje tylko numer, nazwę i miejsce źródła.</div>';
+            return h; },
+          wyj: { po: 'Wykaz pokazuje, skąd pochodzi każda liczba i każde ustalenie zespołu. Przy każdej kwocie i każdym ustaleniu zespół podaje w nawiasie numer źródła, na przykład [R02, R04a].',
+            jak: 'Rodzaje źródeł: DOK – dokument lub rejestr; SYS – dane z systemu; ROZ – notatka z rozmowy; OBS – obserwacja; POM – pomiar próbny; ZEW – źródło zewnętrzne, na przykład przepis albo publikacja. Strona proponuje kolejny numer: R01, R02, R03. Części jednego źródła mają ten sam numer z literą: R04a, R04b; wpiszcie literę w polu numeru. Numer nadany raz zostaje na stałe, także wtedy, gdy źródło nie ma pliku; wiersza nie można usunąć, a źródło, z którego zespół rezygnuje, oznacza postacią „wycofane”. Pliki zespół zapisuje we wspólnym folderze projektu w PTBS, w podfolderze „Źródła numerowane”, pod nazwą z kolumny „Nazwa pliku”.',
+            p1: 'R02 · Zestawienie czasu obsługi zgłoszeń z systemu, 2025 · SYS · plik · folder P1_Źródła numerowane · DZ01 · PD01 · nie · R02_SYS_Zestawienie czasu obsługi zgłoszeń',
+            p2: 'R04b · Pomiar czasu obsługi zgłoszeń, tydzień 2 · POM · planowane · — · DZ02 · PD01, PD03 · nie',
+            blad: 'Nadanie numeru usuniętego źródła nowemu dokumentowi. Odwołania w raportach wskazują wtedy inne dane niż te, z których zespół korzystał.' } }
+      ]}
     ]
   }
 };

@@ -28,7 +28,7 @@ const MENU = [
 const KONSULTACJE = { dzien: 5, sloty: ['12:00', '12:30', '13:00'], minut: 30, tygodni: 2, bez: [], teams: '', pula: 8 };
 
 /* TERMINY: wpisz datę i godzinę rozpoczęcia spotkania w formacie DD.MM.RR GG:MM, np. D01:'12.01.27 09:00'. Puste = na kafelku widać wzór DD.MM.RR / GG:MM. */
-const TERMINY = { D00:'18.11.26 10:30', D01:'24.11.26 09:00', D02:'01.12.26 09:00', D03:'08.12.26 09:00',
+const TERMINY = { D00:'18.11.26 10:30', D01:'26.11.26 09:30', D02:'01.12.26 09:00', D03:'08.12.26 09:00',
   D04:'15.12.26 09:00', D05:'12.01.27 09:00', D06:'19.01.27 09:00', D07:'26.01.27 09:00', D08:'02.02.27 09:00',
   D09:'09.02.27 09:00', D10:'02.03.27 09:00', D11:'16.03.27 09:00', D12:'23.03.27 09:00', D13:'30.03.27 09:00' };
 /* Widoczne są tylko terminy spotkań, które już się odbyły, oraz trzech najbliższych spotkań. Pozostałe terminy są ukryte do czasu, aż staną się jednymi z trzech najbliższych. */

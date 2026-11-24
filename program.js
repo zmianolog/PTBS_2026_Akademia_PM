@@ -16,11 +16,12 @@ const PROGRAM = {
    "etap": 1,
    "tn": [
     "T01",
-    "T02"
+    "T02",
+    "T12"
    ],
    "tu": [],
    "przed": "Przekaż prowadzącemu informacje o projekcie zebrane po spotkaniu D00.",
-   "po": "Mapa interesariuszy ze sposobem zaangażowania oraz karta projektu uzgodniona ze sponsorem."
+   "po": "Uwagi sponsora wprowadzone do karty projektu; mapa interesariuszy uzupełniona; pytania, plan działań diagnostycznych i wykaz źródeł uzupełnione."
   },
   {
    "kod": "D02",
@@ -39,10 +40,10 @@ const PROGRAM = {
    "nazwa": "Planowanie",
    "etap": 2,
    "tn": [
-    "T12",
     "T05"
    ],
    "tu": [
+    "T12",
     "T01",
     "T04"
    ],
@@ -196,7 +197,7 @@ const PROGRAM = {
   },
   "T02": {
    "n": "Mapa interesariuszy ze sposobem zaangażowania",
-   "o": "Kto ma wpływ i interes w projekcie; kogo zespół pyta, kogo informuje, kto współdecyduje.",
+   "o": "Interesariusze w pięciu grupach; skutki projektu i wpływ na projekt; sposób postępowania; forma informacji, indywidualnie czy grupowo, kiedy i kto z zespołu. Rozszerza wstępną analizę interesariuszy z karty projektu.",
    "od": "D01",
    "ik": "siec-relacji"
   },
@@ -256,8 +257,8 @@ const PROGRAM = {
   },
   "T12": {
    "n": "Plan diagnozy i zbierania danych",
-   "o": "Jakie dane zespół zbiera, z jakich źródeł, kto je zbiera i do kiedy; wynik diagnozy stanu obecnego.",
-   "od": "D03",
+   "o": "Pytania diagnostyczne; plan działań diagnostycznych według interesariuszy (prośba o dane, wywiad, obserwacja, pomiar próbny); wykaz źródeł z numerami R01, R02…",
+   "od": "D01",
    "ik": "notatka"
   },
   "T13": {

@@ -66,9 +66,10 @@ if (APM.wymagajLogowania()) (async () => {
     let info = '';
     if (D.akc && !czeka) info += `<div class="kto">${esc(D.akc.kto)}, ${dt(D.akc.kiedy)}</div>`;
     if (D.potw) info += `<div class="kto">Wartość potwierdzona po diagnozie: ${esc(D.potw.kto)}, ${dt(D.potw.kiedy)}</div>`;
-    const akcBtn = ZARZ ? (km1 ? `<button class="zml-btn" data-potw="${ID}">Akceptuję wartość po diagnozie</button>` : `<button class="zml-btn" data-akc="${ID}" ${czeka ? '' : 'disabled title="Zespół nie przekazał dokumentu do akceptacji"'}>Akceptuję</button>`) : '';
+    const maAkc = DOKUMENTY[t] && DOKUMENTY[t].sekcje.some(x => x.akceptacja);
+    const akcBtn = ZARZ && maAkc ? (km1 ? `<button class="zml-btn" data-potw="${ID}">Akceptuję wartość po diagnozie</button>` : `<button class="zml-btn" data-akc="${ID}" ${czeka ? '' : 'disabled title="Zespół nie przekazał dokumentu do akceptacji"'}>Akceptuję</button>`) : '';
     const jsonBtn = JA.rola === 'prowadzacy' ? `<button class="zml-btn" data-json="${ID}">Dane dokumentu (JSON)</button>` : '';
-    return `<td><span class="st ${D.wersja ? KL[k] : ''}">${st}</span>${info}<div class="pr${ZARZ ? '' : ' jeden'}"><a class="zml-btn" href="dokument.html?t=${t}&z=${z}${pg}&pdf=1" target="_blank" rel="noopener">Pełny dokument (PDF)</a>${akcBtn}${jsonBtn}</div></td>`;
+    return `<td><span class="st ${D.wersja ? KL[k] : ''}">${st}</span>${info}<div class="pr${ZARZ && maAkc ? '' : ' jeden'}"><a class="zml-btn" href="dokument.html?t=${t}&z=${z}${pg}&pdf=1" target="_blank" rel="noopener">Pełny dokument (PDF)</a>${akcBtn}${jsonBtn}</div></td>`;
   }
   function rysuj() {
     $('#tresc').innerHTML = `<h1>Projekty</h1>` + (N.length ? `<div class="przewin"><table class="tp"><tr><th>Dokument</th>${Z.map(z => `<th>${z}<small>${esc(PROGRAM.zespoly[z].projekt)}</small></th>`).join('')}</tr>
