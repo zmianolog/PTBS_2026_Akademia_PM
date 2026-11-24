@@ -46,8 +46,9 @@ if (APM.wymagajLogowania()) (async () => {
     if (!JA.zespol) { $('#tresc').innerHTML = '<h1>Narzędziownik</h1><p>Twój kod nie jest jeszcze przypisany do zespołu. Skontaktuj się z prowadzącym.</p>'; return; }
     document.title = 'Narzędziownik — Akademia Zarządzania Projektami PTBS';
     const sp = PROGRAM.sesje.filter(s => Object.values(PROGRAM.toolkit).some(n => n.od === s.kod));
-    $('#tresc').innerHTML = `<h1>Narzędziownik</h1>` + sp.map(s => `<div class="nk-grupa">${s.kod}<small>${esc(s.nazwa)}</small></div>
+    $('#tresc').innerHTML = `<h1>Narzędziownik</h1>` + sp.map(s => `<div class="nk-grupa" id="${s.kod}">${s.kod}<small>${esc(s.nazwa)}</small></div>
       <div class="nk-siatka">${Object.keys(PROGRAM.toolkit).filter(t => PROGRAM.toolkit[t].od === s.kod).sort().map(t => kafelNarzedzia(t, `dokument.html?t=${t}${pg}`)).join('')}</div>`).join('');
+    if (location.hash) { const g = document.getElementById(location.hash.slice(1)); if (g) setTimeout(() => g.scrollIntoView({ block: 'start' }), 50); }
     return;
   }
   /* Projekty: tabela dokumentów zespołów; sponsor otwiera pełny dokument w PDF i akceptuje */

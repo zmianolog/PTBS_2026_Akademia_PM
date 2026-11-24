@@ -50,6 +50,7 @@ textarea.wej{min-height:78px;resize:vertical}
 .tab .suma-k b{font-size:20px;font-weight:800}
 .tab .suma-k span{opacity:.9}
 .tab select.wej{padding-left:8px;padding-right:22px;font-size:14px;text-overflow:ellipsis}
+.tab .kom{min-width:0}.tab .lab{display:none}
 .tab .auto{padding:10px 4px;font-weight:700;color:var(--g);font-size:14px}
 .wielo{display:flex;flex-direction:column;gap:4px;padding:6px 8px;height:auto}.wielo label{display:flex;gap:6px;align-items:center;font-size:13px;line-height:1.2;cursor:pointer}.wielo input{width:16px;height:16px;flex:none}
 .podp{margin-top:10px}.podp .uwaga{margin:0}
@@ -120,7 +121,7 @@ textarea.wej{min-height:78px;resize:vertical}
 .hist small{color:var(--tekst2)}
 .hist pre{white-space:pre-wrap;font:400 14px var(--font);margin:4px 0;background:var(--tlo);padding:6px 8px;border-radius:6px}
 @media (min-width:800px){ .okno .dwie{grid-template-columns:1fr 1fr} .okno .akcje{grid-template-columns:repeat(3,1fr)} }
-@media (max-width:799px){ .tab .tw{grid-template-columns:1fr!important} .tab .th{display:none} .pasek{grid-template-columns:repeat(6,1fr)} .akc-dec{grid-template-columns:1fr} }
+@media (max-width:799px){ .tab .tw{grid-template-columns:1fr!important;border-top:1px solid var(--ramka);padding-top:10px} .tab .th{display:none} .tab .lab{display:block;font-size:12px;font-weight:700;color:var(--tekst2);margin:0 0 3px} .pasek{grid-template-columns:repeat(6,1fr)} .akc-dec{grid-template-columns:1fr} }
 /* ===== wydruk ===== */
 #wydruk{display:none}
 @page{size:A4;margin:16mm 14mm 18mm 14mm;
@@ -228,7 +229,7 @@ if (APM.wymagajLogowania()) (async () => {
   function tabela(p, dis) {
     const w = wart(p.id), szer = p.kol.map(c => c.s + 'fr').join(' ') + (p.stale || dis ? '' : ' 44px');
     let h = `<div class="tab" data-tab="${p.id}"><div class="tw th" style="grid-template-columns:${szer}">${p.kol.map(c => `<span>${c.t}</span>`).join('')}${p.stale || dis ? '' : '<span></span>'}</div>`;
-    w.forEach((r, i) => { h += `<div class="tw" style="grid-template-columns:${szer}">${p.kol.map(c => c.typ === 'auto' ? `<div class="auto" data-auto="${p.id}|${i}">${esc(c.f(r, i))}</div>` : c.typ === 'staly' ? `<div class="staly">${esc(r[c.id])}</div>` : wejscie(c, r[c.id] ?? '', dis, `${p.id}|${i}|${c.id}`)).join('')}${p.stale || dis ? '' : p.bezUsuwania ? '<span></span>' : `<button class="usun" data-usun="${p.id}|${i}" title="Usuń wiersz">×</button>`}</div>`; });
+    w.forEach((r, i) => { h += `<div class="tw" style="grid-template-columns:${szer}">${p.kol.map(c => `<div class="kom"><span class="lab">${c.t}</span>` + (c.typ === 'auto' ? `<div class="auto" data-auto="${p.id}|${i}">${esc(c.f(r, i))}</div>` : c.typ === 'staly' ? `<div class="staly">${esc(r[c.id])}</div>` : wejscie(c, r[c.id] ?? '', dis, `${p.id}|${i}|${c.id}`))+ '</div>').join('')}${p.stale || dis ? '' : p.bezUsuwania ? '<span></span>' : `<button class="usun" data-usun="${p.id}|${i}" title="Usuń wiersz">×</button>`}</div>`; });
     if (!p.stale && !dis && !(p.max && w.length >= p.max)) h += `<div><button class="btn-maly" data-dodaj="${p.id}">Dodaj wiersz</button></div>`;
     if (p.suma) {
       const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0);
