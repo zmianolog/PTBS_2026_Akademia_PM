@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dokument projektu — Akademia Zarządzania Projektami PTBS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="wspolne.css">
+<script src="wspolne.js"></script>
+<script src="program.js"></script>
+<script src="dok_dane.js"></script>
+<script src="dok_definicje.js"></script>
+<style>
+.glowa-dok{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.zespoly{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.zespoly a{display:flex;align-items:center;justify-content:center;text-align:center;min-height:46px;padding:4px 10px;border:2px solid var(--g);border-radius:8px;color:var(--g);font:600 14px/1.2 var(--font);text-decoration:none}
+.zespoly a.wyb{background:var(--g);color:#fff}
+.stan-dok{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;padding:6px 12px;border-radius:8px;background:var(--jasny);color:var(--g)}
+.stan-dok.akc{background:#E6F3EA;color:var(--zielen)} .stan-dok.zm{background:#FDECEC;color:var(--czerwien)} .stan-dok.do{background:#FFF4D6;color:var(--mt)}
+.pasek{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;margin:14px 0 6px}
+.pasek a{height:30px;border-radius:6px;background:var(--tlo);display:flex;align-items:center;justify-content:center;font:700 12px var(--font);color:var(--tekst2);text-decoration:none;border:2px solid transparent}
+.pasek a.w{background:var(--g);color:#fff} .pasek a.t{background:#F3D27A;color:var(--g)}
+.leg-pasek{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--tekst2);margin-bottom:12px}
+.leg-pasek i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:5px;background:var(--tlo)}
+.sek{border:2px solid var(--ramka);border-radius:12px;margin-top:16px;scroll-margin-top:80px}
+.sek>.sg{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:2px solid var(--ramka);background:var(--jasny);border-radius:10px 10px 0 0}
+.sek .nr{display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--g);color:#fff;align-items:center;justify-content:center;font-weight:800;flex:none}
+.sek .st{margin-left:auto;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;background:#fff;color:var(--tekst2);white-space:nowrap}
+.sek .st.w{background:var(--g);color:#fff} .sek .st.t{background:#F3D27A;color:var(--g)}
+.sek .sb{padding:14px;display:grid;gap:16px}
+.pole .et{font-weight:700;color:var(--g);font-size:15px}
+.pole .pod{font-size:13px;color:var(--tekst2);margin:2px 0 6px}
+.pole .meta{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--tekst2);margin-top:4px}
+.pole .meta button{background:none;border:0;padding:0;color:var(--g);font:600 12px var(--font);text-decoration:underline;cursor:pointer}
+.edytuje{font-size:12px;font-weight:700;color:var(--mt);background:#FFF4D6;border-radius:6px;padding:3px 8px;display:inline-block;margin-bottom:4px}
+.nowsza{font-size:12px;font-weight:700;color:var(--czerwien);margin-top:4px}
+input.wej,textarea.wej,select.wej{width:100%;font:400 15px/1.45 var(--font);color:var(--tekst);border:2px solid var(--ramka);border-radius:8px;padding:8px 10px;background:#fff}
+textarea.wej{min-height:78px;resize:vertical}
+.wej:focus{outline:none;border-color:var(--g)}
+.wej:disabled{background:var(--tlo);color:var(--tekst)}
+.tab{display:grid;gap:6px}
+.tab .tw{display:grid;gap:6px;align-items:start}
+.tab .th{font-size:12px;font-weight:700;color:var(--tekst2)}
+.tab textarea.wej{min-height:44px}
+.tab .staly{font-size:14px;font-weight:600;padding:8px 2px}
+.tab .usun{min-height:46px;border:2px solid var(--g);background:var(--g);border-radius:8px;cursor:pointer;font:600 15px var(--font);color:#fff}
+.tab .suma{display:flex;justify-content:flex-end;margin-top:8px}
+.tab .suma-k{display:inline-flex;flex-wrap:wrap;align-items:baseline;justify-content:flex-end;gap:4px 18px;background:var(--g);color:#fff;border-radius:10px;padding:10px 16px;font-size:15px}
+.tab .suma-k b{font-size:20px;font-weight:800}
+.tab .suma-k span{opacity:.9}
+.tab select.wej{padding-left:8px;padding-right:22px;font-size:14px;text-overflow:ellipsis}
+.tab .auto{padding:10px 4px;font-weight:700;color:var(--g);font-size:14px}
+.wielo{display:flex;flex-direction:column;gap:4px;padding:6px 8px;height:auto}.wielo label{display:flex;gap:6px;align-items:center;font-size:13px;line-height:1.2;cursor:pointer}.wielo input{width:16px;height:16px;flex:none}
+.podp{margin-top:10px}.podp .uwaga{margin:0}
+.et-w{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.et-w .wy-btn{margin-left:auto;flex:0 0 auto;min-width:190px}
+.etw{display:grid;grid-template-columns:1.1fr 3fr 46px 46px;gap:6px;align-items:start;margin-top:6px}
+.etw.th{font-size:12px;font-weight:700;color:var(--tekst2);margin-top:10px}
+.etw .ec{padding:8px 4px;line-height:1.3}
+.etw .ec b{color:var(--g);display:block}
+.etw .ec span{font-size:12px;color:var(--tekst2)}
+.etw.nowy-et{border-top:2px solid var(--ramka);padding-top:6px}
+.etw button{min-height:46px;border:2px solid var(--g);background:var(--g);border-radius:8px;cursor:pointer;font:700 18px var(--font);color:#fff}
+.macierz{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:6px;margin-top:14px}
+.macierz .mo{font-size:12px;font-weight:700;color:var(--tekst2);display:flex;align-items:center;justify-content:center;text-align:center}
+.macierz .mp{border:2px solid var(--ramka);border-radius:10px;padding:10px 12px;min-height:90px}
+.macierz .mp b{display:block;color:var(--g);margin-bottom:4px}
+.macierz .mp div{font-size:14px}
+.btn-maly{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 22px;border:2px solid var(--g);border-radius:8px;background:var(--g);color:#fff;font:600 15px/1.2 var(--font);cursor:pointer}
+.btn-maly:hover{background:var(--g2);border-color:var(--g2)}
+.btn-maly:disabled{opacity:.4;cursor:not-allowed}
+.krok{border-left:4px solid var(--ramka);padding-left:12px}
+.krok.pom{opacity:.65}
+.krok .krok-akcje{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.netto{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.netto div{background:var(--jasny);border-radius:8px;padding:10px 12px;font-size:14px}
+.netto b{display:block;font-size:18px;color:var(--g)}
+.uwagi{border-top:2px dashed var(--ramka);padding-top:10px}
+.uwaga{background:#FFF7DD;border-radius:8px;padding:8px 10px;font-size:14px;margin-top:6px}
+.uwaga.ok{background:var(--tlo);color:var(--tekst2)}
+.uwaga small{display:block;color:var(--tekst2);font-size:12px}
+.akc-dec{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.zapis-stan{position:fixed;right:18px;top:78px;display:flex;align-items:center;gap:12px;background:var(--zielen);color:#fff;font:700 17px var(--font);padding:12px 20px;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.18);opacity:0;pointer-events:none;transition:opacity .3s;z-index:30}
+.zapis-stan.pok{opacity:1;animation:zs-puls .7s ease-in-out 2}
+.zapis-stan.blad{background:var(--czerwien);opacity:1;animation:zs-puls 1.2s ease-in-out infinite}
+.zs-ik{width:30px;height:30px;border-radius:50%;background:#fff;position:relative;flex:none}
+.zs-ik::after{content:"";position:absolute;left:10px;top:6px;width:8px;height:14px;border:solid var(--zielen);border-width:0 3px 3px 0;transform:rotate(45deg)}
+.zapis-stan.blad .zs-ik::after{content:"!";border:0;transform:none;left:0;right:0;top:2px;width:auto;height:auto;text-align:center;color:var(--czerwien);font:800 20px var(--font)}
+@keyframes zs-puls{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+#podgladDok{border:2px solid var(--ramka);border-radius:12px;padding:20px;margin-top:14px;font-size:15px;line-height:1.5}
+#podgladDok .w-gl{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--g);padding-bottom:8px;margin-bottom:12px}
+#podgladDok .w-gl img{height:44px}
+.pdf-dok .w-gl img{height:34px} .pdf-dok h2{font-size:15px} .pdf-dok .w-tab{font-size:11px}
+#podgladDok .w-gl .w-ak{font-size:13px;color:var(--tekst2);text-align:right}
+#podgladDok .w-gl .w-ak b{color:var(--g)}
+#podgladDok h1{font-size:22px}
+#podgladDok .w-meta{width:100%;border-collapse:collapse;margin:6px 0 14px;font-size:14px}
+#podgladDok .w-meta td{border:1px solid var(--ramka);padding:5px 8px}
+#podgladDok .w-meta td:nth-child(odd){background:var(--jasny);font-weight:700;color:var(--g);width:18%}
+#podgladDok .w-sek{margin-top:16px}
+#podgladDok .w-sek h2{font-size:16px;color:#fff;background:var(--g);padding:6px 10px;border-radius:6px;margin:0 0 8px}
+#podgladDok .w-pole{margin:0 0 10px}
+#podgladDok .w-et{font-weight:700;color:var(--g);font-size:14px}
+#podgladDok .w-v{white-space:pre-wrap}
+#podgladDok .w-brak{color:var(--czerwien)}
+#podgladDok .w-pom{color:var(--tekst2)}
+#podgladDok .w-tab{width:100%;border-collapse:collapse;font-size:14px;margin-top:4px}
+#podgladDok .w-tab th{background:var(--jasny);color:var(--g);text-align:left;border:1px solid var(--ramka);padding:5px 6px}
+#podgladDok .w-tab td{border:1px solid var(--ramka);padding:5px 6px;vertical-align:top;white-space:pre-wrap}
+#podgladDok .w-tab td.l{text-align:right;white-space:nowrap}
+#podgladDok .w-suma{font-weight:700;color:#fff;background:var(--g);border-radius:8px;padding:8px 12px;margin-top:6px;display:table;margin-left:auto;font-size:15px}
+.okno-tlo{position:fixed;inset:0;background:rgba(20,30,40,.55);z-index:40;display:flex;align-items:center;justify-content:center;padding:16px}
+.okno{background:#fff;border-radius:14px;max-width:980px;width:100%;max-height:90vh;overflow:auto;padding:18px}
+.okno .dwie{display:grid;gap:12px}
+.okno .wer{border:2px solid var(--ramka);border-radius:10px;padding:10px;font-size:14px;white-space:pre-wrap}
+.okno .wer h3{margin-bottom:6px;font-size:15px}
+.okno .akcje{display:grid;gap:8px;margin-top:12px}
+.hist{border-bottom:1px solid var(--ramka);padding:8px 0;font-size:14px}
+.hist small{color:var(--tekst2)}
+.hist pre{white-space:pre-wrap;font:400 14px var(--font);margin:4px 0;background:var(--tlo);padding:6px 8px;border-radius:6px}
+@media (min-width:800px){ .okno .dwie{grid-template-columns:1fr 1fr} .okno .akcje{grid-template-columns:repeat(3,1fr)} }
+@media (max-width:799px){ .tab .tw{grid-template-columns:1fr!important} .tab .th{display:none} .pasek{grid-template-columns:repeat(6,1fr)} .akc-dec{grid-template-columns:1fr} }
+/* ===== wydruk ===== */
+#wydruk{display:none}
+@page{size:A4;margin:16mm 14mm 18mm 14mm;
+  @bottom-right{content:"Strona " counter(page) " z " counter(pages);font:9pt Montserrat,Arial,sans-serif;color:#5A6873}}
+@media print{
+  body>*:not(#wydruk){display:none!important}
+  #wydruk{display:block;font:10pt/1.45 Montserrat,Arial,sans-serif;color:#1A2733}
+  .w-gl{display:flex;justify-content:space-between;align-items:center;border-bottom:2pt solid #1F4460;padding-bottom:6pt;margin-bottom:10pt}
+  .w-gl img{height:34pt}
+  .w-gl .w-ak{font-size:8.5pt;color:#5A6873;text-align:right;line-height:1.3}
+  .w-gl .w-ak b{color:#1F4460;font-size:10pt}
+  #wydruk h1{font-size:18pt;margin:0 0 4pt;color:#1F4460}
+  .w-meta{width:100%;border-collapse:collapse;margin:6pt 0 12pt;font-size:9pt}
+  .w-meta td{border:0.75pt solid #C9D3DC;padding:3pt 6pt}
+  .w-meta td:nth-child(odd){background:#F0F6FB;font-weight:700;color:#1F4460;width:18%}
+  .w-sek{margin-top:10pt;break-inside:auto}
+  .w-sek h2{font-size:12pt;color:#fff;background:#1F4460;padding:3pt 8pt;border-radius:3pt;margin:0 0 6pt;break-after:avoid}
+  .w-pole{margin:0 0 6pt;break-inside:avoid}
+  .w-et{font-weight:700;color:#1F4460;font-size:9.5pt}
+  .w-v{white-space:pre-wrap}
+  .w-brak{color:#C8202E;font-style:normal}
+  .w-pom{color:#5A6873}
+  .w-tab{width:100%;border-collapse:collapse;font-size:8.8pt;margin-top:2pt}
+  .macierz{gap:4pt;margin-top:6pt;break-inside:avoid} .macierz .mp{min-height:44pt;padding:4pt 6pt;border-width:1pt;border-radius:3pt} .macierz .mp b,.macierz .mp div{font-size:8.8pt} .macierz .mo{font-size:8pt}
+  .w-tab th{background:#F0F6FB;color:#1F4460;text-align:left;border:0.75pt solid #C9D3DC;padding:3pt 4pt}
+  .w-tab td{border:0.75pt solid #C9D3DC;padding:3pt 4pt;vertical-align:top;white-space:pre-wrap}
+  .w-tab td.l{text-align:right;white-space:nowrap}
+  .w-suma{font-weight:700;color:#1F4460;margin-top:3pt;border:1.2pt solid #1F4460;border-radius:3pt;padding:3pt 6pt;display:table;margin-left:auto}
+}
+</style>
+</head>
+<body>
+<div id="naglowek"></div>
+<main class="wrap">
+  <div id="podglad"></div>
+  <div class="glowa-dok">
+    <div><span class="nadtytul" id="kodDok">T01</span><h1 id="tytul">Dokument</h1></div>
+    <div id="stanDok"></div>
+  </div>
+  <div class="przyciski" style="grid-template-columns:1fr 1fr 1fr;max-width:900px"><button class="zml-btn" id="instrBtn">Instrukcja</button><button class="zml-btn" id="drukBtn">Drukuj lub zapisz PDF</button><button class="zml-btn" id="rejBtn">Rejestr zmian</button></div>
+  <div id="tresc"></div>
+</main>
+<div id="stopka"></div>
+<div class="zapis-stan" id="zapisStan"><span class="zs-ik"></span><span id="zapisTekst">Dane zapisane</span></div>
+<div id="okno"></div>
+<div id="wydruk"></div>
+<script>
+if (APM.wymagajLogowania()) (async () => {
+  APM.naglowek(); APM.stopka();
+  if (!PODGLAD) await APM.init();
+  const $ = APM.$, P = new URLSearchParams(location.search), T = P.get('t') || 'T01', DEF = DOKUMENTY[T];
+  const JA = ja(), EDYTUJE = JA.rola === 'uczestnik' || (JA.rola === 'test' && !!JA.zespol);
+  const ZESP = EDYTUJE ? JA.zespol : (P.get('z') || 'P1');
+  const ID = ZESP + '_' + T;
+  if (!ZESP) { $('#tresc').innerHTML = '<div class="uwaga">Twój kod nie jest jeszcze przypisany do zespołu. Skontaktuj się z prowadzącym.</div>'; return; }
+  let D; try { D = await DANE.czytaj(ID); } catch (e) { console.warn('APM: odczyt', e); D = { pola: {}, kroki: {}, uwagi: {}, edycja: {}, wersja: 0, doAkc: null, akc: null, potw: null }; }
+  /* dokumenty powiązane: T12 korzysta z listy interesariuszy z T02; T02 przy pierwszym otwarciu pobiera interesariuszy z karty (karta się nie zmienia) */
+  window.POWIAZANE = {};
+  for (const t of (DEF.powiazane || [])) { try { POWIAZANE[t] = await DANE.czytaj(ZESP + '_' + t); } catch (e) { POWIAZANE[t] = null; } }
+  const lok = {}; /* stan lokalny pól: bazaW, brudny, timer */
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const zl = n => (Math.round(+n || 0)).toLocaleString('pl-PL') + ' zł';
+  const dt = s => s ? new Date(s).toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+  const wszystkiePola = DEF.sekcje.flatMap(s => (s.pola || []).flatMap(p => p.dod ? [p, p.dod] : [p]));
+  const defPola = id => wszystkiePola.find(p => p.id === id);
+  const wart = id => { const p = D.pola[id]; if (p) return p.v; const df = defPola(id); if (df && df.typ === 'etapy') return {}; if (df && df.dom) return df.dom(ZESP, POWIAZANE); if (df && df.stale) return df.wiersze.map(w => Object.assign({}, w)); return df && df.typ === 'tabela' ? [] : ''; };
+  const pusty = pustaWartosc;
+  window.WART = wart; /* listy wyboru zależne od innych tabel tego dokumentu */
+
+  /* ----- tryb podglądu: wybór osoby ----- */
+  if (PODGLAD) panelPodgladu($('#podglad'), o => `?t=${T}&z=${o.zespol || ZESP}&podglad=1`);
+  $('#kodDok').textContent = T; $('#tytul').textContent = DEF.nazwa + ' · ' + ZESP;
+  document.title = DEF.nazwa + ' ' + ZESP + ' — Akademia Zarządzania Projektami PTBS';
+  if (false) $('#wyborZesp').innerHTML = `<div class="zespoly">${Object.keys(ZESPOLY).map(z => `<a href="?t=${T}&z=${z}${PODGLAD ? '&podglad=1' : ''}" class="${z === ZESP ? 'wyb' : ''}">${z} · ${ZESPOLY[z].projekt}</a>`).join('')}</div>`;
+
+  /* ----- stan sekcji i dokumentu ----- */
+  const krokZrobiony = id => id === 'w6' ? krokZrobiony('w5') : (D.kroki[id] === 'pom' || !pusty(wart(id)));
+  function stanSekcji(s) {
+    if (s.akceptacja) return D.akc && D.akc.decyzja !== 'do poprawy' ? 'w' : D.doAkc ? 't' : '';
+    const pola = s.pola.filter(p => p.typ !== 'wyliczenie' && !(p.dom && p.typ !== 'tabela'));
+    const ile = pola.filter(p => s.kroki ? krokZrobiony(p.id) : !pusty(wart(p.id))).length;
+    return ile === pola.length ? 'w' : ile ? 't' : '';
+  }
+  const ST = { w: 'wypełniona', t: 'w toku', '': 'do uzupełnienia' };
+  const zmienionePoAkc = () => zmienionePoAkceptacji(D);
+  const stanDok = () => stanDokumentu(D);
+  function odswiezStan() {
+    const [k, t] = stanDok();
+    $('#stanDok').innerHTML = `<span class="stan-dok ${k}">Status: ${t} · wersja ${D.wersja}</span>`;
+    if ($('#pasek')) $('#pasek').innerHTML = DEF.sekcje.map(s => `<a href="#${s.id}" class="${stanSekcji(s)}" title="${s.nr}. ${s.t}: ${ST[stanSekcji(s)]}">${s.nr}</a>`).join('');
+    DEF.sekcje.forEach(s => { const e = document.querySelector(`#${s.id} .st`); if (e) { const st = stanSekcji(s); e.className = 'st ' + st; e.textContent = ST[st]; } });
+  }
+
+  /* ----- pola ----- */
+  function wejscie(p, v, dis, klucz) {
+    const d = dis ? 'disabled' : '', k = `data-p="${klucz || p.id}"`;
+    if (p.typ === 'obszar') return `<textarea class="wej" ${k} ${d}>${esc(v)}</textarea>`;
+    if (p.typ === 'wybor') { let op = typeof p.op === 'function' ? p.op() : p.op; if (v && !op.includes(v)) op = op.concat([v]);
+      return `<select class="wej" ${k} ${d}><option value="">${klucz ? '—' : '— wybierz —'}</option>${op.map(o => `<option ${o === v ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`; }
+    if (p.typ === 'wielo') { const zazn = String(v || '').split(', ').filter(Boolean);
+      const opW = typeof p.op === 'function' ? p.op() : p.op; return `<div class="wej wielo" ${k} data-wielo="1">${opW.length ? '' : '<span style="font-size:12px;color:var(--tekst2)">najpierw uzupełnijcie listę powyżej</span>'}${opW.map(o => `<label><input type="checkbox" value="${esc(o)}" ${zazn.includes(o) ? 'checked' : ''} ${d}>${esc(o)}</label>`).join('')}</div>`; }
+    if (p.typ === 'liczba') return `<input class="wej" type="number" inputmode="decimal" min="0" step="1" ${k} value="${esc(v)}" ${d}>`;
+    return `<input class="wej" type="text" ${k} value="${esc(v)}" ${d}>`;
+  }
+  function tabela(p, dis) {
+    const w = wart(p.id), szer = p.kol.map(c => c.s + 'fr').join(' ') + (p.stale || dis ? '' : ' 44px');
+    let h = `<div class="tab" data-tab="${p.id}"><div class="tw th" style="grid-template-columns:${szer}">${p.kol.map(c => `<span>${c.t}</span>`).join('')}${p.stale || dis ? '' : '<span></span>'}</div>`;
+    w.forEach((r, i) => { h += `<div class="tw" style="grid-template-columns:${szer}">${p.kol.map(c => c.typ === 'auto' ? `<div class="auto" data-auto="${p.id}|${i}">${esc(c.f(r, i))}</div>` : c.typ === 'staly' ? `<div class="staly">${esc(r[c.id])}</div>` : wejscie(c, r[c.id] ?? '', dis, `${p.id}|${i}|${c.id}`)).join('')}${p.stale || dis ? '' : p.bezUsuwania ? '<span></span>' : `<button class="usun" data-usun="${p.id}|${i}" title="Usuń wiersz">×</button>`}</div>`; });
+    if (!p.stale && !dis && !(p.max && w.length >= p.max)) h += `<div><button class="btn-maly" data-dodaj="${p.id}">Dodaj wiersz</button></div>`;
+    if (p.suma) {
+      const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0);
+      h += `<div class="suma"><div class="suma-k"><span>${p.sumaEt || 'Razem'}:</span><b>${zl(s())} rocznie</b>${p.sumaWg ? `<span>oszczędności twarde: ${zl(s('twarda'))}</span><span>miękkie: ${zl(s('miękka'))}</span>` : ''}</div></div>`;
+    }
+    if (p.podpowiedz) h += `<div class="podp" data-podp="${p.id}">${p.podpowiedz(w, wart)}</div>`;
+    if (p.macierz) h += macierzHtml(w, p);
+    return h + '</div>';
+  }
+  function macierzHtml(w, p) {
+    if (p && p.macierz === 'skutki') return macierzSkutki(w);
+    const pole = (wpl, zai) => { const x = WSPOLPRACA.find(k => k.wpl === wpl && k.zai === zai), L = w.filter(r => r.wpl === wpl && r.zai === zai && String(r.kto || '').trim());
+      return `<div class="mp"><b>${x.n}</b>${L.map(r => `<div>${esc(r.kto)}</div>`).join('') || '<div style="color:var(--tekst2)">—</div>'}</div>`; };
+    return `<div class="macierz"><div class="mo"></div>${POZ_ZAI.map(z => `<div class="mo">Zainteresowanie ${z}</div>`).join('')}
+      ${POZ_WPL.slice().reverse().map(p => `<div class="mo">Wpływ<br>${p}</div>${POZ_ZAI.map(z => pole(p, z)).join('')}`).join('')}</div>`;
+  }
+  function macierzSkutki(w) {
+    const pole = (wpl, sk) => { const n = sposobPostepowania({ wpl, sk }), L = w.filter(r => r.wpl === wpl && r.sk === sk && String(r.kto || '').trim());
+      return `<div class="mp"><b>${n}</b>${L.map(r => `<div>${esc(r.kto)}</div>`).join('') || '<div style="color:var(--tekst2)">—</div>'}</div>`; };
+    return `<div class="macierz" style="grid-template-columns:auto 1fr 1fr"><div class="mo"></div>${POZ_SKUTKI.map(z => `<div class="mo">Skutki projektu<br>${z}</div>`).join('')}
+      ${POZ_WPL2.map(p => `<div class="mo">Wpływ<br>${p}</div>${POZ_SKUTKI.map(z => pole(p, z)).join('')}`).join('')}</div>`;
+  }
+  function etapyHtml(p, dis) {
+    const v = wart(p.id) || {};
+    let h = `<div class="etw th"><span>Etap projektu</span><span>Działanie</span>${dis ? '' : '<span></span><span></span>'}</div>`;
+    ETAPY_KARTY.forEach(e => { const L = (v[e.id] && v[e.id].length) ? v[e.id] : [{ t: '' }];
+      L.forEach((x, i) => { h += `<div class="etw${i ? '' : ' nowy-et'}"${dis ? ' style="grid-template-columns:1.1fr 3fr"' : ''}><div class="ec"><b>${e.n}</b><span>${e.sp} · ${e.km}</span></div>${wejscie({ typ: 'obszar' }, x.t || '', dis, `${p.id}|${e.id}|${i}`)}${dis ? '' : `<button data-eplus="${e.id}|${i}" title="Dodaj działanie w tym etapie">+</button>${L.length > 1 ? `<button data-eusun="${e.id}|${i}" title="Usuń wiersz">×</button>` : '<span></span>'}`}</div>`; }); });
+    return h;
+  }
+  function sumy() {
+    const t = id => (wart(id) || []), s = (id, f) => t(id).filter(f || (() => 1)).reduce((a, r) => a + (+r.kw || 0), 0);
+    return { strata: s('w1'), tw: s('w3', r => r.rodz === 'twarda'), mi: s('w3', r => r.rodz === 'miękka'), bud: s('w5') };
+  }
+  function wyliczenie() {
+    const S = sumy();
+    return `<div class="netto"><div>Strata rocznie (krok 1)<b>${zl(S.strata)}</b></div><div>Ramowy budżet (krok 5)<b>${zl(S.bud)}</b></div>
+      <div>Korzyść netto I roku, tylko oszczędności twarde<b>${zl(S.tw - S.bud)}</b></div><div>Korzyść netto I roku, twarde i miękkie<b>${zl(S.tw + S.mi - S.bud)}</b></div></div>`;
+  }
+  function metaPola(id) {
+    return '';
+    const p = D.pola[id], inni = Object.values(D.edycja || {}).filter(e => e && e.pole === id && e.kto !== JA.imie && e.do > Date.now()), inny = inni.length, e = { kto: inni.map(x => x.kto).join(', ') };
+    return `${inny ? `<span class="edytuje">edytuje: ${esc(e.kto)}</span>` : ''}<div class="meta">${p ? `<span>Ostatnia zmiana: ${esc(p.kto)}, ${dt(p.kiedy)}</span>` : (defPola(id) && defPola(id).dom ? `<span>${esc(defPola(id).domEt || 'Wartość wpisana z programu Akademii; zespół może ją zmienić')}</span>` : '<span>Pole jeszcze niewypełnione</span>')}${p ? `<button data-hist="${id}">Historia zmian</button>` : ''}</div>`;
+  }
+  function pole(p, dis) {
+    if (p.typ === 'wyliczenie') return `<div class="pole" id="pole-${p.id}"><div class="et et-w">${p.et}${p.wyj ? `<button class="wy-btn" data-wyj="${p.id}" aria-expanded="false">Wyjaśnienie</button>` : ''}</div><div class="wy ukryty" id="wy-${p.id}">${htmlWyjasnienia(p.wyj)}</div><div data-wyl>${wyliczenie()}</div></div>`;
+    const tresc = p.typ === 'tabela' ? tabela(p, dis) : p.typ === 'etapy' ? etapyHtml(p, dis) : wejscie(p, wart(p.id), dis);
+    return `<div class="pole" id="pole-${p.id}"><div class="et et-w">${p.et}${p.wyj ? `<button class="wy-btn" data-wyj="${p.id}" aria-expanded="false">Wyjaśnienie</button>` : ''}</div><div class="wy ukryty" id="wy-${p.id}">${htmlWyjasnienia(p.wyj)}</div><div data-in="${p.id}">${tresc}</div><div data-meta="${p.id}">${metaPola(p.id)}</div><div data-nowsza="${p.id}"></div></div>`
+      + (p.dod ? pole(p.dod, dis) : '');
+  }
+  function uwagiSekcji(s) {
+    const L = D.uwagi[s.id] || [], prow = JA.rola === 'prowadzacy';
+    if (!L.length && !prow) return '';
+    return `<div class="uwagi"><div class="et" style="font-weight:700;color:var(--g);font-size:14px">Uwagi prowadzącego</div>${L.map((u, i) => `<div class="uwaga ${u.ok ? 'ok' : ''}">${esc(u.t)}<small>${esc(u.kto)}, ${dt(u.kiedy)}${u.ok ? ' · uwzględniona' : ''}</small>${!u.ok && EDYTUJE ? `<button class="btn-maly" style="margin-top:6px" data-uwz="${s.id}|${i}">Oznacz jako uwzględnioną</button>` : ''}</div>`).join('')}
+      ${prow ? `<textarea class="wej" style="margin-top:8px" id="nu-${s.id}" placeholder="Nowa uwaga do tej sekcji"></textarea><button class="btn-maly" style="margin-top:6px" data-nu="${s.id}">Dodaj uwagę</button>` : ''}</div>`;
+  }
+  function sekcjaAkc() {
+    const zar = JA.rola === 'zarzad', zm = zmienionePoAkc();
+    let h = '';
+    if (D.akc) h += `<div class="uwaga ${D.akc.decyzja === 'do poprawy' ? '' : 'ok'}"><b>Decyzja sponsora: ${esc(D.akc.decyzja)}</b> (wersja ${D.akc.wersja})${D.akc.uwagi ? '<br>' + esc(D.akc.uwagi) : ''}<small>${esc(D.akc.kto)}, ${dt(D.akc.kiedy)}</small></div>`;
+    if (zm.length && D.akc) h += `<div class="nowsza">Po akceptacji zespół zmienił pola: ${zm.map(k => (defPola(k) || { et: k }).et).join('; ')}.</div>`;
+    if (D.potw) h += `<div class="uwaga ok"><b>Wartość projektu potwierdzona po diagnozie (KM1)</b>${D.potw.uwagi ? '<br>' + esc(D.potw.uwagi) : ''}<small>${esc(D.potw.kto)}, ${dt(D.potw.kiedy)}</small></div>`;
+    const ponowne = D.akc && D.doAkc && D.doAkc.kiedy > D.akc.kiedy;
+    if ((!D.akc && D.doAkc) || ponowne) h += `<div class="uwaga">Zespół przekazał kartę ${ponowne ? 'ponownie ' : ''}do akceptacji: ${esc(D.doAkc.kto)}, ${dt(D.doAkc.kiedy)}.</div>`;
+    if (!D.akc && !D.doAkc && !zar) h += '<p style="margin:0">Karta jest robocza. Gdy zespół uzna ją za gotową, przekazuje ją sponsorowi do akceptacji.</p>';
+    if (EDYTUJE && (!D.doAkc || (D.akc && !ponowne && (D.akc.decyzja === 'do poprawy' || zm.length)))) h += `<div><button class="zml-btn" style="max-width:420px" id="doAkcBtn">Przekaż kartę do akceptacji</button></div>`;
+    if (zar) h += `<div class="pole"><div class="et">Decyzja sponsora</div><textarea class="wej" id="akcUw" placeholder="Uwagi sponsora (nieobowiązkowe)"></textarea>
+      <div class="akc-dec"><button class="zml-btn" data-dec="akceptuję">Akceptuję</button><button class="zml-btn" data-dec="akceptuję z uwagami">Akceptuję z uwagami</button><button class="zml-btn" data-dec="do poprawy">Do poprawy</button></div>
+      ${D.akc && D.akc.decyzja !== 'do poprawy' && !D.potw ? `<div class="akc-dec" style="grid-template-columns:1fr"><button class="zml-btn" id="potwBtn">Potwierdzam wartość projektu po diagnozie (KM1)</button></div>` : ''}</div>`;
+    return h;
+  }
+  function rysuj() {
+    if (!EDYTUJE) { rysujPodglad(); return; }
+    const dis = !EDYTUJE;
+    $('#tresc').innerHTML = DEF.sekcje.map(s => {
+      let b;
+      if (s.akceptacja) b = sekcjaAkc();
+      else if (s.kroki) {
+        let widoczny = true;
+        b = `<p class="pod" style="margin:0;font-size:14px;color:var(--tekst2)">${s.wstep}</p>` + s.pola.map(p => {
+          if (!widoczny) return '';
+          const pom = D.kroki[p.id] === 'pom', zrob = krokZrobiony(p.id);
+          const h = `<div class="krok ${pom ? 'pom' : ''}">${pom ? `<div class="pole"><div class="et">${p.et}</div><div class="pod">Krok pominięty: nie dotyczy projektu.</div></div>` : pole(p, dis)}
+            ${EDYTUJE && p.typ !== 'wyliczenie' ? `<div class="krok-akcje">${pom ? `<button class="btn-maly" data-krok="${p.id}">Przywróć krok</button>` : (pusty(wart(p.id)) ? `<button class="btn-maly" data-krok="${p.id}">Pomiń krok — nie dotyczy projektu</button>` : '')}</div>` : ''}</div>`;
+          if (!zrob) widoczny = false;
+          return h;
+        }).join('') + (widoczny ? '' : '<p class="pod" style="margin:0;font-size:13px;color:var(--tekst2)">Kolejny krok pojawi się po wypełnieniu albo pominięciu bieżącego.</p>');
+      } else b = s.pola.map(p => pole(p, dis)).join('');
+      return `<section class="sek" id="${s.id}"><div class="sg"><span class="nr">${s.nr}</span><h2 style="margin:0;font-size:18px">${s.t}</h2></div><div class="sb">${b}${s.akceptacja ? '' : uwagiSekcji(s)}</div></section>`;
+    }).join('');
+    odswiezStan(); podepnij();
+  }
+
+  function rysujPodglad() {
+    $('#tresc').innerHTML = `<div id="podgladDok">${budujWydruk(true)}</div>` + (JA.rola === 'zarzad' && DEF.sekcje.some(s => s.akceptacja) ? `<section class="sek" style="margin-top:16px"><div class="sg"><h2 style="margin:0;font-size:18px">Decyzja sponsora</h2></div><div class="sb">${sekcjaAkc()}</div></section>` : '');
+    odswiezStan(); podepnij();
+  }
+
+  /* ----- zapis ----- */
+  let tz = null;
+  const pokazZapis = (t, blad) => {
+    const e = $('#zapisStan'), g = new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+    $('#zapisTekst').textContent = blad ? 'Dane nie zostały zapisane. Sprawdź połączenie z internetem.' : `${t}, godz. ${g}`;
+    clearTimeout(tz); e.classList.remove('pok', 'blad'); void e.offsetWidth;
+    if (blad) { e.classList.add('blad'); return; }
+    e.classList.add('pok'); tz = setTimeout(() => e.classList.remove('pok'), 3500);
+  };
+  function wartoscZDom(id) {
+    const df = defPola(id);
+    if (df.typ === 'etapy') {
+      const v = JSON.parse(JSON.stringify(wart(id) || {}));
+      document.querySelectorAll(`[data-p^="${id}|"]`).forEach(el => { const [, e, i] = el.dataset.p.split('|'); (v[e] = v[e] || [])[+i] = { t: el.value }; });
+      return v;
+    }
+    if (df.typ === 'tabela') {
+      const w = (wart(id) || []).map(r => Object.assign({}, r));
+      document.querySelectorAll(`[data-p^="${id}|"]`).forEach(el => { const [, i, c] = el.dataset.p.split('|'); const kol = df.kol.find(k => k.id === c); w[+i] = w[+i] || {}; w[+i][c] = kol.typ === 'liczba' ? (el.value === '' ? '' : +el.value) : kol.typ === 'wielo' ? [...el.querySelectorAll('input:checked')].map(x => x.value).join(', ') : el.value; });
+      return w;
+    }
+    const el = document.querySelector(`[data-p="${id}"]`); return df.typ === 'liczba' ? (el.value === '' ? '' : +el.value) : el.value;
+  }
+  async function zapisz(id, wymus, wartosc) {
+    const L = lok[id] || (lok[id] = {}); clearTimeout(L.timer);
+    const v = wartosc !== undefined ? wartosc : wartoscZDom(id);
+    const bazaW = L.bazaW !== undefined ? L.bazaW : ((D.pola[id] || {}).w || 0);
+    let r; try { r = await DANE.zapiszPole(ID, id, v, bazaW, JA.imie, wymus); } catch (e) { console.warn(e); pokazZapis('', true); return; }
+    if (r.konflikt) { konflikt(id, v, r.konflikt); return; }
+    L.bazaW = r.ok.w; L.brudny = false; D = r.D;
+    $(`[data-meta="${id}"]`) && ($(`[data-meta="${id}"]`).innerHTML = metaPola(id)); $(`[data-nowsza="${id}"]`) && ($(`[data-nowsza="${id}"]`).innerHTML = '');
+    pokazZapis('Dane zapisane'); odswiezZalezne(id);
+  }
+  function odswiezZalezne(id) {
+    const df = defPola(id);
+    if (df && df.typ === 'tabela' && df.macierz) { const box = $(`[data-in="${id}"]`), w = wart(id) || [], kA = df.kol.find(c => c.typ === 'auto');
+      box.querySelectorAll('[data-auto]').forEach(el => { const i = +el.dataset.auto.split('|')[1]; el.textContent = w[i] ? kA.f(w[i], i) : ''; });
+      const m = box.querySelector('.macierz'); if (m) { const t = document.createElement('div'); t.innerHTML = macierzHtml(w, df); m.replaceWith(t.firstElementChild); } }
+    if (df && df.typ === 'tabela' && !df.macierz && df.kol.some(c => c.typ === 'auto')) { const w = wart(id) || [], A = df.kol.filter(c => c.typ === 'auto');
+      document.querySelectorAll(`[data-in="${id}"] [data-auto]`).forEach((el, j) => { const i = +el.dataset.auto.split('|')[1], c = A[j % A.length]; el.textContent = w[i] ? c.f(w[i], i) : ''; }); }
+    wszystkiePola.filter(q => q.typ === 'tabela' && (q.zalezy || []).includes(id)).forEach(q => { const box = $(`[data-in="${q.id}"]`); if (box && !(document.activeElement && box.contains(document.activeElement))) { box.innerHTML = tabela(q, !EDYTUJE); podepnijPola(box); } });
+    document.querySelectorAll('[data-podp]').forEach(e => { const dp = defPola(e.dataset.podp); if (dp && dp.podpowiedz) e.innerHTML = dp.podpowiedz(wart(dp.id) || [], wart); });
+    if (df && df.typ === 'tabela' && df.suma) { const box = $(`[data-in="${id}"]`); const f = document.activeElement && box.contains(document.activeElement); if (!f) { box.innerHTML = tabela(df, !EDYTUJE); podepnijPola(box); } else { const s = box.querySelector('.suma'); if (s) { const t = document.createElement('div'); t.innerHTML = tabela(df, !EDYTUJE); s.replaceWith(t.querySelector('.suma')); } } }
+    const wy = document.querySelector('[data-wyl]'); if (wy) wy.innerHTML = wyliczenie();
+    const sek = DEF.sekcje.find(s => s.kroki && s.pola.some(p => p.id === id || (p.dod && p.dod.id === id)));
+    if (sek) { const przed = sek.pola.map(p => krokZrobiony(p.id)).join(); if (lok._kroki !== przed) { lok._kroki = przed; if (!document.activeElement || !document.activeElement.closest('.wej')) rysuj(); else setTimeout(() => { if (!document.activeElement || !document.activeElement.closest('.wej')) rysuj(); }, 0); } }
+    odswiezStan();
+  }
+  function ustawEdycje(id, on) {
+    return;
+    if (!EDYTUJE) return;
+    DANE.edycja(ID, id, JA.imie, on);
+  }
+  const poleZ = el => el.dataset.p.split('|')[0];
+  function podepnijPola(root) {
+    root.querySelectorAll('[data-p]').forEach(el => {
+      const id = poleZ(el);
+      el.addEventListener('focus', () => { const L = lok[id] || (lok[id] = {}); if (!L.brudny) L.bazaW = (D.pola[id] || {}).w || 0; ustawEdycje(id, true); });
+      el.addEventListener('input', () => { const L = lok[id] || (lok[id] = {}); L.brudny = true; clearTimeout(L.timer); L.timer = setTimeout(() => zapisz(id), 1500); });
+      el.addEventListener('change', () => { if (el.tagName === 'SELECT' || el.dataset.wielo) { const L = lok[id] || (lok[id] = {}); clearTimeout(L.timer); L.brudny = true; zapisz(id); } });
+      el.addEventListener('blur', () => { const L = lok[id] || {}; setTimeout(() => { if (!document.activeElement || poleZOpt(document.activeElement) !== id) { if (L.brudny) zapisz(id); ustawEdycje(id, false); } }, 50); });
+    });
+    root.querySelectorAll('[data-dodaj]').forEach(b => b.addEventListener('click', async () => { const id = b.dataset.dodaj, w = wartoscZDom(id), dfd = defPola(id); w.push(dfd.nowyWiersz ? dfd.nowyWiersz(w) : {}); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
+    root.querySelectorAll('[data-usun]').forEach(b => b.addEventListener('click', async () => { const [id, i] = b.dataset.usun.split('|'); const w = wartoscZDom(id); w.splice(+i, 1); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
+    root.querySelectorAll('[data-hist]').forEach(b => b.addEventListener('click', () => historia(b.dataset.hist)));
+    root.querySelectorAll('[data-wyj]').forEach(b => b.addEventListener('click', () => { const w = $('#wy-' + b.dataset.wyj), o = w.classList.toggle('ukryty'); b.setAttribute('aria-expanded', String(!o)); b.textContent = o ? 'Wyjaśnienie' : 'Zwiń wyjaśnienie'; }));
+    const etapZmien = async (fn) => { const id = 'etapy', v = wartoscZDom(id); fn(v); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, v); const box = $(`[data-in="${id}"]`); box.innerHTML = etapyHtml(defPola(id), false); podepnijPola(box); };
+    root.querySelectorAll('[data-eplus]').forEach(b => b.addEventListener('click', () => { const [e, i] = b.dataset.eplus.split('|'); etapZmien(v => { v[e] = v[e] && v[e].length ? v[e] : [{ t: '' }]; v[e].splice(+i + 1, 0, { t: '' }); }); }));
+    root.querySelectorAll('[data-eusun]').forEach(b => b.addEventListener('click', () => { const [e, i] = b.dataset.eusun.split('|'); etapZmien(v => v[e].splice(+i, 1)); }));
+  }
+  const poleZOpt = el => el && el.dataset && el.dataset.p ? poleZ(el) : null;
+  function podepnij() {
+    podepnijPola(document);
+    document.querySelectorAll('[data-krok]').forEach(b => b.addEventListener('click', async () => { const id = b.dataset.krok; D = await DANE.zmien(ID, d => { if (d.kroki[id] === 'pom') delete d.kroki[id]; else d.kroki[id] = 'pom'; d.wersja++; }); rysuj(); }));
+    document.querySelectorAll('[data-nu]').forEach(b => b.addEventListener('click', async () => { const s = b.dataset.nu, t = $('#nu-' + s).value.trim(); if (!t) return; D = await DANE.zmien(ID, d => { (d.uwagi[s] = d.uwagi[s] || []).push({ t, kto: JA.imie, kiedy: new Date().toISOString(), ok: false }); }); rysuj(); }));
+    document.querySelectorAll('[data-uwz]').forEach(b => b.addEventListener('click', async () => { const [s, i] = b.dataset.uwz.split('|'); D = await DANE.zmien(ID, d => { d.uwagi[s][+i].ok = true; }); rysuj(); }));
+    const da = $('#doAkcBtn'); if (da) da.addEventListener('click', async () => { D = await DANE.zmien(ID, d => { d.doAkc = { kto: JA.imie, kiedy: new Date().toISOString() }; }); rysuj(); });
+    document.querySelectorAll('[data-dec]').forEach(b => b.addEventListener('click', async () => { const uw = $('#akcUw').value.trim(); D = await DANE.zmien(ID, d => { d.akc = { decyzja: b.dataset.dec, uwagi: uw, kto: JA.imie, kiedy: new Date().toISOString(), wersja: d.wersja }; }); rysuj(); }));
+    const pb = $('#potwBtn'); if (pb) pb.addEventListener('click', async () => { const uw = $('#akcUw').value.trim(); D = await DANE.zmien(ID, d => { d.potw = { uwagi: uw, kto: JA.imie, kiedy: new Date().toISOString(), wersja: d.wersja }; }); rysuj(); });
+  }
+
+  /* ----- konflikt i historia ----- */
+  const pokazW = (id, v) => { const df = defPola(id); if (df.typ !== 'tabela') return esc(v || '—'); return (v || []).map((r, i) => `${i + 1}. ` + df.kol.map(c => `${c.t}: ${esc(r[c.id] ?? '')}`).join(' · ')).join('\n') || '—'; };
+  function zamknijOkno() { $('#okno').innerHTML = ''; }
+  function konflikt(id, moja, zapisana) {
+    const df = defPola(id), tekst = df.typ !== 'tabela';
+    $('#okno').innerHTML = `<div class="okno-tlo"><div class="okno"><h2>To pole zmieniła inna osoba w czasie Twojej edycji</h2>
+      <p>Pole „${esc(df.et)}”. Nowszą wersję zapisano ${dt(zapisana.kiedy)}, autor: ${esc(zapisana.kto)}. Wybierz, którą wersję zostawić${tekst ? ', albo połącz je w polu poniżej' : ''}. Wersja, której nie wybierzesz, zostanie w historii zmian.</p>
+      <div class="dwie"><div class="wer"><h3>Twoja wersja</h3>${pokazW(id, moja)}</div><div class="wer"><h3>Wersja zapisana przez: ${esc(zapisana.kto)}</h3>${pokazW(id, zapisana.v)}</div></div>
+      ${tekst ? `<div class="pole" style="margin-top:12px"><div class="et">Połączona wersja</div><textarea class="wej" id="polacz" style="min-height:120px">${esc(zapisana.v || '')}\n${esc(moja || '')}</textarea></div>` : ''}
+      <div class="akcje"><button class="zml-btn" id="kMoja">Zostaw moją wersję</button><button class="zml-btn" id="kIch">Zostaw zapisaną wersję</button>${tekst ? '<button class="zml-btn" id="kPol">Zapisz połączoną wersję</button>' : ''}</div></div></div>`;
+    const dalej = async v => { zamknijOkno(); D = await DANE.czytaj(ID); lok[id] = { bazaW: (D.pola[id] || {}).w || 0 }; if (v !== undefined) { const r = await DANE.zapiszPole(ID, id, v, lok[id].bazaW, JA.imie, true); lok[id].bazaW = r.ok.w; D = r.D; } rysuj(); pokazZapis('Dane zapisane'); };
+    $('#kMoja').onclick = () => dalej(moja);
+    $('#kIch').onclick = async () => { await DANE.dopiszHist(ID, { pole: id, stara: zapisana.v ?? null, nowa: moja, kto: JA.imie, opis: 'wersja niewybrana w oknie konfliktu, niezapisana w polu', wersja: D.wersja }); dalej(); };
+    if (tekst) $('#kPol').onclick = () => dalej($('#polacz').value);
+  }
+  async function historia(id) {
+    const df = defPola(id), H = (await DANE.hist(ID)).filter(h => h.pole === id).reverse();
+    $('#okno').innerHTML = `<div class="okno-tlo"><div class="okno"><h2>Historia zmian: ${esc(df.et)}</h2>
+      ${H.map((h, i) => `<div class="hist"><small>${esc(h.kto)}, ${dt(h.kiedy)} · wersja dokumentu ${h.wersja}${h.opis ? ' · ' + esc(h.opis) : ''}</small><pre>${pokazW(id, h.nowa)}</pre>${EDYTUJE && i > 0 && !h.opis ? `<button class="btn-maly" data-przywroc="${i}">Przywróć tę wersję</button>` : ''}</div>`).join('') || '<p>Brak zmian.</p>'}
+      <div class="akcje" style="grid-template-columns:1fr"><button class="zml-btn" id="hZamknij">Zamknij</button></div></div></div>`;
+    $('#hZamknij').onclick = zamknijOkno;
+    document.querySelectorAll('[data-przywroc]').forEach(b => b.onclick = async () => { const h = H[+b.dataset.przywroc]; const r = await DANE.zapiszPole(ID, id, h.nowa, 0, JA.imie, true); D = r.D; zamknijOkno(); rysuj(); pokazZapis('Przywrócono wersję'); });
+  }
+
+  async function rejestr() {
+    const H = (await DANE.hist(ID)).slice().reverse();
+    const nazwa = id => (defPola(id) || { et: id }).et;
+    $('#okno').innerHTML = `<div class="okno-tlo"><div class="okno"><h2>Rejestr zmian dokumentu</h2>
+      <p>Wszystkie zmiany pól od najnowszej. Wpisów nie można poprawić ani usunąć.</p>
+      ${H.map(h => `<div class="hist"><small>${dt(h.kiedy)} · ${esc(h.kto)} · wersja ${h.wersja}${h.opis ? ' · ' + esc(h.opis) : ''}</small><div style="font-weight:700;color:var(--g)">${esc(nazwa(h.pole))}</div>
+        <div class="dwie" style="display:grid;gap:8px;grid-template-columns:1fr 1fr"><pre>Było: ${pokazW(h.pole, h.stara)}</pre><pre>Jest: ${pokazW(h.pole, h.nowa)}</pre></div></div>`).join('') || '<p>Brak zmian.</p>'}
+      <div class="akcje" style="grid-template-columns:1fr"><button class="zml-btn" id="rZamknij">Zamknij</button></div></div></div>`;
+    $('#rZamknij').onclick = zamknijOkno;
+  }
+  $('#rejBtn').addEventListener('click', rejestr);
+  $('#instrBtn').addEventListener('click', () => window.open(`instrukcja.html?t=${T}`, '_blank'));
+
+  /* ----- zmiany innych osób ----- */
+  const naZmiane = nowe => {
+    if (!EDYTUJE) { D = nowe; if (!(document.activeElement && document.activeElement.closest('.wej'))) rysujPodglad(); return; }
+    const stare = D; D = nowe;
+    Object.keys(D.pola).forEach(id => {
+      const L = lok[id] || {}, zm = !stare.pola[id] || stare.pola[id].w !== D.pola[id].w;
+      const f = document.activeElement && poleZOpt(document.activeElement) === id;
+      if (zm && !L.brudny && !f) { const box = $(`[data-in="${id}"]`); const df = defPola(id); if (box && df) { box.innerHTML = df.typ === 'tabela' ? tabela(df, !EDYTUJE) : wejscie(df, D.pola[id].v, !EDYTUJE); podepnijPola(box); } L.bazaW = D.pola[id].w; }
+      else if (zm && (L.brudny || f) && D.pola[id].kto !== JA.imie) { const n = $(`[data-nowsza="${id}"]`); if (n) n.innerHTML = `<div class="nowsza">Nowszą wersję tego pola zapisała inna osoba: ${esc(D.pola[id].kto)}. Przy zapisie zobaczysz obie wersje.</div>`; }
+    });
+    document.querySelectorAll('[data-meta]').forEach(e => e.innerHTML = metaPola(e.dataset.meta));
+    const ak = JSON.stringify([stare.akc, stare.doAkc, stare.potw, stare.uwagi, stare.kroki]) !== JSON.stringify([D.akc, D.doAkc, D.potw, D.uwagi, D.kroki]);
+    if (ak && !(document.activeElement && document.activeElement.closest('.wej'))) rysuj(); else { const wy = document.querySelector('[data-wyl]'); if (wy) wy.innerHTML = wyliczenie(); odswiezStan(); }
+  };
+  setInterval(() => document.querySelectorAll('[data-meta]').forEach(e => e.innerHTML = metaPola(e.dataset.meta)), 15000);
+
+  /* ----- wydruk ----- */
+  function budujWydruk(ekran) {
+    const [, st] = stanDok(), brak = '<span class="w-brak">do uzupełnienia</span>';
+    const wP = p => {
+      if (p.typ === 'wyliczenie') { const S = sumy(); return `<div class="w-pole"><div class="w-et">${p.et}</div><table class="w-tab"><tr><th>Strata rocznie</th><th>Ramowy budżet</th><th>Korzyść netto I roku (twarde)</th><th>Korzyść netto I roku (twarde i miękkie)</th></tr><tr><td class="l">${zl(S.strata)}</td><td class="l">${zl(S.bud)}</td><td class="l">${zl(S.tw - S.bud)}</td><td class="l">${zl(S.tw + S.mi - S.bud)}</td></tr></table></div>`; }
+      if (D.kroki[p.id] === 'pom') return `<div class="w-pole"><div class="w-et">${p.et}</div><div class="w-pom">Krok pominięty: nie dotyczy projektu.</div></div>`;
+      const v = wart(p.id);
+      let t;
+      if (p.typ === 'etapy') {
+        t = pusty(v) ? brak : `<table class="w-tab"><tr><th style="width:30%">Etap projektu</th><th>Działanie</th></tr>${ETAPY_KARTY.map(e => { const L = ((v || {})[e.id] || []).filter(x => String(x.t || '').trim()); const n = Math.max(L.length, 1);
+          return (L.length ? L : [{ t: '' }]).map((x, i) => `<tr>${i ? '' : `<td rowspan="${n}"><b>${e.n}</b><br><span style="font-size:.85em">${e.sp} · ${e.km}</span></td>`}<td>${x.t ? esc(x.t) : '<span class="w-brak">brak działań</span>'}</td></tr>`).join(''); }).join('')}</table>`;
+      } else if (p.typ === 'tabela') {
+        const w = (v || []).filter(r => p.stale || !pusty([r]));
+        t = w.length ? `<table class="w-tab"><tr>${p.kol.map(c => `<th>${c.t}</th>`).join('')}</tr>${w.map((r, ri) => `<tr>${p.kol.map(c => c.typ === 'auto' ? `<td>${esc(c.f(r, ri))}</td>` : `<td class="${c.typ === 'liczba' ? 'l' : ''}">${c.typ === 'liczba' && r[c.id] !== '' && r[c.id] != null ? zl(r[c.id]) : esc(r[c.id] ?? '')}</td>`).join('')}</tr>`).join('')}</table>` : brak;
+        if (w.length && p.suma) { const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0); t += `<div class="w-suma">${p.sumaEt || 'Razem'}: ${zl(s())} rocznie${p.sumaWg ? ` · twarde: ${zl(s('twarda'))} · miękkie: ${zl(s('miękka'))}` : ''}</div>`; }
+        if (p.macierz && w.length) t += macierzHtml(w, p);
+      } else t = pusty(v) ? brak : `<div class="w-v">${esc(v)}</div>`;
+      return `<div class="w-pole"><div class="w-et">${p.et}</div>${t}</div>` + (p.dod ? wP(p.dod) : '');
+    };
+    const wS = s => {
+      if (s.akceptacja) return `<div class="w-sek"><h2>${s.nr}. ${s.t}</h2>${D.akc ? `<div class="w-pole"><div class="w-et">Decyzja sponsora</div><div>${esc(D.akc.decyzja)} · ${esc(D.akc.kto)}, ${dt(D.akc.kiedy)} · wersja ${D.akc.wersja}${D.akc.uwagi ? '<br>Uwagi: ' + esc(D.akc.uwagi) : ''}</div></div>` : `<div class="w-pole">${brak}</div>`}${D.potw ? `<div class="w-pole"><div class="w-et">Potwierdzenie wartości po diagnozie (KM1)</div><div>${esc(D.potw.kto)}, ${dt(D.potw.kiedy)}${D.potw.uwagi ? '<br>Uwagi: ' + esc(D.potw.uwagi) : ''}</div></div>` : ''}</div>`;
+      const PP = s.pola.map(wP); return `<div class="w-sek"><div class="w-glowa"><h2>${s.nr}. ${s.t}</h2>${PP[0] || ''}</div>${PP.slice(1).join('')}${ekran && JA.rola === 'prowadzacy' ? uwagiSekcji(s) : ''}</div>`;
+    };
+    return `<div class="w-gl"><img src="logo_ptbs.png" alt="PTBS"><div class="w-ak"><b>Akademia Zarządzania Projektami PTBS</b><br>${T} · ${DEF.nazwa}</div></div>
+      <h1>${DEF.nazwa}: ${esc(wart('nazwa_proj') || ZESPOLY[ZESP].projekt)}</h1>
+      <table class="w-meta"><tr><td>Zespół</td><td>${ZESP}${wart('nazwa_zesp') ? ' · ' + esc(wart('nazwa_zesp')) : ''}</td><td>Status</td><td>${st}</td></tr>
+      <tr><td>Wersja</td><td>${D.wersja}</td><td>Data wydruku</td><td>${dt(new Date().toISOString())}</td></tr></table>
+      ${DEF.sekcje.map(wS).join('')}`;
+  }
+  function wydruk() {
+    const [, st] = stanDok();
+    $('#wydruk').innerHTML = budujWydruk(false);
+    let ps=document.getElementById('stylDruku'); if(!ps){ ps=document.createElement('style'); ps.id='stylDruku'; document.head.appendChild(ps); }
+    ps.textContent=`@page{@bottom-left{content:"${T} ${DEF.nazwa} · ${ZESP} · wersja ${D.wersja} · ${st} · wydruk ${dt(new Date().toISOString())}";font:8pt Montserrat,Arial,sans-serif;color:#5A6873}}`;
+  }
+  window.addEventListener('beforeprint', wydruk);
+  $('#drukBtn').addEventListener('click', () => { wydruk(); setTimeout(() => window.print(), 50); });
+
+  rysuj();
+  try { DANE.otworz(ID, naZmiane); } catch (e) {}
+  if (P.get('druk') === '1') setTimeout(() => { wydruk(); window.print(); }, 400);
+  /* pdf=1: strona tworzy plik PDF z pełnym dokumentem i otwiera go w przeglądarce PDF */
+  if (P.get('pdf') === '1') {
+    const [, st] = stanDok();
+    document.body.insertAdjacentHTML('beforeend', '<div id="pdfInfo" style="position:fixed;inset:0;background:#fff;z-index:50;display:flex;align-items:center;justify-content:center;font:700 18px var(--font);color:var(--g)">Przygotowuję plik PDF…</div>');
+    const s = document.createElement('script'); s.src = 'html2pdf.min.js';
+    s.onload = async () => {
+      const el = document.createElement('div'); el.id = 'podgladDok'; el.className = 'pdf-dok'; el.innerHTML = budujWydruk(false);
+      el.style.cssText = 'width:700px;box-sizing:border-box;border:0;padding:0;margin:0;font-size:12px;line-height:1.45;background:#fff';
+      document.body.appendChild(el);
+      const stopka = `${T} ${DEF.nazwa} - ${ZESP} - wersja ${D.wersja} - ${st} - ${dt(new Date().toISOString())}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ł/g, 'l').replace(/Ł/g, 'L');
+      const nazwa = `PTBS_2026_APM_${T}_${ZESP}_wersja_${D.wersja}.pdf`;
+      try {
+        const pdf = await html2pdf().set({ margin: [12, 12, 16, 12], filename: nazwa, image: { type: 'jpeg', quality: 0.95 }, html2canvas: { scale: 2, useCORS: true },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['css'], avoid: ['.w-pole', 'tr', '.macierz', '.w-suma', '.w-glowa'] } }).from(el).toPdf().get('pdf');
+        const n = pdf.internal.getNumberOfPages();
+        for (let i = 1; i <= n; i++) { pdf.setPage(i); pdf.setFontSize(8); pdf.setTextColor(90, 104, 115); pdf.text(stopka, 12, 289); pdf.text(`Strona ${i} z ${n}`, 198, 289, { align: 'right' }); }
+        pdf.setProperties({ title: nazwa });
+        if (window.__pdfTest) { window.__pdfData = pdf.output('datauristring'); return; }
+        const url = pdf.output('bloburl', { filename: nazwa });
+        pdf.save(nazwa);
+        $('#pdfInfo').innerHTML = `<div style="text-align:center;max-width:560px;padding:20px"><p style="margin:0 0 14px">Plik <b>${nazwa}</b> został pobrany. Otworzysz go z listy pobranych plików przeglądarki.</p><a class="zml-btn" href="${url}" style="max-width:360px;margin:0 auto">Otwórz PDF w tej karcie</a></div>`;
+      } catch (e) { console.error(e); $('#pdfInfo').textContent = 'Nie udało się przygotować pliku PDF. Użyj przycisku „Drukuj lub zapisz PDF”.'; }
+    };
+    document.head.appendChild(s);
+  }
+})();
+</script>
+</body>
+</html>

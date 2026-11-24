@@ -1,0 +1,105 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function prowadzacy() {
+      return request.auth != null
+        && request.auth.token.email == 'marcin.zoltak@zmianologi.ca';
+    }
+    function kodAktywny(k) {
+      return exists(/databases/$(database)/documents/kody/$(k))
+        && get(/databases/$(database)/documents/kody/$(k)).data.aktywny == true;
+    }
+
+    /* osoba zalogowana kodem: anonimowe logowanie jest powiązane z kodem w kolekcji „uzytkownicy” */
+    function powiazany() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/uzytkownicy/$(request.auth.uid));
+    }
+    function mojKod() {
+      return get(/databases/$(database)/documents/uzytkownicy/$(request.auth.uid)).data.kod;
+    }
+    function osoba() {
+      return get(/databases/$(database)/documents/kody/$(mojKod())).data;
+    }
+    function zalogowanyKodem() {
+      return powiazany() && kodAktywny(mojKod());
+    }
+    function zarzad() {
+      return zalogowanyKodem() && osoba().rola == 'zarzad';
+    }
+    function czlonek(z) {
+      /* rola „test” (kod DEMO-2026) działa jak członek zespołu, do którego kod jest przypisany */
+      return zalogowanyKodem() && osoba().rola in ['uczestnik', 'test'] && osoba().get('zespol', '') == z;
+    }
+    function zmienione() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    match /kody/{kod} {
+      allow get: if request.auth != null;
+      allow list, write: if prowadzacy();
+    }
+
+    match /uzytkownicy/{uid} {
+      allow get: if prowadzacy() || (request.auth != null && request.auth.uid == uid);
+      allow list: if prowadzacy();
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['kod', 'kiedy'])
+        && kodAktywny(request.resource.data.kod);
+    }
+
+    match /samoocena/{id} {
+      allow read, write: if prowadzacy();
+      allow get: if request.auth != null
+        && kodAktywny(id.split('_')[0]);
+      allow create: if request.auth != null
+        && kodAktywny(id.split('_')[0])
+        && id.split('_')[1] in ['P1', 'P2']
+        && request.resource.data.kod == id.split('_')[0];
+      allow update: if request.auth != null
+        && kodAktywny(id.split('_')[0])
+        && resource.data.status != 'zapisany'
+        && request.resource.data.kod == resource.data.kod;
+    }
+
+    match /zbiorcze/{pomiar} {
+      allow get: if request.auth != null;
+      allow list, write: if prowadzacy();
+    }
+
+    /* konsultacje: identyfikator RRRR-MM-DD_GGMM; zespół zapisuje się i odwołuje tylko własny zapis */
+    match /konsultacje/{slot} {
+      allow read: if prowadzacy() || zalogowanyKodem();
+      allow create: if zalogowanyKodem() && osoba().rola in ['uczestnik', 'test']
+        && request.resource.data.zespol == osoba().get('zespol', '')
+        && request.resource.data.kto == osoba().get('imie', '')
+        && request.resource.data.keys().hasOnly(['zespol', 'kto', 'temat', 'kiedy', 'tydzien']);
+      allow delete: if prowadzacy() || (zalogowanyKodem() && resource.data.zespol == osoba().get('zespol', ''));
+      allow update: if false;
+    }
+
+    /* dokumenty projektowe: identyfikator ZESPÓŁ_NARZĘDZIE, na przykład P1_T01 */
+    match /dokumenty/{id} {
+      allow read: if prowadzacy() || zarzad() || czlonek(id.split('_')[0]);
+      /* zespół tworzy dokument bez decyzji sponsora */
+      allow create: if czlonek(id.split('_')[0])
+        && request.resource.data.get('akc', null) == null
+        && request.resource.data.get('potw', null) == null;
+      /* zespół zmienia wszystko poza decyzją sponsora; sponsor zapisuje tylko decyzję; prowadzący tylko uwagi */
+      allow update: if (czlonek(id.split('_')[0]) && !zmienione().hasAny(['akc', 'potw']))
+        || (zarzad() && zmienione().hasOnly(['akc', 'potw']))
+        || (prowadzacy() && zmienione().hasOnly(['uwagi']));
+      allow delete: if false;
+
+      /* ewidencja zmian: tylko dopisywanie, autor musi być osobą zalogowaną kodem */
+      match /historia/{wpis} {
+        allow read: if prowadzacy() || zarzad() || czlonek(id.split('_')[0]);
+        allow create: if czlonek(id.split('_')[0])
+          && request.resource.data.kto == osoba().get('imie', '')
+          && request.resource.data.keys().hasOnly(['pole', 'stara', 'nowa', 'kto', 'kiedy', 'wersja', 'opis']);
+        allow update, delete: if false;
+      }
+    }
+  }
+}
