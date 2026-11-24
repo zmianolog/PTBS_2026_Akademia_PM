@@ -51,6 +51,12 @@ textarea.wej{min-height:78px;resize:vertical}
 .tab .suma-k span{opacity:.9}
 .tab select.wej{padding-left:8px;padding-right:22px;font-size:14px;text-overflow:ellipsis}
 .tab .kom{min-width:0}.tab .lab{display:none}
+.wakc{display:flex;gap:4px;align-items:flex-start}.wakc .usun,.wakc .przes{width:36px;min-height:40px;padding:0}
+.tab .przes{border:2px solid var(--g);background:#fff;border-radius:8px;cursor:pointer;font:700 16px var(--font);color:var(--g)}.tab .przes:disabled{opacity:.3;cursor:default}
+.pusty{font-weight:400;font-size:12px;color:var(--tekst2);font-style:italic}
+.wstep-tab{background:var(--tlo);border-left:4px solid var(--g);border-radius:6px;padding:10px 12px;margin:0 0 12px;font-size:14px;line-height:1.5}.wstep-tab ol{margin:6px 0 0 18px;padding:0}
+.slownik{margin-top:10px;font-size:13px;line-height:1.45}.slownik table{border-collapse:collapse;width:100%}.slownik td{border-top:1px solid var(--ramka);padding:5px 8px;vertical-align:top}.slownik td:first-child{font-weight:700;white-space:nowrap;color:var(--g)}
+.link-akc{margin-top:6px}.link-akc .btn-maly{display:inline-flex;align-items:center;text-decoration:none}
 .tab .auto{padding:10px 4px;font-weight:700;color:var(--g);font-size:14px}
 .wielo{display:flex;flex-direction:column;gap:4px;padding:6px 8px;height:auto}.wielo label{display:flex;gap:6px;align-items:center;font-size:13px;line-height:1.2;cursor:pointer}.wielo input{width:16px;height:16px;flex:none}
 .podp{margin-top:10px}.podp .uwaga{margin:0}
@@ -121,7 +127,7 @@ textarea.wej{min-height:78px;resize:vertical}
 .hist small{color:var(--tekst2)}
 .hist pre{white-space:pre-wrap;font:400 14px var(--font);margin:4px 0;background:var(--tlo);padding:6px 8px;border-radius:6px}
 @media (min-width:800px){ .okno .dwie{grid-template-columns:1fr 1fr} .okno .akcje{grid-template-columns:repeat(3,1fr)} }
-@media (max-width:799px){ .tab .tw{grid-template-columns:1fr!important;border-top:1px solid var(--ramka);padding-top:10px} .tab .th{display:none} .tab .lab{display:block;font-size:12px;font-weight:700;color:var(--tekst2);margin:0 0 3px} .pasek{grid-template-columns:repeat(6,1fr)} .akc-dec{grid-template-columns:1fr} }
+@media (max-width:799px){ .tab .tw{grid-template-columns:1fr!important;border-top:1px solid var(--ramka);padding-top:10px} .tab .th{display:none} .tab .lab{display:block;font-size:12px;font-weight:700;color:var(--tekst2);margin:0 0 3px} .wakc .przes,.wakc .usun{flex:1;width:auto} .pasek{grid-template-columns:repeat(6,1fr)} .akc-dec{grid-template-columns:1fr} }
 /* ===== wydruk ===== */
 #wydruk{display:none}
 @page{size:A4;margin:16mm 14mm 18mm 14mm;
@@ -190,6 +196,16 @@ if (APM.wymagajLogowania()) (async () => {
   const wart = id => { const p = D.pola[id]; if (p) return p.v; const df = defPola(id); if (df && df.typ === 'etapy') return {}; if (df && df.dom) return df.dom(ZESP, POWIAZANE); if (df && df.stale) return df.wiersze.map(w => Object.assign({}, w)); return df && df.typ === 'tabela' ? [] : ''; };
   const pusty = pustaWartosc;
   window.WART = wart; /* listy wyboru zależne od innych tabel tego dokumentu */
+  const nowyUid = () => Math.random().toString(36).slice(2, 10);
+  /* tabela z wierszami tworzonymi z innej tabeli (np. współpraca z interesariuszami z sekcji 1): wiersz łączy się z wierszem źródła po identyfikatorze, a dla starszych wpisów po nazwie */
+  function wierszeTabeli(p) {
+    const v = wart(p.id) || [];
+    if (!p.zrodlo) return v;
+    const src = (wart(p.zrodlo) || []).filter(r => String(r.kto || '').trim());
+    return src.map(z => Object.assign({}, v.find(x => z.uid && x.uid === z.uid) || v.find(x => String(x.kto || '').trim() === String(z.kto).trim()) || {}, { uid: z.uid || '', kto: z.kto }));
+  }
+  window.WIERSZE = id => wierszeTabeli(defPola(id));
+  const autoHtml = (c, r, i) => { const t = r ? c.f(r, i) : ''; return t ? esc(t) : (c.pusty ? `<span class="pusty">${esc(c.pusty)}</span>` : ''); };
 
   /* ----- tryb podglądu: wybór osoby ----- */
   if (PODGLAD) panelPodgladu($('#podglad'), o => `?t=${T}&z=${o.zespol || ZESP}&podglad=1`);
@@ -223,14 +239,21 @@ if (APM.wymagajLogowania()) (async () => {
       return `<select class="wej" ${k} ${d}><option value="">${klucz ? '—' : '— wybierz —'}</option>${op.map(o => `<option ${o === v ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`; }
     if (p.typ === 'wielo') { const zazn = String(v || '').split(', ').filter(Boolean);
       const opW = typeof p.op === 'function' ? p.op() : p.op; return `<div class="wej wielo" ${k} data-wielo="1">${opW.length ? '' : '<span style="font-size:12px;color:var(--tekst2)">najpierw uzupełnijcie listę powyżej</span>'}${opW.map(o => `<label><input type="checkbox" value="${esc(o)}" ${zazn.includes(o) ? 'checked' : ''} ${d}>${esc(o)}</label>`).join('')}</div>`; }
+    if (p.typ === 'lista') { const op = typeof p.op === 'function' ? p.op() : p.op, dl = 'dl-' + String(klucz || p.id).replace(/\W/g, '_');
+      return `<input class="wej" type="text" list="${dl}" ${k} value="${esc(v)}" ${d} placeholder="wybierz albo wpisz"><datalist id="${dl}">${op.map(o => Array.isArray(o) ? `<option value="${esc(o[0])}">${esc(o[1])}</option>` : `<option value="${esc(o)}"></option>`).join('')}</datalist>`; }
+    if (p.typ === 'link') return `<input class="wej" type="text" ${k} value="${esc(v)}" ${d} placeholder="${esc(p.placeholder || '')}"><div class="link-akc" data-link="${p.id}">${linkAkcja(v)}</div>`;
     if (p.typ === 'liczba') return `<input class="wej" type="number" inputmode="decimal" min="0" step="1" ${k} value="${esc(v)}" ${d}>`;
     return `<input class="wej" type="text" ${k} value="${esc(v)}" ${d}>`;
   }
+  function linkAkcja(v) {
+    v = String(v || '').trim(); if (!v) return '';
+    return /^https?:\/\//i.test(v) ? `<a class="btn-maly" href="${esc(v)}" target="_blank" rel="noopener">Otwórz folder</a>` : `<button class="btn-maly" type="button" data-kopiuj="${esc(v)}">Kopiuj ścieżkę</button><span class="pod" style="font-size:12px;margin-left:8px">Wklej ją w pasku adresu Eksploratora plików.</span>`;
+  }
   function tabela(p, dis) {
-    const w = wart(p.id), szer = p.kol.map(c => c.s + 'fr').join(' ') + (p.stale || dis ? '' : ' 44px');
-    let h = `<div class="tab" data-tab="${p.id}"><div class="tw th" style="grid-template-columns:${szer}">${p.kol.map(c => `<span>${c.t}</span>`).join('')}${p.stale || dis ? '' : '<span></span>'}</div>`;
-    w.forEach((r, i) => { h += `<div class="tw" style="grid-template-columns:${szer}">${p.kol.map(c => `<div class="kom"><span class="lab">${c.t}</span>` + (c.typ === 'auto' ? `<div class="auto" data-auto="${p.id}|${i}">${esc(c.f(r, i))}</div>` : c.typ === 'staly' ? `<div class="staly">${esc(r[c.id])}</div>` : wejscie(c, r[c.id] ?? '', dis, `${p.id}|${i}|${c.id}`))+ '</div>').join('')}${p.stale || dis ? '' : p.bezUsuwania ? '<span></span>' : `<button class="usun" data-usun="${p.id}|${i}" title="Usuń wiersz">×</button>`}</div>`; });
-    if (!p.stale && !dis && !(p.max && w.length >= p.max)) h += `<div><button class="btn-maly" data-dodaj="${p.id}">Dodaj wiersz</button></div>`;
+    const w = wierszeTabeli(p), staly = p.stale || p.zrodlo, szer = p.kol.map(c => c.s + 'fr').join(' ') + (staly || dis ? '' : ' 116px');
+    let h = `<div class="tab" data-tab="${p.id}">${p.wstep ? `<div class="wstep-tab">${p.wstep}</div>` : ''}<div class="tw th" style="grid-template-columns:${szer}">${p.kol.map(c => `<span>${c.t}</span>`).join('')}${staly || dis ? '' : '<span></span>'}</div>`;
+    w.forEach((r, i) => { h += `<div class="tw" style="grid-template-columns:${szer}">${p.kol.map(c => `<div class="kom"><span class="lab">${c.t}</span>` + (c.typ === 'auto' ? `<div class="auto" data-auto="${p.id}|${i}">${autoHtml(c, r, i)}</div>` : c.typ === 'staly' ? `<div class="staly">${esc(r[c.id])}</div>` : wejscie(c, r[c.id] ?? '', dis, `${p.id}|${i}|${c.id}`))+ '</div>').join('')}${staly || dis ? '' : `<div class="wakc"><button class="przes" data-gora="${p.id}|${i}" title="Przesuń w górę" ${i ? '' : 'disabled'}>↑</button><button class="przes" data-dol="${p.id}|${i}" title="Przesuń w dół" ${i < w.length - 1 ? '' : 'disabled'}>↓</button>${p.bezUsuwania ? '' : `<button class="usun" data-usun="${p.id}|${i}" title="Usuń wiersz">×</button>`}</div>`}</div>`; });
+    if (!staly && !dis && !(p.max && w.length >= p.max)) h += `<div><button class="btn-maly" data-dodaj="${p.id}">Dodaj wiersz</button></div>`;
     if (p.suma) {
       const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0);
       h += `<div class="suma"><div class="suma-k"><span>${p.sumaEt || 'Razem'}:</span><b>${zl(s())} rocznie</b>${p.sumaWg ? `<span>oszczędności twarde: ${zl(s('twarda'))}</span><span>miękkie: ${zl(s('miękka'))}</span>` : ''}</div></div>`;
@@ -344,8 +367,9 @@ if (APM.wymagajLogowania()) (async () => {
       return v;
     }
     if (df.typ === 'tabela') {
-      const w = (wart(id) || []).map(r => Object.assign({}, r));
+      const w = wierszeTabeli(df).map(r => Object.assign({}, r));
       document.querySelectorAll(`[data-p^="${id}|"]`).forEach(el => { const [, i, c] = el.dataset.p.split('|'); const kol = df.kol.find(k => k.id === c); w[+i] = w[+i] || {}; w[+i][c] = kol.typ === 'liczba' ? (el.value === '' ? '' : +el.value) : kol.typ === 'wielo' ? [...el.querySelectorAll('input:checked')].map(x => x.value).join(', ') : el.value; });
+      if (df.uid) w.forEach(r => { if (r && !r.uid) r.uid = nowyUid(); });
       return w;
     }
     const el = document.querySelector(`[data-p="${id}"]`); return df.typ === 'liczba' ? (el.value === '' ? '' : +el.value) : el.value;
@@ -363,12 +387,13 @@ if (APM.wymagajLogowania()) (async () => {
   function odswiezZalezne(id) {
     const df = defPola(id);
     if (df && df.typ === 'tabela' && df.macierz) { const box = $(`[data-in="${id}"]`), w = wart(id) || [], kA = df.kol.find(c => c.typ === 'auto');
-      box.querySelectorAll('[data-auto]').forEach(el => { const i = +el.dataset.auto.split('|')[1]; el.textContent = w[i] ? kA.f(w[i], i) : ''; });
+      box.querySelectorAll('[data-auto]').forEach(el => { const i = +el.dataset.auto.split('|')[1]; el.innerHTML = autoHtml(kA, w[i], i); });
       const m = box.querySelector('.macierz'); if (m) { const t = document.createElement('div'); t.innerHTML = macierzHtml(w, df); m.replaceWith(t.firstElementChild); } }
     if (df && df.typ === 'tabela' && !df.macierz && df.kol.some(c => c.typ === 'auto')) { const w = wart(id) || [], A = df.kol.filter(c => c.typ === 'auto');
-      document.querySelectorAll(`[data-in="${id}"] [data-auto]`).forEach((el, j) => { const i = +el.dataset.auto.split('|')[1], c = A[j % A.length]; el.textContent = w[i] ? c.f(w[i], i) : ''; }); }
+      document.querySelectorAll(`[data-in="${id}"] [data-auto]`).forEach((el, j) => { const i = +el.dataset.auto.split('|')[1], c = A[j % A.length]; el.innerHTML = autoHtml(c, w[i], i); }); }
+    if (df && df.typ === 'link') { const e = document.querySelector(`[data-link="${id}"]`); if (e) e.innerHTML = linkAkcja(wart(id)); }
     wszystkiePola.filter(q => q.typ === 'tabela' && (q.zalezy || []).includes(id)).forEach(q => { const box = $(`[data-in="${q.id}"]`); if (box && !(document.activeElement && box.contains(document.activeElement))) { box.innerHTML = tabela(q, !EDYTUJE); podepnijPola(box); } });
-    document.querySelectorAll('[data-podp]').forEach(e => { const dp = defPola(e.dataset.podp); if (dp && dp.podpowiedz) e.innerHTML = dp.podpowiedz(wart(dp.id) || [], wart); });
+    document.querySelectorAll('[data-podp]').forEach(e => { const dp = defPola(e.dataset.podp); if (dp && dp.podpowiedz) e.innerHTML = dp.podpowiedz(wierszeTabeli(dp) || [], wart); });
     if (df && df.typ === 'tabela' && df.suma) { const box = $(`[data-in="${id}"]`); const f = document.activeElement && box.contains(document.activeElement); if (!f) { box.innerHTML = tabela(df, !EDYTUJE); podepnijPola(box); } else { const s = box.querySelector('.suma'); if (s) { const t = document.createElement('div'); t.innerHTML = tabela(df, !EDYTUJE); s.replaceWith(t.querySelector('.suma')); } } }
     const wy = document.querySelector('[data-wyl]'); if (wy) wy.innerHTML = wyliczenie();
     const sek = DEF.sekcje.find(s => s.kroki && s.pola.some(p => p.id === id || (p.dod && p.dod.id === id)));
@@ -391,12 +416,16 @@ if (APM.wymagajLogowania()) (async () => {
     });
     root.querySelectorAll('[data-dodaj]').forEach(b => b.addEventListener('click', async () => { const id = b.dataset.dodaj, w = wartoscZDom(id), dfd = defPola(id); w.push(dfd.nowyWiersz ? dfd.nowyWiersz(w) : {}); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
     root.querySelectorAll('[data-usun]').forEach(b => b.addEventListener('click', async () => { const [id, i] = b.dataset.usun.split('|'); const w = wartoscZDom(id); w.splice(+i, 1); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); }));
+    const przesun = async (kod, o) => { const [id, i] = kod.split('|'), w = wartoscZDom(id), j = +i + o; if (j < 0 || j >= w.length) return; [w[+i], w[j]] = [w[j], w[+i]]; lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, w); const box = $(`[data-in="${id}"]`); box.innerHTML = tabela(defPola(id), false); podepnijPola(box); };
+    root.querySelectorAll('[data-gora]').forEach(b => b.addEventListener('click', () => przesun(b.dataset.gora, -1)));
+    root.querySelectorAll('[data-dol]').forEach(b => b.addEventListener('click', () => przesun(b.dataset.dol, 1)));
     root.querySelectorAll('[data-hist]').forEach(b => b.addEventListener('click', () => historia(b.dataset.hist)));
     root.querySelectorAll('[data-wyj]').forEach(b => b.addEventListener('click', () => { const w = $('#wy-' + b.dataset.wyj), o = w.classList.toggle('ukryty'); b.setAttribute('aria-expanded', String(!o)); b.textContent = o ? 'Wyjaśnienie' : 'Zwiń wyjaśnienie'; }));
     const etapZmien = async (fn) => { const id = 'etapy', v = wartoscZDom(id); fn(v); lok[id] = lok[id] || {}; lok[id].bazaW = (D.pola[id] || {}).w || 0; await zapisz(id, false, v); const box = $(`[data-in="${id}"]`); box.innerHTML = etapyHtml(defPola(id), false); podepnijPola(box); };
     root.querySelectorAll('[data-eplus]').forEach(b => b.addEventListener('click', () => { const [e, i] = b.dataset.eplus.split('|'); etapZmien(v => { v[e] = v[e] && v[e].length ? v[e] : [{ t: '' }]; v[e].splice(+i + 1, 0, { t: '' }); }); }));
     root.querySelectorAll('[data-eusun]').forEach(b => b.addEventListener('click', () => { const [e, i] = b.dataset.eusun.split('|'); etapZmien(v => v[e].splice(+i, 1)); }));
   }
+  document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.link-akc [data-kopiuj]'); if (b) { try { navigator.clipboard.writeText(b.dataset.kopiuj); b.textContent = 'Skopiowano'; } catch (x) {} } });
   const poleZOpt = el => el && el.dataset && el.dataset.p ? poleZ(el) : null;
   function podepnij() {
     podepnijPola(document);
@@ -455,6 +484,7 @@ if (APM.wymagajLogowania()) (async () => {
       if (zm && !L.brudny && !f) { const box = $(`[data-in="${id}"]`); const df = defPola(id); if (box && df) { box.innerHTML = df.typ === 'tabela' ? tabela(df, !EDYTUJE) : wejscie(df, D.pola[id].v, !EDYTUJE); podepnijPola(box); } L.bazaW = D.pola[id].w; }
       else if (zm && (L.brudny || f) && D.pola[id].kto !== JA.imie) { const n = $(`[data-nowsza="${id}"]`); if (n) n.innerHTML = `<div class="nowsza">Nowszą wersję tego pola zapisała inna osoba: ${esc(D.pola[id].kto)}. Przy zapisie zobaczysz obie wersje.</div>`; }
     });
+    wszystkiePola.filter(q => q.typ === 'tabela' && (q.zalezy || []).some(z => !stare.pola[z] || !D.pola[z] || stare.pola[z].w !== D.pola[z].w)).forEach(q => { const box = $(`[data-in="${q.id}"]`); if (box && !(document.activeElement && box.contains(document.activeElement))) { box.innerHTML = tabela(q, !EDYTUJE); podepnijPola(box); } });
     document.querySelectorAll('[data-meta]').forEach(e => e.innerHTML = metaPola(e.dataset.meta));
     const ak = JSON.stringify([stare.akc, stare.doAkc, stare.potw, stare.uwagi, stare.kroki]) !== JSON.stringify([D.akc, D.doAkc, D.potw, D.uwagi, D.kroki]);
     if (ak && !(document.activeElement && document.activeElement.closest('.wej'))) rysuj(); else { const wy = document.querySelector('[data-wyl]'); if (wy) wy.innerHTML = wyliczenie(); odswiezStan(); }
@@ -467,17 +497,18 @@ if (APM.wymagajLogowania()) (async () => {
     const wP = p => {
       if (p.typ === 'wyliczenie') { const S = sumy(); return `<div class="w-pole"><div class="w-et">${p.et}</div><table class="w-tab"><tr><th>Strata rocznie</th><th>Ramowy budżet</th><th>Korzyść netto I roku (twarde)</th><th>Korzyść netto I roku (twarde i miękkie)</th></tr><tr><td class="l">${zl(S.strata)}</td><td class="l">${zl(S.bud)}</td><td class="l">${zl(S.tw - S.bud)}</td><td class="l">${zl(S.tw + S.mi - S.bud)}</td></tr></table></div>`; }
       if (D.kroki[p.id] === 'pom') return `<div class="w-pole"><div class="w-et">${p.et}</div><div class="w-pom">Krok pominięty: nie dotyczy projektu.</div></div>`;
-      const v = wart(p.id);
+      const v = p.typ === 'tabela' ? wierszeTabeli(p) : wart(p.id);
       let t;
       if (p.typ === 'etapy') {
         t = pusty(v) ? brak : `<table class="w-tab"><tr><th style="width:30%">Etap projektu</th><th>Działanie</th></tr>${ETAPY_KARTY.map(e => { const L = ((v || {})[e.id] || []).filter(x => String(x.t || '').trim()); const n = Math.max(L.length, 1);
           return (L.length ? L : [{ t: '' }]).map((x, i) => `<tr>${i ? '' : `<td rowspan="${n}"><b>${e.n}</b><br><span style="font-size:.85em">${e.sp} · ${e.km}</span></td>`}<td>${x.t ? esc(x.t) : '<span class="w-brak">brak działań</span>'}</td></tr>`).join(''); }).join('')}</table>`;
       } else if (p.typ === 'tabela') {
-        const w = (v || []).filter(r => p.stale || !pusty([r]));
+        const w = (v || []).filter(r => p.stale || p.zrodlo || !pusty([r]));
         t = w.length ? `<table class="w-tab"><tr>${p.kol.map(c => `<th>${c.t}</th>`).join('')}</tr>${w.map((r, ri) => `<tr>${p.kol.map(c => c.typ === 'auto' ? `<td>${esc(c.f(r, ri))}</td>` : `<td class="${c.typ === 'liczba' ? 'l' : ''}">${c.typ === 'liczba' && r[c.id] !== '' && r[c.id] != null ? zl(r[c.id]) : esc(r[c.id] ?? '')}</td>`).join('')}</tr>`).join('')}</table>` : brak;
         if (w.length && p.suma) { const s = k => w.filter(r => !k || r[p.sumaWg] === k).reduce((a, r) => a + (+r[p.suma] || 0), 0); t += `<div class="w-suma">${p.sumaEt || 'Razem'}: ${zl(s())} rocznie${p.sumaWg ? ` · twarde: ${zl(s('twarda'))} · miękkie: ${zl(s('miękka'))}` : ''}</div>`; }
         if (p.macierz && w.length) t += macierzHtml(w, p);
       } else t = pusty(v) ? brak : `<div class="w-v">${esc(v)}</div>`;
+      if (p.typ === 'tabela' && p.podpowiedz && p.slownikDruk) t += `<div class="w-v" style="font-size:.85em">${p.slownikDruk(v || [], wart)}</div>`;
       return `<div class="w-pole"><div class="w-et">${p.et}</div>${t}</div>` + (p.dod ? wP(p.dod) : '');
     };
     const wS = s => {

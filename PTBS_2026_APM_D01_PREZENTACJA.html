@@ -293,7 +293,10 @@ table.tb td:not(:first-child){width:39%}
 .kroki4{display:grid;grid-template-columns:1fr 40px 1fr 40px 1fr 40px 1fr;align-items:stretch}
 .kroki4 .strz{display:flex;align-items:center;justify-content:center}.kroki4 .strz svg{width:34px;height:34px;stroke:var(--m);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
 ol.pk.dwie{display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:column;grid-template-rows:repeat(5,minmax(0,1fr));column-gap:36px;row-gap:14px;flex:1}
-table.tb.tb6 th,table.tb.tb6 td{width:auto;padding:12px 14px;font-size:calc(var(--s)*20px)}table.tb.tb6 td:first-child{width:22%}table.tb.tb6 td:nth-child(5),table.tb.tb6 th:nth-child(5){white-space:nowrap}
+table.tb.tb6 th,table.tb.tb6 td{width:auto;padding:12px 14px;font-size:calc(var(--s)*20px)}table.tb.tb6 td:first-child{width:22%}
+.pk-kroki{margin:4px 0 12px 22px;padding:0;font-size:calc(var(--s)*20px);line-height:1.4}.pk-kroki li{margin:3px 0}
+.tb5 th,table.tb.tb5 td{width:auto;padding:12px 14px;font-size:calc(var(--s)*20px)}
+.tb5 td:first-child{width:7%;font-weight:700;color:var(--g)}.tb5 td:nth-child(3),.tb5 td:nth-child(4),table.tb.tb5 th:nth-child(4){white-space:nowrap}table.tb.tb6 td:nth-child(5),table.tb.tb6 th:nth-child(5){white-space:nowrap}
 .k5 .karta h3{overflow-wrap:anywhere}
 .przyk-r.k5 .karta .przyk{height:calc(var(--s)*112px)}
 .mac2{flex:1;display:grid;grid-template-columns:170px repeat(2,minmax(0,1fr));grid-template-rows:96px repeat(2,minmax(0,1fr));gap:12px}
@@ -517,13 +520,13 @@ table.tb.tb4{font-size:calc(var(--s)*21px)}table.tb.tb4 th,table.tb.tb4 td{paddi
       <div class="zad-cw">
         <div class="f"><span>Praca w zespołach, pisze jedna osoba</span><span>25 minut</span>
           <button class="glos" data-akcja="glos"><span class="gl-ik"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z"/><path class="a" d="M15.5 9a4 4 0 0 1 0 6M18.5 6a8 8 0 0 1 0 12"/></svg></span><span class="gl-t">Odsłuchaj instrukcję</span></button></div>
-        <div class="cel">Wpiszcie interesariuszy swojego projektu w pięciu grupach, oceńcie skutki projektu i wpływ każdego z nich i zaplanujcie, jak przygotujecie każdą grupę.</div>
+        <div class="cel">Wpiszcie interesariuszy swojego projektu w pięciu grupach, oceńcie skutki projektu i wpływ każdego z nich i opiszcie, jak będziecie z każdym współpracować.</div>
         <ol>
           <li>Osoba, która pisze, loguje się swoim kodem i w menu „Narzędziownik” otwiera narzędzie T02 „Mapa interesariuszy”.</li>
-          <li>Wpiszcie interesariuszy i przy każdym wybierzcie grupę: decydent, dostawca informacji, współuczestnik, odbiorca aktywny albo odbiorca pasywny.</li>
-          <li>Przy każdym interesariuszu wybierzcie skutki projektu: pozytywne albo negatywne, oraz wpływ na projekt: większy albo mniejszy.</li>
-          <li>Przy każdej grupie wybierzcie formę informacji i sposób: indywidualnie albo grupowo.</li>
-          <li>Przy każdym interesariuszu wpiszcie, kto z zespołu się z nim kontaktuje i do kiedy.</li>
+          <li>W sekcji 1 wpiszcie interesariuszy i przy każdym zaznaczcie grupę. Ta sama osoba może należeć do kilku grup.</li>
+          <li>Przy każdym interesariuszu wybierzcie skutki projektu i wpływ na projekt. Strona sama przypisze sposób postępowania.</li>
+          <li>W sekcji 2 „Współpraca z interesariuszami” opiszcie przy każdym, jak będziecie z nim współpracować, w jakiej formie i jak często.</li>
+          <li>Przy każdym interesariuszu wpiszcie, kto z zespołu odpowiada za kontakt i kiedy najbliższy kontakt.</li>
         </ol>
       </div>
       <div class="zad-pr">
@@ -651,8 +654,8 @@ table.tb.tb4{font-size:calc(var(--s)*21px)}table.tb.tb4 th,table.tb.tb4 td{paddi
   <div class="tr"><span class="pas">Część E</span>
     <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path class="a" d="M8.5 15l2.5 2.5 4.5-4.5"/></svg>Przykład planu diagnozy</h2>
     <div class="obsz">
-      <table class="tb tb6"><tr><th>Interesariusz</th><th>Działanie</th><th>Odpowiada na</th><th>Kto z zespołu</th><th>Termin</th><th>Informowanie</th></tr><tr><td>Kierownik działu technicznego</td><td>prośba o dane, potem wywiad</td><td>pytania 1, 2, 3</td><td>A. Nowak</td><td>do 18.12</td><td>indywidualnie</td></tr><tr><td>Administratorzy budynków</td><td>obserwacja przyjmowania zgłoszeń</td><td>pytania 3, 4</td><td>B. Kowalska</td><td>do 22.12</td><td>grupowo, komunikat</td></tr><tr><td>Administratorzy budynków</td><td>pomiar próbny czasu obsługi</td><td>pytanie 4</td><td>B. Kowalska</td><td>do 8.01</td><td>grupowo, komunikat</td></tr><tr><td>Dział księgowości</td><td>prośba o zestawienie faktur</td><td>pytanie 5</td><td>C. Wiśniewski</td><td>do 18.12</td><td>indywidualnie</td></tr></table>
-      <div class="ramka odsl">Każde działanie wskazuje pytania, na które odpowiada. Źródło, które powstanie z działania, na przykład notatka z wywiadu albo zestawienie danych, zespół wpisuje do wykazu źródeł pod kolejnym numerem.</div>
+      <table class="tb tb5"><tr><th>Nr</th><th>Działanie: co zespół zrobi i u kogo</th><th>Dane (pytania)</th><th>Kiedy</th><th>Kto z zespołu</th></tr><tr><td>DZ01</td><td>Prośba do kierownika działu technicznego o zestawienie zgłoszeń z 2025 r., potem rozmowa z nim o przyczynach opóźnień</td><td>PD01, PD02, PD03</td><td>do 18.12</td><td>A. Nowak</td></tr><tr><td>DZ02</td><td>Obserwacja przyjmowania zgłoszeń u administratorów budynków przez jeden dzień i pomiar próbny czasu obsługi przez dwa tygodnie</td><td>PD03, PD04</td><td>do 8.01</td><td>B. Kowalska</td></tr><tr><td>DZ03</td><td>Prośba do działu księgowości o zestawienie faktur za naprawy pilne z 2025 r.</td><td>PD05</td><td>do 18.12</td><td>C. Wiśniewski</td></tr></table>
+      <div class="ramka odsl">Prośby do tej samej osoby zespół łączy w jedno działanie: jedną prośbę o dane albo jedno spotkanie. Każde działanie wskazuje pytania, na które odpowiada. Źródło, które z niego powstanie, zespół wpisuje do wykazu źródeł pod kolejnym numerem.</div>
     </div>
   </div>
 </section>
@@ -701,16 +704,16 @@ table.tb.tb4{font-size:calc(var(--s)*21px)}table.tb.tb4 th,table.tb.tb4 td{paddi
     <h2 class="tyt"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/><path class="a" d="M9 13h7M9 17h5"/></svg>Pliki na dysku i powoływanie się na źródło</h2>
     <div class="obsz" style="flex-direction:row;gap:24px">
       <div class="karta gl" style="flex:1">
-        <h3>Folder projektu</h3>
-        <p>Zespół zapisuje pliki we wspólnym folderze projektu w PTBS, w podfolderze „Źródła numerowane”. Nazwa pliku zaczyna się od numeru i rodzaju źródła.</p>
+        <h3>Folder źródeł zespołu</h3>
+        <ol class="pk-kroki odsl"><li>Jedna osoba zakłada folder na służbowym OneDrive lub SharePoint PTBS i wkleja link raz w T12.</li><li>Zespół dodaje źródło, a strona nadaje numer.</li><li>Zespół zapisuje plik w folderze pod nazwą, którą poda strona.</li><li>Zespół zmienia postać źródła na „plik”.</li></ol>
         <div class="folder odsl"><div class="f1">P1_Źródła numerowane</div><div>R01_DOK_Rejestr zgłoszeń awarii 2025.xlsx</div><div>R02_SYS_Czas obsługi zgłoszeń 2025.xlsx</div><div>R03_ROZ_Rozmowa z administratorem.docx</div><div>R04a_POM_Pomiar czasu obsługi tydzień 1.xlsx</div></div>
-        <div class="przyk odsl">Strona Akademii przechowuje tylko wykaz źródeł. Pliki z danymi pracowników i najemców zostają w zasobach PTBS.</div>
       </div>
       <div class="karta mi" style="flex:1">
         <h3>Powoływanie się na źródło</h3>
-        <p>Przy każdej kwocie i każdym ustaleniu zespół podaje w nawiasie numer źródła. Na pytanie „skąd te dane?” zespół wskazuje ten numer.</p>
+        <p>Przy każdej kwocie i każdym ustaleniu zespół podaje w nawiasie numer źródła.</p>
         <div class="przyk odsl" style="margin-top:0">Średni czas od zgłoszenia do usunięcia awarii wynosi 12 dni [R02, R04a].</div>
         <p class="odsl"><b style="color:var(--g)">Reguła dwóch źródeł.</b> Ustalenie, które zmienia kwotę w karcie albo kierunek projektu, ma co najmniej dwa niezależne źródła. Ustalenie z jednym źródłem zespół oznacza jako „wymaga potwierdzenia”.</p>
+        <div class="przyk odsl">Strona Akademii przechowuje tylko wykaz źródeł. Pliki zostają w zasobach PTBS.</div>
       </div>
     </div>
   </div>
@@ -722,13 +725,13 @@ table.tb.tb4{font-size:calc(var(--s)*21px)}table.tb.tb4 th,table.tb.tb4 td{paddi
       <div class="zad-cw">
         <div class="f"><span>Praca w zespołach, pisze jedna osoba</span><span>35 minut</span>
           <button class="glos" data-akcja="glos"><span class="gl-ik"><svg class="zi zi-r-miga" viewBox="0 0 24 24"><path d="M4 9.5v5h3.5L12 18V6L7.5 9.5z"/><path class="a" d="M15.5 9a4 4 0 0 1 0 6M18.5 6a8 8 0 0 1 0 12"/></svg></span><span class="gl-t">Odsłuchaj instrukcję</span></button></div>
-        <div class="cel">Ułóżcie pytania diagnostyczne do swojego projektu i pierwszą wersję planu diagnozy ułożoną według interesariuszy.</div>
+        <div class="cel">Ułóżcie pytania diagnostyczne do swojego projektu i pierwszą wersję planu diagnozy.</div>
         <ol>
           <li>W menu „Narzędziownik” otwórzcie narzędzie T12 „Plan diagnozy i zbierania danych”.</li>
           <li>Wpiszcie od pięciu do ośmiu pytań. Zacznijcie od objawów, od wartości wyjściowej i celu oraz od straty z karty projektu.</li>
-          <li>Przy każdym pytaniu wskażcie dane, ich źródło i interesariusza, od którego je weźmiecie.</li>
-          <li>Połączcie pytania do tego samego interesariusza w działania: prośbę o dane, wywiad, obserwację albo pomiar próbny.</li>
-          <li>Przy każdym działaniu wpiszcie, kto z zespołu je prowadzi, do kiedy i czy informujecie interesariusza grupowo, czy indywidualnie.</li>
+          <li>Ułóżcie działania: co zrobicie i u kogo, jakich pytań dotyczy działanie, kiedy i kto z zespołu je prowadzi.</li>
+          <li>Prośby do tej samej osoby połączcie w jedno działanie: jedną prośbę o dane albo jedno spotkanie.</li>
+          <li>Jedna osoba zakłada folder zespołu na służbowym OneDrive i wkleja link w wykazie źródeł.</li>
         </ol>
       </div>
       <div class="zad-pr">
@@ -758,8 +761,8 @@ table.tb.tb4{font-size:calc(var(--s)*21px)}table.tb.tb4 th,table.tb.tb4 td{paddi
     <div class="obsz">
       <div class="siatka k3" style="flex:1">
         <div class="karta"><div class="wiersz"><span class="ik"><svg class="zi zi-r-rys" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/><path class="a" d="M9 13h7M9 17h5"/></svg></span><h3>Karta projektu</h3></div><p>Zespół wprowadza do karty uwagi sponsora z dzisiejszego przeglądu i przekazuje kartę do akceptacji.</p><div class="termin-z">Termin: przed spotkaniem D02, 1 grudnia.</div></div>
-        <div class="karta"><div class="wiersz"><span class="ik"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><circle class="a" cx="12" cy="12" r="3"/><circle cx="12" cy="3.5" r="1.6"/><circle cx="20.5" cy="12" r="1.6"/><circle cx="12" cy="20.5" r="1.6"/><circle cx="3.5" cy="12" r="1.6"/><path d="M12 5.1V9M18.9 12H15M12 18.9V15M5.1 12H9"/></svg></span><h3>Mapa interesariuszy</h3></div><p>Zespół uzupełnia mapę i uzgadnia działania ze współuczestnikami i dostawcami informacji według planu diagnozy.</p><div class="termin-z">Termin: przed spotkaniem D02, 1 grudnia.</div></div>
-        <div class="karta"><div class="wiersz"><span class="ik"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path class="a" d="M15.5 15.5L21 21"/></svg></span><h3>Plan diagnozy</h3></div><p>Zespół uzupełnia pytania, plan działań i wykaz źródeł, a pliki zapisuje w folderze projektu z numerem źródła w nazwie.</p><div class="termin-z">Termin: przed spotkaniem D03, 8 grudnia.</div></div>
+        <div class="karta"><div class="wiersz"><span class="ik"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><circle class="a" cx="12" cy="12" r="3"/><circle cx="12" cy="3.5" r="1.6"/><circle cx="20.5" cy="12" r="1.6"/><circle cx="12" cy="20.5" r="1.6"/><circle cx="3.5" cy="12" r="1.6"/><path d="M12 5.1V9M18.9 12H15M12 18.9V15M5.1 12H9"/></svg></span><h3>Mapa interesariuszy</h3></div><p>Zespół uzupełnia mapę i opisuje współpracę z każdym interesariuszem, a ze współuczestnikami i dostawcami informacji uzgadnia działania według planu diagnozy.</p><div class="termin-z">Termin: przed spotkaniem D02, 1 grudnia.</div></div>
+        <div class="karta"><div class="wiersz"><span class="ik"><svg class="zi zi-r-puls" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path class="a" d="M15.5 15.5L21 21"/></svg></span><h3>Plan diagnozy</h3></div><p>Zespół zakłada folder źródeł na służbowym OneDrive i wkleja link w T12. Uzupełnia pytania, plan działań i wykaz źródeł, a pliki zapisuje w folderze z numerem źródła w nazwie.</p><div class="termin-z">Termin: przed spotkaniem D03, 8 grudnia.</div></div>
       </div>
       <div class="ramka m">Najbliższe konsultacje: piątek, 27 listopada, w Teams. Zespół zapisuje się w menu „Konsultacje” i wpisuje problem, którego ma dotyczyć konsultacja.</div>
     </div>

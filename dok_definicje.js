@@ -61,27 +61,47 @@ const wlascicielProcesu = z => { const c = ZESPOLY[z].czlonkowie.find(c => /wła
 
 /* ===== T02 Mapa interesariuszy ===== */
 const GRUPY_INT = ['decydent', 'dostawca informacji', 'współuczestnik', 'odbiorca aktywny', 'odbiorca pasywny'];
+const OPIS_GRUP = [
+  ['Decydent', 'decyduje o projekcie: o celu, zakresie, budżecie i akceptacji kolejnych etapów, na przykład sponsor i Zarząd.'],
+  ['Dostawca informacji', 'ma dane, dokumenty albo wiedzę o tym, jak proces działa dziś, na przykład dział z rejestrem awarii.'],
+  ['Współuczestnik', 'musi wykonać w projekcie określoną pracę, na przykład analizę albo konfigurację systemu.'],
+  ['Odbiorca aktywny', 'po wdrożeniu korzysta z rezultatu i pracuje w nowym rozwiązaniu, na przykład administratorzy przyjmujący zgłoszenia.'],
+  ['Odbiorca pasywny', 'odczuwa skutki projektu, choć sam nie korzysta z rozwiązania, na przykład najemcy czekający na naprawę.']];
 const POZ_SKUTKI = ['negatywne', 'pozytywne'], POZ_WPL2 = ['większy', 'mniejszy'];
 const POSTEPOWANIE = { 'większy|negatywne': 'Uzgadnianie i ograniczanie skutków', 'większy|pozytywne': 'Wspólna praca',
   'mniejszy|negatywne': 'Wyjaśnianie i łagodzenie skutków', 'mniejszy|pozytywne': 'Informowanie' };
 const sposobPostepowania = r => POSTEPOWANIE[r.wpl + '|' + r.sk] || '';
-const FORMY_INF = ['spotkanie', 'rozmowa', 'warsztat', 'e-mail lub pismo', 'komunikat'];
+const UDZIAL = ['podejmuje decyzje', 'dostarcza danych', 'wykonuje pracę', 'sprawdza rozwiązanie', 'otrzymuje informacje'];
+const FORMY_KONT = ['spotkanie', 'rozmowa', 'warsztat', 'e-mail lub pismo', 'komunikat'];
+const CZESTOSC = ['jednorazowo', 'przy kamieniach milowych', 'co tydzień', 'co dwa tygodnie', 'co miesiąc'];
 const TRYB = ['indywidualnie', 'grupowo'];
-const nazwyInter = () => (window.WART ? (WART('mapa') || []) : []).map(r => String(r.kto || '').trim()).filter(Boolean);
-/* interesariusze z T02 dla planu diagnozy; gdy mapy jeszcze nie ma, z karty projektu */
-const interZMapy = () => { const P = window.POWIAZANE || {}, z = d => d && d.pola;
-  const m = z(P.T02) && P.T02.pola.mapa ? P.T02.pola.mapa.v : null, k = z(P.T01) && P.T01.pola.inter ? P.T01.pola.inter.v : null;
-  return ((m && m.length ? m : k) || []).map(r => String(r.kto || '').trim()).filter(Boolean); };
+const uidInter = () => Math.random().toString(36).slice(2, 10);
+const sposobZMapy = r => { const M = window.WART ? (WART('mapa') || []) : [], m = M.find(x => (r.uid && x.uid === r.uid) || String(x.kto || '').trim() === String(r.kto || '').trim()); return m ? sposobPostepowania(m) : ''; };
 
 /* ===== T12 Plan diagnozy ===== */
 const SKAD_PYT = ['objaw problemu', 'wartość wyjściowa miernika', 'cel projektu', 'strata z karty', 'przypuszczenie o przyczynie'];
-const DZIALANIA_DIAG = ['prośba o dane', 'wywiad', 'obserwacja', 'pomiar próbny', 'analiza dokumentów'];
-const RODZ_ZR = ['DOK', 'SYS', 'ROZ', 'OBS', 'POM', 'ZEW'];
-const POSTAC_ZR = ['plik', 'link', 'notatka', 'planowane', 'do pozyskania', 'wycofane'];
+const RODZ_ZR_OPIS = [['DOK', 'dokument lub rejestr', 'umowy, protokoły, rejestry, zestawienia, procedury'],
+  ['SYS', 'dane z systemu', 'dane z systemu księgowego i innych programów Spółki'],
+  ['ROZ', 'notatka z rozmowy', 'rozmowa z osobą, która wykonuje pracę albo odczuwa skutki problemu'],
+  ['OBS', 'obserwacja', 'zapis tego, jak praca przebiega w rzeczywistości'],
+  ['POM', 'pomiar próbny', 'zapis, ile razy coś się zdarza i ile trwa, prowadzony przez krótki czas'],
+  ['ZEW', 'źródło zewnętrzne', 'przepis, publikacja albo strona internetowa spoza Spółki']];
+const RODZ_ZR = RODZ_ZR_OPIS.map(x => [x[0], x[1]]);
+const POSTAC_OPIS = [['plik', 'plik zapisany w folderze źródeł zespołu'], ['link', 'strona internetowa albo plik poza folderem zespołu; adres w kolumnie „Link”'],
+  ['notatka', 'notatka zespołu, na przykład z rozmowy, zapisana w folderze'], ['planowane', 'źródło powstanie z zaplanowanego działania'],
+  ['do pozyskania', 'zespół poprosił o dane i czeka na nie'], ['wycofane', 'zespół zrezygnował ze źródła; numer zostaje i nie jest używany ponownie']];
+const POSTAC_ZR = POSTAC_OPIS.map(x => x[0]);
+const kodRodzaju = r => { const m = /^\s*([A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż]{3})(?![A-Za-zĄĆĘŁŃÓŚŹŻąćęłńóśźż])/.exec(String(r.rodz || '')); return m ? m[1].toUpperCase() : ''; };
 const kolejnyNr = (w, pref) => { const m = w.reduce((a, r) => { const x = /(\d+)/.exec(String(r.nr || '')); return Math.max(a, x ? +x[1] : 0); }, 0); return pref + String(m + 1).padStart(2, '0'); };
 const numeryZ = (id) => (window.WART ? (WART(id) || []) : []).map(r => r.nr).filter(Boolean);
-const nazwaPliku = r => { if (!r.nr || !r.rodz) return ''; const n = String(r.naz || '').trim().replace(/[\\/:*?"<>|]/g, '').slice(0, 60); return r.nr + '_' + r.rodz.slice(0, 3) + (n ? '_' + n : ''); };
+const nazwaPliku = r => { const k = kodRodzaju(r); if (!r.nr || !k) return ''; const n = String(r.naz || '').trim().replace(/[\\/:*?"<>|\n]/g, ' ').replace(/\s+/g, ' ').slice(0, 60); return r.nr + '_' + k + (n ? '_' + n : ''); };
 const escP = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const slownikHtml = (tyt, L) => `<div class="slownik"><b>${tyt}</b><table>${L.map(x => `<tr><td>${escP(x[0])}</td><td>${escP(x[1])}</td></tr>`).join('')}</table></div>`;
+const slownikZrodel = (w) => {
+  const wlasne = [...new Set(w.map(r => String(r.rodz || '').trim()).filter(x => x && !RODZ_ZR_OPIS.some(y => y[0] === kodRodzaju({ rodz: x }))))];
+  return slownikHtml('Rodzaje źródeł', RODZ_ZR_OPIS.map(x => [x[0], x[1] + ': ' + x[2] + '.']).concat(wlasne.map(x => [kodRodzaju({ rodz: x }) || '—', x + ' (rodzaj wpisany przez zespół)'])))
+    + slownikHtml('Postać źródła', POSTAC_OPIS.map(x => [x[0], x[1] + '.']));
+};
 
 const DOKUMENTY = {
   T01: {
@@ -280,17 +300,19 @@ const DOKUMENTY = {
     },
     sekcje: [
       { id: 's1', nr: 1, t: 'Interesariusze i ocena', pola: [
-        { id: 'mapa', typ: 'tabela', et: 'Interesariusze projektu', macierz: 'skutki',
+        { id: 'mapa', typ: 'tabela', et: 'Interesariusze projektu', macierz: 'skutki', uid: true,
+          nowyWiersz: () => ({ uid: uidInter() }),
+          podpowiedz: () => slownikHtml('Pięć grup interesariuszy', OPIS_GRUP),
           kol: [ { id: 'kto', t: 'Interesariusz', typ: 'obszar', s: 1.4 },
                  { id: 'gr', t: 'Grupa (można wybrać kilka)', typ: 'wielo', op: GRUPY_INT, s: 1.35 },
-                 { id: 'ocz', t: 'Czego oczekuje lub czego się obawia', typ: 'obszar', s: 1.9 },
-                 { id: 'sk', t: 'Skutki projektu', typ: 'wybor', op: POZ_SKUTKI, s: .95 },
-                 { id: 'wpl', t: 'Wpływ na projekt', typ: 'wybor', op: POZ_WPL2, s: .95 },
-                 { id: 'spos', t: 'Sposób postępowania', typ: 'auto', f: sposobPostepowania, s: 1.15 } ],
+                 { id: 'ocz', t: 'Czego oczekuje lub czego się obawia', typ: 'obszar', s: 1.65 },
+                 { id: 'sk', t: 'Skutki projektu', typ: 'wybor', op: POZ_SKUTKI, s: 1.1 },
+                 { id: 'wpl', t: 'Wpływ na projekt', typ: 'wybor', op: POZ_WPL2, s: 1.05 },
+                 { id: 'spos', t: 'Sposób postępowania', typ: 'auto', f: sposobPostepowania, pusty: 'uzupełni się po wyborze skutków i wpływu', s: 1.15 } ],
           domEt: 'Lista wpisana z sekcji 7 karty projektu; karta się nie zmienia, a zespół może tę listę zmieniać',
           dom: (z, P) => { const k = P && P.T01 && P.T01.pola && P.T01.pola.inter ? (P.T01.pola.inter.v || []).filter(r => String(r.kto || '').trim()) : [];
-            return k.length ? k.map(r => ({ kto: r.kto, ocz: r.ocz || '', gr: '', sk: '', wpl: '' }))
-              : [ { kto: 'Sponsor (' + SPONSOR + ')', gr: 'decydent', ocz: '', sk: '', wpl: 'większy' }, { kto: 'Właściciel procesu (' + wlascicielProcesu(z) + ')', gr: '', ocz: '', sk: '', wpl: '' } ]; },
+            return k.length ? k.map(r => ({ uid: uidInter(), kto: r.kto, ocz: r.ocz || '', gr: '', sk: '', wpl: '' }))
+              : [ { uid: uidInter(), kto: 'Sponsor (' + SPONSOR + ')', gr: 'decydent', ocz: '', sk: '', wpl: 'większy' }, { uid: uidInter(), kto: 'Właściciel procesu (' + wlascicielProcesu(z) + ')', gr: '', ocz: '', sk: '', wpl: '' } ]; },
           wyj: { po: 'Mapa pokazuje, kto decyduje o projekcie, kto dostarcza informacji, kto musi wykonać pracę w projekcie i kto będzie korzystał z rezultatu albo odczuje jego skutki. Od tego zależy, jak zespół przygotuje każdego interesariusza.',
             jak: 'Wpiszcie interesariuszy i przy każdym zaznaczcie grupę. Decydent decyduje o celu, zakresie, budżecie i akceptacji etapów. Dostawca informacji ma dane, dokumenty albo wiedzę o tym, jak proces działa dziś. Współuczestnik musi wykonać w projekcie określoną pracę, na przykład analizę albo konfigurację systemu. Odbiorca aktywny po wdrożeniu korzysta z rezultatu i pracuje w nowym rozwiązaniu. Odbiorca pasywny odczuwa skutki projektu, choć sam nie korzysta z rozwiązania. Ta sama osoba może należeć do kilku grup. Skutki oznaczają, co projekt zmieni w pracy lub sytuacji interesariusza: pozytywne albo negatywne. Wpływ oznacza, czy interesariusz może zatrzymać, opóźnić albo zmienić projekt: większy albo mniejszy. Sposób postępowania strona przypisuje sama według macierzy pod tabelą.',
             opis: 'Gdy projekt ma kilku sponsorów, każdy z nich jest decydentem. Sponsorzy muszą porozumieć się co do celu, zakresu i budżetu i zgodzić się na nie, zanim zespół zacznie diagnozę. Zespół wpisuje każdego sponsora w osobnym wierszu.',
@@ -298,32 +320,36 @@ const DOKUMENTY = {
             p2: 'Najemcy czekający na naprawę · odbiorca pasywny · oczekują szybszej naprawy · skutki pozytywne · wpływ mniejszy · informowanie',
             blad: 'Pominięcie współuczestników, czyli osób, które muszą wykonać pracę w projekcie, choć nie są w zespole. Bez ich czasu i zgody przełożonego zespół nie wykona diagnozy.' } }
       ]},
-      { id: 's2', nr: 2, t: 'Przygotowanie interesariuszy', pola: [
-        { id: 'prz', typ: 'tabela', et: 'Jak zespół przygotuje każdego interesariusza', zalezy: ['mapa'],
-          kol: [ { id: 'kto', t: 'Interesariusz', typ: 'wybor', op: nazwyInter, s: 1.3 },
-                 { id: 'info', t: 'Jaką informację przekazujemy albo o co prosimy', typ: 'obszar', s: 2.1 },
-                 { id: 'forma', t: 'Forma', typ: 'wybor', op: FORMY_INF, s: 1 },
-                 { id: 'tryb', t: 'Indywidualnie czy grupowo', typ: 'wybor', op: TRYB, s: 1 },
-                 { id: 'kz', t: 'Kto z zespołu', typ: 'tekst', s: 1 },
-                 { id: 'kiedy', t: 'Do kiedy', typ: 'tekst', s: .8 } ],
+      { id: 's2', nr: 2, t: 'Współpraca z interesariuszami', pola: [
+        { id: 'wsp', typ: 'tabela', et: 'Jak zespół współpracuje z każdym interesariuszem', zrodlo: 'mapa', zalezy: ['mapa'],
+          kol: [ { id: 'kto', t: 'Interesariusz', typ: 'staly', s: 1.15 },
+                 { id: 'spos', t: 'Sposób postępowania', typ: 'auto', f: sposobZMapy, pusty: 'wybierzcie skutki i wpływ w sekcji 1', s: 1 },
+                 { id: 'udz', t: 'Udział w projekcie', typ: 'wielo', op: UDZIAL, s: 1.25 },
+                 { id: 'jak', t: 'Jak zespół z nim współpracuje', typ: 'obszar', s: 1.7 },
+                 { id: 'forma', t: 'Forma kontaktu', typ: 'lista', op: FORMY_KONT, s: 1.05 },
+                 { id: 'tryb', t: 'Indywidualnie czy grupowo', typ: 'wybor', op: TRYB, s: 1.2 },
+                 { id: 'czest', t: 'Jak często', typ: 'lista', op: CZESTOSC, s: 1 },
+                 { id: 'kz', t: 'Kto z zespołu', typ: 'tekst', s: .9 },
+                 { id: 'kiedy', t: 'Najbliższy kontakt: do kiedy', typ: 'tekst', s: .85 } ],
+          wstep: 'Wiersze tworzą się same z interesariuszy wpisanych w sekcji 1. Nowego interesariusza dopiszcie w sekcji 1, a pojawi się tutaj.',
           podpowiedz: (w, wart) => {
-            const M = wart('mapa') || [], jest = new Set(w.map(r => r.kto)), brak = M.filter(r => String(r.kto || '').trim() && !jest.has(String(r.kto).trim())).map(r => r.kto.trim());
+            const M = wart('mapa') || [], brak = w.filter(r => !String(r.jak || '').trim()).map(r => r.kto);
             const gr = w.filter(r => r.tryb === 'grupowo' && M.some(m => String(m.kto || '').trim() === r.kto && /współuczestnik|dostawca/.test(m.gr || ''))).map(r => r.kto);
             let h = '';
-            if (brak.length) h += `<div class="uwaga">Bez zaplanowanego przygotowania: ${brak.map(escP).join('; ')}.</div>`;
+            if (brak.length) h += `<div class="uwaga">Bez opisanej współpracy: ${brak.map(escP).join('; ')}.</div>`;
             if (gr.length) h += `<div class="uwaga">Współuczestników i dostawców informacji zespół przygotowuje indywidualnie: uzgadnia z nimi zakres pracy, wynik i termin, a z przełożonym czas pracy. Sprawdźcie: ${[...new Set(gr)].map(escP).join('; ')}.</div>`;
             return h; },
-          wyj: { po: 'Przygotowanie mówi, co każdy interesariusz musi wiedzieć albo zrobić, w jakiej formie zespół mu to przekaże, kto z zespołu to zrobi i do kiedy.',
-            jak: 'Wybierzcie interesariusza z listy z sekcji 1. Decydentom zespół przedstawia sprawy do decyzji. Dostawców informacji prosi o konkretne dane i uzgadnia termin. Współuczestnikom przedstawia zakres pracy, wynik i termin, a z ich przełożonym uzgadnia czas pracy; potem potwierdza ustalenia na piśmie. Odbiorców aktywnych włącza w sprawdzanie rozwiązania. Odbiorców pasywnych informuje grupowo, co się zmieni i kiedy.',
-            p1: 'Kierownik działu informatyki · prosimy o konfigurację formularza i ocenę czasu pracy · spotkanie · indywidualnie · A. Nowak · do 4.12',
-            p2: 'Najemcy · informujemy o nowym sposobie zgłaszania awarii · komunikat · grupowo · B. Kowalska · przed pilotażem',
+          wyj: { po: 'Ta część mówi, jak zespół będzie pracował z każdym interesariuszem przez cały projekt: co ta osoba robi w projekcie, o co zespół ją prosi, co z nią uzgadnia i co jej przekazuje, w jakiej formie i jak często.',
+            jak: 'Sposób postępowania z sekcji 1 podpowiada, jak współpracować. Przy wspólnej pracy zespół włącza interesariusza w pracę i decyzje. Przy uzgadnianiu i ograniczaniu skutków rozmawia z nim wcześnie i uzgadnia rozwiązanie. Przy wyjaśnianiu i łagodzeniu skutków wyjaśnia, co się zmieni i dlaczego. Przy informowaniu przekazuje informacje o postępie. Formę kontaktu i częstotliwość można wybrać z listy albo wpisać własną.',
+            p1: 'Kierownik działu technicznego · dostarcza danych, wykonuje pracę · prosimy o zestawienie zgłoszeń i ocenę wariantów; uzgadniamy z nim czas pracy jego ludzi · spotkanie · indywidualnie · co dwa tygodnie · A. Nowak · do 4.12',
+            p2: 'Najemcy · otrzymują informacje · informujemy, co się zmieni w zgłaszaniu awarii i kiedy · komunikat · grupowo · przy kamieniach milowych · B. Kowalska · przed pilotażem',
             blad: 'Jeden e-mail do wszystkich interesariuszy. Współuczestnicy i dostawcy informacji nie wiedzą wtedy, czego dokładnie zespół od nich oczekuje i do kiedy.' } }
       ]}
     ]
   },
   T12: {
     nazwa: 'Plan diagnozy i zbierania danych',
-    powiazane: ['T02', 'T01'],
+    powiazane: [],
     instr: {
       po: 'Plan diagnozy mówi, czego zespół chce się dowiedzieć, od których interesariuszy i jakimi działaniami zbierze dane oraz w jakich źródłach te dane zapisze. Wyniki diagnozy zespół przedstawia sponsorowi na kamieniu milowym KM1 (D06).',
       kto: 'Wypełnia cały zespół projektowy; na spotkaniu pisze jedna osoba. Strona zapisuje autora i datę każdej zmiany.',
@@ -348,52 +374,51 @@ const DOKUMENTY = {
             blad: 'Pytanie o rozwiązanie zamiast o stan obecny, na przykład „jaki system kupić?”. Diagnoza ustala, co dziś powoduje problem; rozwiązanie zespół wybiera później, na kamieniu KM2.' } }
       ]},
       { id: 's2', nr: 2, t: 'Plan działań diagnostycznych', pola: [
-        { id: 'dzi', typ: 'tabela', et: 'Działania ułożone według interesariuszy', zalezy: ['pyt'],
+        { id: 'dzi', typ: 'tabela', et: 'Działania diagnostyczne', zalezy: ['pyt'],
           nowyWiersz: w => ({ nr: kolejnyNr(w, 'DZ') }),
           kol: [ { id: 'nr', t: 'Nr', typ: 'staly', s: .55 },
-                 { id: 'kto', t: 'Interesariusz (z mapy T02)', typ: 'wybor', op: interZMapy, s: 1.3 },
-                 { id: 'rodz', t: 'Działanie', typ: 'wybor', op: DZIALANIA_DIAG, s: 1.1 },
-                 { id: 'pd', t: 'Odpowiada na pytania', typ: 'wielo', op: () => numeryZ('pyt'), s: .85 },
-                 { id: 'kz', t: 'Kto z zespołu', typ: 'tekst', s: .95 },
-                 { id: 'term', t: 'Do kiedy', typ: 'tekst', s: .75 },
-                 { id: 'tryb', t: 'Informowanie', typ: 'wybor', op: TRYB, s: 1 },
-                 { id: 'godz', t: 'Czas interesariusza, godz.', typ: 'liczba', s: .7 },
-                 { id: 'zgoda', t: 'Zgoda przełożonego', typ: 'wybor', op: ['uzgodniona', 'do uzgodnienia', 'nie dotyczy'], s: 1 } ],
-          podpowiedz: (w) => {
-            const G = {}; w.forEach(r => { if (r.kto) (G[r.kto] = G[r.kto] || []).push(r); });
-            const wiele = Object.entries(G).filter(([, L]) => L.length > 1);
-            let h = wiele.map(([k, L]) => `<div class="uwaga">Do interesariusza „${escP(k)}” zespół planuje ${L.length} działania (${L.map(r => r.nr).join(', ')}), razem ${L.reduce((a, r) => a + (+r.godz || 0), 0)} godz. jego czasu. Sprawdźcie, czy możecie połączyć je w jedną prośbę albo jedno spotkanie.</div>`).join('');
-            const zg = w.filter(r => r.zgoda === 'do uzgodnienia').map(r => r.nr);
-            if (zg.length) h += `<div class="uwaga">Działania wymagające zgody przełożonego interesariusza: ${zg.join(', ')}. Zespół uzgadnia czas pracy, zanim poprosi o pracę.</div>`;
-            return h; },
-          wyj: { po: 'Plan działań to lista działań diagnostycznych: prośba o dane, wywiad, obserwacja, pomiar próbny albo analiza dokumentów. Każde działanie ma interesariusza, osobę z zespołu i termin. W planie projektu jest to pakiet prac etapu diagnozy, który kończy się kamieniem milowym KM1.',
-            jak: 'Wybierzcie interesariusza z mapy T02 i połączcie pytania do tego samego interesariusza w jedno działanie albo kilka działań w jednym terminie. Przy każdym działaniu wpiszcie, na które pytania odpowiada, kto z zespołu je prowadzi i do kiedy, czy interesariusza informujecie grupowo, czy indywidualnie, ile godzin jego pracy zajmie działanie i czy czas pracy trzeba uzgodnić z jego przełożonym. Ustalcie kolejność: najpierw dane z rejestrów, potem wywiad, który je wyjaśnia.',
-            p1: 'DZ01 · Kierownik działu technicznego · prośba o dane, potem wywiad · PD01, PD02 · A. Nowak · do 18.12 · indywidualnie · 2 godz. · nie dotyczy',
-            p2: 'DZ02 · Administratorzy budynków · obserwacja przyjmowania zgłoszeń · PD03 · B. Kowalska · do 22.12 · grupowo · 4 godz. · do uzgodnienia',
-            blad: 'Osobne prośby do tej samej osoby w różnych terminach. Interesariusz traci czas i chęć do współpracy, a zespół czeka na dane dłużej.' } }
+                 { id: 'opis', t: 'Działanie: co zespół zrobi i u kogo', typ: 'obszar', s: 3 },
+                 { id: 'pd', t: 'Dane, których dotyczy (pytania)', typ: 'wielo', op: () => numeryZ('pyt'), s: 1 },
+                 { id: 'kiedy', t: 'Kiedy', typ: 'tekst', s: .9 },
+                 { id: 'kz', t: 'Kto z zespołu', typ: 'tekst', s: 1 } ],
+          wstep: 'Prośby do tej samej osoby połączcie w jedno działanie: jedną prośbę o dane albo jedno spotkanie.',
+          podpowiedz: () => slownikHtml('Przykładowe działania diagnostyczne', [['prośba o dane', 'zespół prosi osobę albo dział o zestawienie, rejestr albo dokumenty'], ['wywiad', 'rozmowa z osobą, która wykonuje pracę albo odczuwa skutki problemu'], ['obserwacja', 'zespół patrzy, jak praca przebiega w rzeczywistości, i zapisuje to'], ['pomiar próbny', 'zespół przez krótki czas liczy, ile razy coś się zdarza i ile trwa'], ['analiza dokumentów', 'zespół przegląda procedury, umowy i zestawienia']]),
+          wyj: { po: 'Plan działań to lista działań diagnostycznych. Każde działanie mówi, co zespół zrobi i u kogo, jakich pytań z sekcji 1 dotyczy, kiedy i kto z zespołu je prowadzi. W planie projektu jest to pakiet prac etapu diagnozy, który kończy się kamieniem milowym KM1.',
+            jak: 'Opiszcie działanie własnymi słowami i zaznaczcie pytania, na które odpowie. Prośby do tej samej osoby połączcie w jedno działanie. Ustalcie kolejność: najpierw dane z rejestrów, potem rozmowa, która je wyjaśnia. Kolejność wierszy zmienicie strzałkami.',
+            p1: 'DZ01 · Prośba do kierownika działu technicznego o zestawienie zgłoszeń z 2025 r., potem rozmowa o przyczynach opóźnień · PD01, PD02 · do 11.12 · A. Nowak',
+            p2: 'DZ02 · Obserwacja przyjmowania zgłoszeń przez administratorów przez jeden dzień · PD03 · do 18.12 · B. Kowalska',
+            blad: 'Osobne prośby do tej samej osoby w różnych terminach. Interesariusz traci czas i chęć do współpracy, a zespół dłużej czeka na dane.' } }
       ]},
       { id: 's3', nr: 3, t: 'Wykaz źródeł', pola: [
+        { id: 'folder', typ: 'link', et: 'Folder źródeł zespołu', placeholder: 'wklejcie link do folderu albo ścieżkę',
+          wyj: { po: 'Jeden wspólny folder, w którym zespół zapisuje wszystkie pliki źródłowe. Link wpisany tutaj otwiera folder wszystkim członkom zespołu.',
+            jak: 'Jedna osoba zakłada folder na służbowym OneDrive lub SharePoint PTBS, na przykład „P1_Źródła numerowane”, udostępnia go zespołowi, kopiuje link do folderu i wkleja go tutaj. Link internetowy otworzy się przyciskiem; ścieżkę do dysku sieciowego strona pozwoli skopiować.',
+            p1: 'https://ptbs-my.sharepoint.com/… (link do folderu P1_Źródła numerowane)', blad: 'Zapisywanie plików na prywatnym dysku albo w poczcie. Dane pracowników i najemców zostają w zasobach PTBS.' } },
         { id: 'zr', typ: 'tabela', et: 'Źródła danych z numerami', zalezy: ['pyt', 'dzi'], bezUsuwania: true,
           nowyWiersz: w => ({ nr: kolejnyNr(w, 'R') }),
-          kol: [ { id: 'nr', t: 'Nr', typ: 'tekst', s: .55 },
-                 { id: 'naz', t: 'Źródło', typ: 'obszar', s: 1.9 },
-                 { id: 'rodz', t: 'Rodzaj', typ: 'wybor', op: RODZ_ZR, s: .9 },
-                 { id: 'post', t: 'Postać', typ: 'wybor', op: POSTAC_ZR, s: 1.05 },
-                 { id: 'gdzie', t: 'Link albo miejsce', typ: 'obszar', s: 1.15 },
+          kol: [ { id: 'nr', t: 'Nr', typ: 'tekst', s: .6 },
+                 { id: 'naz', t: 'Źródło', typ: 'obszar', s: 1.7 },
+                 { id: 'rodz', t: 'Rodzaj', typ: 'lista', op: RODZ_ZR, s: 1 },
+                 { id: 'post', t: 'Postać', typ: 'wybor', op: POSTAC_ZR, s: 1 },
+                 { id: 'link', t: 'Link (tylko źródła spoza folderu)', typ: 'tekst', s: 1.1 },
                  { id: 'dz', t: 'Z działania', typ: 'wybor', op: () => numeryZ('dzi'), s: .75 },
                  { id: 'pd', t: 'Odpowiada na pytania', typ: 'wielo', op: () => numeryZ('pyt'), s: .85 },
                  { id: 'os', t: 'Dane osobowe', typ: 'wybor', op: ['tak', 'nie'], s: .75 },
-                 { id: 'plik', t: 'Nazwa pliku', typ: 'auto', f: nazwaPliku, s: 1.3 } ],
+                 { id: 'plik', t: 'Nazwa pliku', typ: 'auto', f: nazwaPliku, pusty: 'pojawi się po wpisaniu numeru i rodzaju', s: 1.3 } ],
+          wstep: '<b>Jak dodać źródło</b><ol><li>Kliknijcie „Dodaj wiersz”: strona nada numer.</li><li>Wpiszcie nazwę źródła i wybierzcie rodzaj albo wpiszcie własny, zaczynając od trzyliterowego kodu, na przykład „FOT · zdjęcia”.</li><li>Zapiszcie plik w folderze źródeł zespołu pod nazwą z kolumny „Nazwa pliku”.</li><li>Zmieńcie postać na „plik”.</li></ol>Folder załóżcie na służbowym OneDrive lub SharePoint PTBS. Link wpisujecie tylko przy źródłach spoza folderu, na przykład przepisach i stronach internetowych.',
           podpowiedz: (w, wart) => {
             const P = (wart('pyt') || []).filter(r => r.waz === 'tak' && r.nr), uz = w.filter(r => r.post !== 'wycofane');
             const malo = P.filter(p => uz.filter(r => String(r.pd || '').split(', ').includes(p.nr)).length < 2).map(p => p.nr);
-            let h = malo.length ? `<div class="uwaga">Reguła dwóch źródeł: pytania ${malo.join(', ')} zmieniają kwotę w karcie albo kierunek projektu, a mają mniej niż dwa źródła. Ustalenie z jednym źródłem zespół oznacza jako „wymaga potwierdzenia”.</div>` : '';
-            if (w.some(r => r.os === 'tak')) h += '<div class="uwaga">Pliki z danymi osobowymi pracowników i najemców zostają w zasobach PTBS. Na stronie Akademii zespół wpisuje tylko numer, nazwę i miejsce źródła.</div>';
-            return h; },
+            const bezKodu = w.filter(r => String(r.rodz || '').trim() && !kodRodzaju(r)).map(r => r.nr);
+            let h = '';
+            if (malo.length) h += `<div class="uwaga">Reguła dwóch źródeł: pytania ${malo.join(', ')} zmieniają kwotę w karcie albo kierunek projektu, a mają mniej niż dwa źródła. Ustalenie z jednym źródłem zespół oznacza jako „wymaga potwierdzenia”.</div>`;
+            if (bezKodu.length) h += `<div class="uwaga">Własny rodzaj źródła zacznijcie od trzyliterowego kodu, na przykład „FOT · zdjęcia”. Brakuje kodu przy: ${bezKodu.join(', ')}.</div>`;
+            if (w.some(r => r.os === 'tak')) h += '<div class="uwaga">Pliki z danymi osobowymi pracowników i najemców zostają w zasobach PTBS. Na stronie Akademii zespół wpisuje tylko numer, nazwę i rodzaj źródła.</div>';
+            return h + slownikZrodel(w); },
           wyj: { po: 'Wykaz pokazuje, skąd pochodzi każda liczba i każde ustalenie zespołu. Przy każdej kwocie i każdym ustaleniu zespół podaje w nawiasie numer źródła, na przykład [R02, R04a].',
-            jak: 'Rodzaje źródeł: DOK – dokument lub rejestr; SYS – dane z systemu; ROZ – notatka z rozmowy; OBS – obserwacja; POM – pomiar próbny; ZEW – źródło zewnętrzne, na przykład przepis albo publikacja. Strona proponuje kolejny numer: R01, R02, R03. Części jednego źródła mają ten sam numer z literą: R04a, R04b; wpiszcie literę w polu numeru. Numer nadany raz zostaje na stałe, także wtedy, gdy źródło nie ma pliku; wiersza nie można usunąć, a źródło, z którego zespół rezygnuje, oznacza postacią „wycofane”. Pliki zespół zapisuje we wspólnym folderze projektu w PTBS, w podfolderze „Źródła numerowane”, pod nazwą z kolumny „Nazwa pliku”.',
-            p1: 'R02 · Zestawienie czasu obsługi zgłoszeń z systemu, 2025 · SYS · plik · folder P1_Źródła numerowane · DZ01 · PD01 · nie · R02_SYS_Zestawienie czasu obsługi zgłoszeń',
-            p2: 'R04b · Pomiar czasu obsługi zgłoszeń, tydzień 2 · POM · planowane · — · DZ02 · PD01, PD03 · nie',
+            jak: 'Strona proponuje kolejny numer: R01, R02, R03. Części jednego źródła mają ten sam numer z literą: R04a, R04b; literę wpiszcie w polu numeru. Numer nadany raz zostaje na stałe, także wtedy, gdy źródło nie ma pliku; wiersza nie można usunąć, a źródło, z którego zespół rezygnuje, oznacza postacią „wycofane”. Kolejność wierszy zmienicie strzałkami.',
+            p1: 'R02 · Zestawienie czasu obsługi zgłoszeń z systemu, 2025 · SYS · plik · DZ01 · PD01 · nie · R02_SYS_Zestawienie czasu obsługi zgłoszeń, 2025',
+            p2: 'R05 · Przepisy o terminach usuwania awarii · ZEW · link · adres strony w kolumnie „Link” · PD02 · nie',
             blad: 'Nadanie numeru usuniętego źródła nowemu dokumentowi. Odwołania w raportach wskazują wtedy inne dane niż te, z których zespół korzystał.' } }
       ]}
     ]
