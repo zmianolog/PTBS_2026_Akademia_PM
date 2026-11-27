@@ -75,9 +75,8 @@ if (APM.wymagajLogowania()) (async () => {
   /* sloty z najbliższych tygodni */
   function sloty() {
     const teraz = new Date(), dni = [];
-    for (let i = 0; i < K.tygodni * 7; i++) { const d = new Date(teraz.getFullYear(), teraz.getMonth(), teraz.getDate() + i);
-      if (d.getDay() === K.dzien) { const dz = iso(d), s = K.sloty.filter(g => zDaty(dz, g) > teraz); if (s.length) dni.push({ dz, d, s, bez: K.bez.includes(dz) }); } }
-    return dni;
+    K.terminy.slice().sort().forEach(dz => { const s = K.sloty.filter(g => zDaty(dz, g) > teraz); if (s.length) dni.push({ dz, d: zDaty(dz, '12:00'), s }); });
+    return dni.slice(0, 3);
   }
   const mozeOdwolac = dz => new Date() < zDaty(dz, '00:00');
   let W = {};
@@ -85,14 +84,13 @@ if (APM.wymagajLogowania()) (async () => {
     try { W = await B.wszystkie(); } catch (e) { console.warn(e); W = {}; }
     const zesp = JA.zespol, dni = sloty();
     let h = `<h1>Konsultacje</h1><div class="kz-zasady"><b>Zasady</b><ul>
-      <li>Konsultacje odbywają się w Teams, w ${['niedziele', 'poniedziałki', 'wtorki', 'środy', 'czwartki', 'piątki', 'soboty'][K.dzien]}, w slotach po ${K.minut} minut.</li>
+      <li>Konsultacje odbywają się w Teams, w terminach podanych poniżej, w slotach po ${K.minut} minut.</li>
       <li>Zapisuje się zespół. Każdy zespół może mieć jeden slot w tygodniu.</li>
       <li>Przy zapisie wpiszcie, z jakim problemem projektowym przychodzicie.</li>
       <li>Zapis można odwołać najpóźniej dzień przed konsultacją.</li></ul></div>`;
-    if (!dni.length) h += '<p class="kz-brak">W najbliższych dwóch tygodniach nie ma wolnych terminów konsultacji.</p>';
-    dni.forEach(({ dz, d, s, bez }) => {
+    if (!dni.length) h += '<p class="kz-brak">Nie ma jeszcze kolejnych terminów konsultacji. Prowadzący poda je na najbliższym spotkaniu.</p>';
+    dni.forEach(({ dz, d, s }) => {
       h += `<section class="kz-dzien"><h2>${ladnie(d)}</h2>`;
-      if (bez) { h += '<p class="kz-brak">W tym tygodniu konsultacji nie ma.</p></section>'; return; }
       const tyg = tydzien(dz), naszWTyg = Object.entries(W).some(([id, x]) => x.zespol === zesp && x.tydzien === tyg);
       h += '<div class="kz-sloty">' + s.map(g => { const id = `${dz}_${g.replace(':', '')}`, x = W[id];
         if (x && x.zespol === zesp && UCZ) return `<div class="kz-slot nasz"><b>${g}</b><span class="st">Wasz zespół · zapisał(a): ${esc(x.kto)}</span><div>${esc(x.temat)}</div>

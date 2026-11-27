@@ -22,10 +22,10 @@ const MENU = [
   { plik: 'wyniki.html', nazwa: 'Wyniki grupy', role: ['zarzad'] }
 ];
 
-/* KONSULTACJE: stałe okno w tygodniu (dzień: 1 = poniedziałek … 5 = piątek), sloty po 30 minut.
-   Strona pokazuje sloty z najbliższych dwóch tygodni. „bez” = dni bez konsultacji w formacie RRRR-MM-DD.
+/* KONSULTACJE: „terminy” = dni konsultacji w formacie RRRR-MM-DD, ustalane przez prowadzącego; sloty po 30 minut.
+   Strona pokazuje najbliższe trzy terminy, które jeszcze się nie skończyły.
    „teams” = stały link do spotkania w Teams, widoczny dla zespołu przy jego zapisie. „pula” = godziny konsultacji w bieżącej części. */
-const KONSULTACJE = { dzien: 5, sloty: ['12:00', '12:30', '13:00'], minut: 30, tygodni: 2, bez: [], teams: '', pula: 8 };
+const KONSULTACJE = { terminy: ['2026-12-04', '2026-12-09'], sloty: ['12:00', '12:30', '13:00'], minut: 30, teams: '', pula: 8 };
 
 /* TERMINY: wpisz datę i godzinę rozpoczęcia spotkania w formacie DD.MM.RR GG:MM, np. D01:'12.01.27 09:00'. Puste = na kafelku widać wzór DD.MM.RR / GG:MM. */
 const TERMINY = { D00:'18.11.26 10:30', D01:'26.11.26 09:30', D02:'01.12.26 09:00', D03:'08.12.26 09:00',
@@ -132,7 +132,7 @@ const APM = (() => {
         'Tabela pokazuje dokumenty wszystkich zespołów i status każdego dokumentu.',
         'Otwórz dokument, aby dodać uwagi do jego sekcji. Uwagi widzi zespół i sponsor.'] } },
     'konsultacje.html': { t:'Konsultacje', k:[
-      'Konsultacje zespołów odbywają się w Teams w piątki, w slotach po 30 minut.',
+      'Konsultacje zespołów odbywają się w Teams w terminach podanych na tej stronie, w slotach po 30 minut.',
       'Wpisz temat konsultacji przy wolnym slocie i kliknij „Zapisz zespół”.',
       'Zapis waszego zespołu odwołasz przyciskiem „Odwołaj zapis”.',
       'Przy zapisie waszego zespołu pojawia się przycisk „Dołącz w Teams”.'] },
