@@ -206,7 +206,9 @@ if (APM.wymagajLogowania()) (async () => {
     const pd = $('#przyciskiDok'); pd.style.gridTemplateColumns = 'repeat(4,1fr)'; pd.style.maxWidth = '1180px';
     pd.insertAdjacentHTML('beforeend', `<button class="zml-btn" id="widokBtn">${WIDOK_UCZ ? 'Widok dokumentu' : 'Widok uczestnika'}</button>`); }
   if (!ZESP) { $('#tresc').innerHTML = '<div class="uwaga">Twój kod nie jest jeszcze przypisany do zespołu. Skontaktuj się z prowadzącym.</div>'; return; }
-  let D; try { D = await DANE.czytaj(ID); } catch (e) { console.warn('APM: odczyt', e); D = { pola: {}, kroki: {}, uwagi: {}, edycja: {}, wersja: 0, doAkc: null, akc: null, potw: null }; }
+  let D; try { D = await DANE.czytaj(ID); } catch (e) { console.warn('APM: odczyt', e);
+    $('#podglad').insertAdjacentHTML('beforeend', `<div class="uwaga" style="margin:0 0 12px;background:#FDECEC;color:var(--czerwien);font-weight:700">Nie udało się odczytać dokumentu z bazy (${e && e.code === 'permission-denied' ? 'baza odmówiła dostępu' : 'błąd połączenia'}). Pola poniżej są puste z tego powodu, a nie dlatego, że zespół ich nie wypełnił.</div>`);
+    D = { pola: {}, kroki: {}, uwagi: {}, edycja: {}, wersja: 0, doAkc: null, akc: null, potw: null }; }
   /* dokumenty powiązane: T12 korzysta z listy interesariuszy z T02; T02 przy pierwszym otwarciu pobiera interesariuszy z karty (karta się nie zmienia) */
   window.POWIAZANE = {};
   for (const t of (DEF.powiazane || [])) { try { POWIAZANE[t] = await DANE.czytaj(ZESP + '_' + t); } catch (e) { POWIAZANE[t] = null; } }
