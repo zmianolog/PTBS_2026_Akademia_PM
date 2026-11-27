@@ -69,22 +69,112 @@ const APM = (() => {
       <nav class="menu" id="menu">${MENU.filter(m=>!m.role||m.role.includes(rola())||(m.podglad&&podglad())).map(m=>`<a href="${m.plik}${m.podglad&&podglad()?'?podglad=1':''}" class="${m.plik===biez?'biezaca':''}">${(m.nazwaR&&m.nazwaR[rola()])||m.nazwa}</a>`).join('')}</nav>
       ${przewodnikBtn()}
     </div></header>`;
-    $('#menu').insertAdjacentHTML('beforeend','<a href="index.html?wyloguj=1" id="wylogujMenu">Wyloguj</a>');
+    $('#menu').insertAdjacentHTML('beforeend','<button type="button" id="rozwinBtn" aria-pressed="false" title="Rozwija wszystkie pola tekstowe do pełnej długości wpisanej treści">R · Rozwiń pola</button><a href="index.html?wyloguj=1" id="wylogujMenu">Wyloguj</a>');
     $('#wylogujMenu').addEventListener('click',e=>{ e.preventDefault(); wyloguj(); });
-    $('#przewodnikBtn').addEventListener('click',()=>{ const d=$('#przewodnikDymek'); d.classList.add('akt'); clearTimeout(d._t); d._t=setTimeout(()=>d.classList.remove('akt'),2600); });
+    $('#rozwinBtn').addEventListener('click',()=>ustawRozwin(!document.body.classList.contains('rozwin')));
+    ustawRozwin((()=>{ try{ return localStorage.getItem('apm_rozwin')==='1'; }catch(e){ return false; } })());
+    $('#przewodnikBtn').addEventListener('click',e=>{ e.stopPropagation(); const d=$('#przewodnikPanel'); const otw=d.classList.toggle('akt'); $('#przewodnikBtn').setAttribute('aria-expanded',String(otw)); if(otw) d.innerHTML=przewodnikTresc(); });
+    $('#przewodnikPanel').addEventListener('click',e=>{ if(e.target.closest('[data-prz-zamknij]')){ $('#przewodnikPanel').classList.remove('akt'); $('#przewodnikBtn').setAttribute('aria-expanded','false'); } });
+    document.addEventListener('click',e=>{ const d=$('#przewodnikPanel'); if(d&&d.classList.contains('akt')&&!e.target.closest('.przewodnik-w')){ d.classList.remove('akt'); $('#przewodnikBtn').setAttribute('aria-expanded','false'); } });
+    document.addEventListener('keydown',e=>{ const d=$('#przewodnikPanel'); if(e.key==='Escape'&&d&&d.classList.contains('akt')){ d.classList.remove('akt'); $('#przewodnikBtn').setAttribute('aria-expanded','false'); } });
     (function mrugaj(){ setTimeout(()=>{ const o=document.querySelector('#przewodnikBtn .oczy'); if(o){ o.classList.add('mrug'); setTimeout(()=>o.classList.remove('mrug'),140); } mrugaj(); }, 2200+Math.random()*3800); })();
     $('#menuBtn').addEventListener('click',()=>{ const m=$('#menu'); m.classList.toggle('otwarte'); $('#menuBtn').setAttribute('aria-expanded',m.classList.contains('otwarte')); });
   }
-  /* Przewodnik po stronie: postać-koło w nagłówku; scenariusze pomocy powstaną po D00 */
+  /* Przycisk R: rozwija wszystkie pola tekstowe do pełnej długości wpisanej treści; stan zapamiętany w przeglądarce */
+  let obsRozwin=null;
+  const dopasuj=t=>{ t.style.height='auto'; t.style.height=(t.scrollHeight+4)+'px'; };
+  function ustawRozwin(on){
+    document.body.classList.toggle('rozwin',on);
+    try{ localStorage.setItem('apm_rozwin',on?'1':'0'); }catch(e){}
+    const b=document.getElementById('rozwinBtn'); if(b){ b.setAttribute('aria-pressed',String(on)); b.textContent=on?'R · Zwiń pola':'R · Rozwiń pola'; b.title=on?'Przywraca zwykłą wysokość pól tekstowych':'Rozwija wszystkie pola tekstowe do pełnej długości wpisanej treści'; }
+    document.querySelectorAll('textarea').forEach(t=>{ if(on) dopasuj(t); else t.style.height=''; });
+    if(on&&!obsRozwin){
+      obsRozwin=new MutationObserver(()=>{ if(document.body.classList.contains('rozwin')) document.querySelectorAll('textarea').forEach(t=>{ if(t.offsetParent!==null&&t.scrollHeight+4>t.offsetHeight) dopasuj(t); }); });
+      obsRozwin.observe(document.body,{childList:true,subtree:true});
+      document.addEventListener('input',e=>{ if(document.body.classList.contains('rozwin')&&e.target.tagName==='TEXTAREA') dopasuj(e.target); },true);
+      document.addEventListener('click',e=>{ if(document.body.classList.contains('rozwin')&&e.target.closest('button')) setTimeout(()=>{ if(document.body.classList.contains('rozwin')) document.querySelectorAll('textarea').forEach(t=>{ if(t.offsetParent!==null) dopasuj(t); }); },0); },true);
+    }
+  }
+  /* Przewodnik po stronie: opis każdej strony; klucz = plik strony, wartość = tekst dla wszystkich albo osobno dla roli (uczestnik, zarzad, prowadzacy) */
+  const PRZEWODNIK = {
+    'akademia.html': { t:'O Akademii', k:[
+      'Ta strona opisuje Akademię: po co powstała, czego uczestnicy nauczą się w programie i jakie rezultaty Akademia ma przynieść Spółce.',
+      'Część „Etapy projektu” pokazuje sześć etapów, przez które każdy zespół prowadzi swój projekt.',
+      'Opis każdego spotkania szkoleniowego jest w zakładce „Programy szkoleniowe”.',
+      'Swój poziom kompetencji na początku Akademii ocenisz w zakładce „Samoocena kompetencji”.'] },
+    'samoocena.html': { t:'Samoocena kompetencji', k:[
+      'Przy każdej z dwunastu kompetencji wybierasz poziom od 1 do 4, który najlepiej opisuje, jak dziś działasz w projektach.',
+      'Przyciskami „Dalej” i „Wstecz” przechodzisz między kompetencjami. Strona zapisuje odpowiedzi na bieżąco.',
+      'Po ostatniej kompetencji kliknij „Sprawdź wyniki”. Strona pokaże Twój profil kompetencji na wykresie.',
+      'Na końcu Akademii zobaczysz swoją samoocenę z początku programu i porównasz ją ze swoim obecnym działaniem.'] },
+    'programy.html': { t:'Programy szkoleniowe', k:[
+      'Strona pokazuje czternaście spotkań szkoleniowych Akademii w kolejności, od D00 do D13.',
+      'Kliknij spotkanie, aby zobaczyć jego cele, zakres, kompetencje, przebieg i pracę, którą zespół wykona w projekcie.',
+      'Przycisk „Otwórz stronę spotkania” prowadzi do materiałów szkoleniowych i zadań z tego spotkania.'] },
+    'spotkanie.html': { t:'Strona spotkania', k:[
+      'Strona spotkania zawiera dwie części: materiały szkoleniowe i zadania z tego spotkania.',
+      'Przycisk „Otwórz” przy materiale otwiera go w nowej karcie przeglądarki.',
+      'Dokumenty projektu waszego zespołu są w zakładce „Narzędziownik” w górnym menu.',
+      'Przyciski na dole strony przenoszą do poprzedniego i do następnego spotkania.'] },
+    'projekt.html': {
+      uczestnik:{ t:'Narzędziownik', k:[
+        'Narzędziownik zawiera wszystkie dokumenty projektu waszego zespołu, pogrupowane według spotkań.',
+        'Granatowy kafelek oznacza narzędzie dostępne do pracy. Szary kafelek oznacza narzędzie, które zostanie udostępnione później.',
+        'Kliknij granatowy kafelek, aby otworzyć dokument. Wszyscy członkowie zespołu pracują w tym samym dokumencie, a strona zapisuje zmiany automatycznie.'] },
+      zarzad:{ t:'Projekty', k:[
+        'Tabela pokazuje dokumenty wszystkich zespołów i status każdego dokumentu.',
+        'Przycisk „Pełny dokument (PDF)” pobiera dokument w formie do przeczytania i wydruku.',
+        'Gdy zespół przekaże dokument do akceptacji, przycisk „Akceptuję” przy tym dokumencie staje się aktywny. Kliknięcie przycisku zapisuje akceptację.',
+        'Uwagi do dokumentu wyślij zespołowi albo prowadzącemu zwykłym mailem.'] },
+      prowadzacy:{ t:'Projekty', k:[
+        'Tabela pokazuje dokumenty wszystkich zespołów i status każdego dokumentu.',
+        'Otwórz dokument, aby dodać uwagi do jego sekcji. Uwagi widzi zespół i sponsor.'] } },
+    'konsultacje.html': { t:'Konsultacje', k:[
+      'Konsultacje zespołów odbywają się w Teams w piątki, w slotach po 30 minut.',
+      'Wpisz temat konsultacji przy wolnym slocie i kliknij „Zapisz zespół”.',
+      'Zapis waszego zespołu odwołasz przyciskiem „Odwołaj zapis”.',
+      'Przy zapisie waszego zespołu pojawia się przycisk „Dołącz w Teams”.'] },
+    'wyniki.html': { t:'Wyniki grupy', k:[
+      'Wykres pokazuje średnią samoocenę uczestników Akademii w dwunastu kompetencjach, w skali od 1 do 4.',
+      'Kliknij ikonę kompetencji, aby zobaczyć jej opis i rozkład odpowiedzi w grupie.',
+      'Strona nie pokazuje odpowiedzi poszczególnych osób.'] },
+    'dokument.html': {
+      uczestnik:{ t:'Dokument zespołu', k:[
+        'Dokument składa się z numerowanych sekcji. Pasek z numerami pokazuje sekcje wypełnione (granatowe), sekcje w toku (złote) i sekcje do uzupełnienia (szare).',
+        'Treść wpisujesz bezpośrednio w polach. Strona zapisuje ją automatycznie, a zielony znak „Dane zapisane” potwierdza zapis.',
+        'Przycisk „Wyjaśnienie” przy polu pokazuje, po co jest pole, jak je wypełnić, przykłady i typowe błędy.',
+        'Przycisk „R · Rozwiń pola” w górnym menu powiększa wszystkie pola tekstowe tak, aby była widoczna cała wpisana treść. Ponowne kliknięcie przywraca zwykłą wysokość pól.',
+        'W karcie projektu, w kroku 6 sekcji „Wartość projektu”, wykres pokazuje, w którym miesiącu korzyści z projektu pokryją jego koszt. Suwakami ustawiacie, kiedy zaczynają się korzyści i jak szybko osiągają pełną kwotę.',
+        'Gdy dokument jest gotowy, zespół przekazuje go sponsorowi przyciskiem w ostatniej sekcji.'] },
+      zarzad:{ t:'Dokument zespołu', k:[
+        'Strona pokazuje pełną treść dokumentu zespołu w formie do czytania.',
+        'Przycisk „Drukuj lub zapisz PDF” przygotowuje dokument do wydruku albo do zapisania jako plik PDF.',
+        'W karcie projektu, w części „Wartość projektu”, wykres pokazuje, w którym miesiącu korzyści z projektu pokryją jego koszt, według założeń zespołu.',
+        'Decyzję o dokumencie zapisujesz w części „Decyzja sponsora” na dole strony.'] },
+      prowadzacy:{ t:'Dokument zespołu', k:[
+        'Strona pokazuje pełną treść dokumentu zespołu.',
+        'Uwagi do sekcji wpisujesz w polu „Nowa uwaga do tej sekcji” i zapisujesz przyciskiem „Dodaj uwagę”.'] } },
+    'instrukcja.html': { t:'Instrukcja dokumentu', k:[
+      'Instrukcja opisuje każde pole dokumentu: po co jest, jak je wypełnić, przykłady i typowe błędy.',
+      'Przycisk „Drukuj lub zapisz PDF” przygotowuje instrukcję do wydruku.'] },
+    'prowadzacy.html': { t:'Panel prowadzącego', k:[
+      'Panel służy do tworzenia kodów, przypisywania osób do zespołów i przeglądania wyników samooceny.'] }
+  };
+  function przewodnikTresc(){
+    const biez=location.pathname.split('/').pop()||'index.html', w=PRZEWODNIK[biez];
+    const r=rola(), o=w&&(w.k?w:(w[r]||w[r==='test'?'uczestnik':'']||w.uczestnik));
+    const lista=o?`<ol>${o.k.map(x=>`<li>${x}</li>`).join('')}</ol>`:'<p>Dla tej strony nie ma jeszcze opisu.</p>';
+    return `<div class="prz-gl"><b>Przewodnik po stronie</b><span>${o?o.t:''}</span></div>${lista}<button type="button" class="zml-btn" data-prz-zamknij>Zamknij</button>`;
+  }
   function przewodnikBtn(){
     const B='fill="#fff"';
-    return `<div class="przewodnik-w"><button class="przewodnik" id="przewodnikBtn" aria-label="Jak korzystać z tej strony" title="Jak korzystać z tej strony">
+    return `<div class="przewodnik-w"><button class="przewodnik" id="przewodnikBtn" aria-expanded="false" aria-controls="przewodnikPanel" aria-label="Przewodnik po stronie" title="Przewodnik po stronie">
       <svg viewBox="58 51 148 148" aria-hidden="true"><circle class="puls" cx="132" cy="125" r="68" fill="none" stroke="#1F4460" stroke-width="4"/>
       <g class="oddech"><circle cx="132" cy="125" r="66" fill="#1F4460"/>
       <g class="oczy" transform="translate(76 92)"><path d="M36 22a6 6 0 1 1-12 0 6 6 0 0 1 12 0ZM88 22a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z" ${B}/></g>
       <g transform="translate(76 80)"><path d="M26.55 6.15c-5.8.27-15.2 4.49-14.96 10.34.01.18.3.27.43.12 2.76-2.96 22.32-5.95 29.2-4.36.64.14 1.12-.48.72-.93-3.43-3.85-10.2-5.43-15.4-5.18ZM86.45 6.15c5.8.27 15.2 4.49 14.96 10.34-.01.18-.3.27-.43.12-2.76-2.96-22.32-5.95-29.2-4.36-.64.14-1.12-.48-.72-.93 3.43-3.85 10.2-5.43 15.4-5.18Z" ${B}/></g>
       <g transform="translate(78 130)"><path d="M40 16c0 5.37 6.16 9 14 9s14-3.63 14-9c0-1.1-.95-2-2-2-1.3 0-1.87.9-2 2-1.24 2.94-4.32 4.72-10 5-5.68-.28-8.76-2.06-10-5-.13-1.1-.7-2-2-2-1.05 0-2 .9-2 2Z" ${B}/></g></g></svg>
-    </button><div class="przewodnik-dymek" id="przewodnikDymek" role="status">Jeszcze nie dzisiaj</div></div>`;
+    </button><div class="przewodnik-panel" id="przewodnikPanel" role="dialog" aria-label="Przewodnik po stronie"></div></div>`;
   }
   function stopka(){
     $('#stopka').outerHTML = `<footer class="stopka"><div class="wewn"><span>ZMIANOLOGICA · dr Marcin Żółtak</span><button class="link" id="wyloguj">Wyloguj z tego urządzenia</button></div></footer>`;

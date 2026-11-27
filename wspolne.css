@@ -75,6 +75,8 @@ p{margin:0 0 12px}
 .menu.otwarte{display:flex}
 .menu a{display:flex;align-items:center;justify-content:center;text-align:center;min-height:48px;padding:4px 12px;border:2px solid var(--g);border-radius:8px;color:var(--g);font:600 15px/1.2 var(--font);text-decoration:none}
 .menu a.biezaca{background:var(--g);color:#fff}
+.menu button{display:flex;align-items:center;justify-content:center;text-align:center;min-height:48px;padding:4px 12px;border:2px solid var(--g);border-radius:8px;background:#fff;color:var(--g);font:600 15px/1.2 var(--font);cursor:pointer}
+.menu button[aria-pressed="true"]{background:var(--g);color:#fff}
 /* stopka */
 .stopka{border-top:2px solid var(--ramka);margin-top:30px}
 .stopka .wewn{max-width:1180px;margin:0 auto;padding:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;font-size:13px;color:var(--tekst2)}
@@ -100,7 +102,7 @@ p{margin:0 0 12px}
 /* szersze ekrany */
 @media (min-width:640px){ .wrap{padding:28px 24px 50px} h1{font-size:30px} .siatka.k2,.siatka.k3,.siatka.k6{grid-template-columns:repeat(2,1fr)} .przyciski{grid-template-columns:repeat(auto-fit,minmax(240px,max-content))} .zml-btn{width:auto;min-width:240px}}
 @media (min-width:1000px){ .siatka.k3{grid-template-columns:repeat(3,1fr)} .siatka.k6{grid-template-columns:repeat(3,1fr)} .marka{font-size:15px} }
-@media (min-width:1180px){ .menu-btn{display:none} .menu{display:flex;position:static;flex-direction:row;border:0;padding:0;gap:8px} .menu a{width:128px;flex:none;font-size:14px} }
+@media (min-width:1180px){ .menu-btn{display:none} .menu{display:flex;position:static;flex-direction:row;border:0;padding:0;gap:8px} .menu a,.menu button{width:112px;flex:none;font-size:13px;padding:4px 8px} }
 @media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
 
 /* Kompetencje w etapach projektu */
@@ -157,8 +159,16 @@ p{margin:0 0 12px}
 .przewodnik .oczy.mrug{transform:translate(76px,92px) scaleY(.12);transform-box:fill-box;transform-origin:center}
 @keyframes prz-oddech{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 @keyframes prz-puls{0%{transform:scale(1);opacity:.5}70%,100%{transform:scale(1.25);opacity:0}}
-.przewodnik-dymek{position:absolute;right:0;top:calc(100% + 8px);white-space:nowrap;background:#fff;border:2px solid var(--g);border-radius:10px;padding:6px 12px;font:700 14px var(--font);color:var(--g);opacity:0;transform:translateY(-4px);transition:opacity .2s,transform .2s;pointer-events:none;z-index:20}
-.przewodnik-dymek.akt{opacity:1;transform:none}
+.przewodnik-panel{position:absolute;right:0;top:calc(100% + 10px);width:min(420px,calc(100vw - 24px));max-height:calc(100vh - 110px);overflow:auto;background:#fff;border:2px solid var(--g);border-radius:12px;padding:16px;box-shadow:0 10px 30px rgba(20,30,40,.2);font:400 15px/1.5 var(--font);color:var(--tekst);display:none;z-index:20}
+.przewodnik-panel.akt{display:block}
+.przewodnik-panel .prz-gl{display:flex;flex-direction:column;gap:2px;border-bottom:2px solid var(--m);padding-bottom:8px;margin-bottom:10px}
+.przewodnik-panel .prz-gl b{color:var(--g);font-size:17px;font-weight:800}
+.przewodnik-panel .prz-gl span{font-size:13px;font-weight:600;color:var(--tekst2)}
+.przewodnik-panel ol{margin:0 0 14px;padding-left:22px}
+.przewodnik-panel li{margin:0 0 8px}
+.przewodnik-panel .zml-btn{width:100%;min-width:0}
+/* przycisk R: pola tekstowe rozwinięte do pełnej treści */
+body.rozwin textarea{overflow:hidden;resize:none}
 @media (prefers-reduced-motion:reduce){.przewodnik .oddech,.przewodnik .puls{animation:none}.przewodnik .puls{opacity:0}}
 .naglowek .marka{margin-right:auto}
 .naglowek .marka span{white-space:nowrap}
