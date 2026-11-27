@@ -91,14 +91,20 @@ textarea.wej{min-height:78px;resize:vertical}
 .sym-przew{overflow-x:auto}
 .sym-svg{width:100%;min-width:620px;height:auto;display:block;font-family:var(--font)}
 .pdf-dok .sym-svg,#wydruk .sym-svg{min-width:0}
-.sym-leg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:12px;color:var(--tekst2);margin:6px 0 10px}
+.sym-leg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;font-size:12px;color:var(--tekst2);margin:6px 0 10px}
 .sym-leg span{display:flex;align-items:center;gap:8px;line-height:1.25}
 .sym-leg i{display:inline-block;width:28px;flex:none}
-.sym-wyn{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sym-wyn{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.sym-tyt{font-weight:700;color:var(--g);font-size:14px;margin:14px 0 2px}
+.sym-opis{margin-top:12px;background:var(--jasny);border-left:4px solid var(--m);border-radius:8px;padding:12px 14px;font-size:14px;line-height:1.5}
+.sym-opis p{margin:0 0 6px}
+.sym-ostrz{margin-top:8px;border-top:2px dashed var(--ramka);padding-top:8px}
+.sym-ostrz ul{margin:4px 0 0;padding-left:20px}
+.pdf-dok .sym-opis,#wydruk .sym-opis{font-size:10px;padding:6px 8px}
 .sym-wyn div{background:var(--jasny);border-radius:8px;padding:10px 12px;font-size:14px;height:100%}
 .sym-wyn b{display:block;font-size:17px;color:var(--g)}
 .pdf-dok .sym-wyn div,#wydruk .sym-wyn div{font-size:11px;padding:6px 8px} .pdf-dok .sym-wyn b,#wydruk .sym-wyn b{font-size:13px}
-.pdf-dok .sym,#wydruk .sym{break-inside:avoid}
+.pdf-dok .sym-przew,#wydruk .sym-przew,.pdf-dok .sym-opis,#wydruk .sym-opis,.pdf-dok .sym-wyn,#wydruk .sym-wyn{break-inside:avoid}
 .uwagi{border-top:2px dashed var(--ramka);padding-top:10px}
 .uwaga{background:#FFF7DD;border-radius:8px;padding:8px 10px;font-size:14px;margin-top:6px}
 .uwaga.ok{background:var(--tlo);color:var(--tekst2)}
@@ -310,7 +316,7 @@ if (APM.wymagajLogowania()) (async () => {
   }
   function sumy() {
     const t = id => (wart(id) || []), s = (id, f) => t(id).filter(f || (() => 1)).reduce((a, r) => a + (+r.kw || 0), 0);
-    return { strata: s('w1'), tw: s('w3', r => r.rodz === 'twarda'), mi: s('w3', r => r.rodz === 'miękka'), bud: s('w5') };
+    return { strata: s('w1'), tw: s('w3', r => r.rodz === 'twarda'), mi: s('w3', r => r.rodz === 'miękka'), bud: s('w5'), utrz: D.kroki.w5u === 'pom' ? 0 : s('w5u') };
   }
   function wyliczenie() {
     const S = sumy();
@@ -318,66 +324,102 @@ if (APM.wymagajLogowania()) (async () => {
       <div>Korzyść netto I roku, tylko oszczędności twarde<b>${zl(S.tw - S.bud)}</b></div><div>Korzyść netto I roku, twarde i miękkie<b>${zl(S.tw + S.mi - S.bud)}</b></div></div>`;
   }
   /* ----- symulacja zwrotu z inwestycji (krok 6 karty) -----
-     Ustawienia suwaków zespół zapisuje w polu „sym” dokumentu, poza polami karty: zapis nie zmienia wersji ani statusu karty.
-     Model miesięczny: budżet z kroku 5 rozkłada się równo na miesiące przed pierwszymi korzyściami;
-     korzyści z kroku 3 (kwota roczna / 12) rosną liniowo do pełnej kwoty w czasie dojścia; strata z kroku 1 narasta co miesiąc. */
+     Ustawienia suwaków (czas) zespół zapisuje w polu „sym” dokumentu, poza polami karty: zapis nie zmienia wersji ani statusu karty.
+     Kwoty pochodzą wyłącznie z karty: strata (krok 1), korzyści (krok 3), budżet wdrożenia (krok 5) i koszt utrzymania (krok 5, tabela utrzymania).
+     Model miesięczny: budżet rozkłada się równo na miesiące wdrożenia (przed pierwszymi korzyściami), po wdrożeniu co miesiąc płynie koszt utrzymania (rocznie / 12);
+     korzyści (rocznie / 12) rosną liniowo do pełnej kwoty w czasie dojścia, potem są stałe. Wynik narastający = suma korzyści − suma kosztów. */
   const SYM_DOM = { start: 6, doj: 3, hor: 36 };
   let symLok = null;
-  const symUst = () => Object.assign({}, SYM_DOM, D.sym || {}, symLok || {});
+  const symUst = () => { const u = Object.assign({}, SYM_DOM, D.sym || {}, symLok || {}); return { start: u.start, doj: u.doj, hor: u.hor }; };
   function symLicz(S, u) {
-    const M = [], kM = u.start > 0 ? S.bud / u.start : 0;
-    let c = 0, bt = 0, bw = 0, st = 0, zT = null, zW = null;
-    M.push({ m: 0, c: u.start > 0 ? 0 : S.bud, bt: 0, bw: 0, st: 0 }); if (u.start === 0) c = S.bud;
+    const M = [{ m: 0, k: 0, kt: 0, kw: 0, st: 0, nT: 0, nW: 0 }], kWd = u.start > 0 ? S.bud / u.start : 0;
+    let sk = 0, st_ = 0, sw = 0, zT = null, zW = null;
     for (let m = 1; m <= u.hor; m++) {
-      if (m <= u.start) c += kM;
-      const k = m - u.start, f = k <= 0 ? 0 : (u.doj ? Math.min(1, k / u.doj) : 1);
-      bt += S.tw / 12 * f; bw += (S.tw + S.mi) / 12 * f; st += S.strata / 12;
-      M.push({ m, c, bt, bw, st });
-      if (zT === null && S.tw > 0 && bt >= c && m >= u.start) zT = m;
-      if (zW === null && S.tw + S.mi > 0 && bw >= c && m >= u.start) zW = m;
+      const wdr = m <= u.start, k = wdr ? kWd : S.utrz / 12;
+      const d = m - u.start, f = d <= 0 ? 0 : (u.doj ? Math.min(1, d / u.doj) : 1);
+      const kt = S.tw / 12 * f, kw = (S.tw + S.mi) / 12 * f;
+      sk += k; st_ += kt; sw += kw;
+      M.push({ m, k, wdr, kt, kw, st: S.strata / 12, nT: st_ - sk, nW: sw - sk });
+      if (zT === null && m >= u.start && S.tw > 0 && st_ - sk >= 0) zT = m;
+      if (zW === null && m >= u.start && S.tw + S.mi > 0 && sw - sk >= 0) zW = m;
     }
     return { M, zT, zW };
   }
   const tysZl = n => { const a = Math.abs(n); return (a >= 1e6 ? (n / 1e6).toLocaleString('pl-PL', { maximumFractionDigits: 1 }) + ' mln' : a >= 1e3 ? Math.round(n / 1e3).toLocaleString('pl-PL') + ' tys.' : Math.round(n).toLocaleString('pl-PL')) + ' zł'; };
-  function symSvg(S, u, R) {
-    const W = 760, H = 330, L = 78, Rp = 16, T = 18, B = 44, pw = W - L - Rp, ph = H - T - B, M = R.M;
-    const maxV = Math.max(1, ...M.map(x => Math.max(x.c, x.bw, x.st)));
-    const krok = (() => { const r = maxV / 5, p = Math.pow(10, Math.floor(Math.log10(r))), n = r / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p; })();
-    const top = Math.ceil(maxV / krok) * krok, x = m => L + pw * m / u.hor, y = v => T + ph * (1 - v / top);
-    const linia = (k, kol, gr, dash) => `<polyline fill="none" stroke="${kol}" stroke-width="${gr}" stroke-linejoin="round" ${dash ? `stroke-dasharray="${dash}"` : ''} points="${M.map(p => x(p.m).toFixed(1) + ',' + y(p[k]).toFixed(1)).join(' ')}"/>`;
+  const zlD = n => Math.round(n).toLocaleString('pl-PL').replace(/ /g, ' ') + ' zł';
+  /* wspólny rysunek wykresu: serie = [{k, kol, gr, dash, et}], znaczniki = [{m, kol, et}] */
+  function wykres(M, u, serie, opt) {
+    const W = 760, H = 300, L = 84, Rp = 112, T = 22, B = 40, pw = W - L - Rp, ph = H - T - B;
+    const vals = M.flatMap(p => serie.map(z => p[z.k]));
+    let lo = Math.min(0, ...vals), hi = Math.max(1, ...vals);
+    const krok = (() => { const r = (hi - lo) / 5 || 1, p = Math.pow(10, Math.floor(Math.log10(r))), n = r / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10) * p; })();
+    lo = Math.floor(lo / krok) * krok; hi = Math.ceil(hi / krok) * krok;
+    const x = m => L + pw * m / u.hor, y = v => T + ph * (hi - v) / (hi - lo);
     let g = '';
-    for (let v = 0; v <= top + 1e-6; v += krok) g += `<line x1="${L}" x2="${W - Rp}" y1="${y(v)}" y2="${y(v)}" stroke="#DDE2E7" stroke-width="1"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="#5A6873">${tysZl(v)}</text>`;
+    for (let v = lo; v <= hi + 1e-6; v += krok) g += `<line x1="${L}" x2="${L + pw}" y1="${y(v)}" y2="${y(v)}" stroke="${Math.abs(v) < 1e-6 ? '#5A6873' : '#DDE2E7'}" stroke-width="${Math.abs(v) < 1e-6 ? 1.5 : 1}"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="#5A6873">${tysZl(v)}</text>`;
     const co = u.hor <= 24 ? 3 : 6;
-    for (let m = 0; m <= u.hor; m += co) g += `<line x1="${x(m)}" x2="${x(m)}" y1="${T + ph}" y2="${T + ph + 5}" stroke="#5A6873"/><text x="${x(m)}" y="${T + ph + 20}" text-anchor="middle" font-size="12" fill="#5A6873">${m}</text>`;
-    g += `<text x="${L + pw / 2}" y="${H - 4}" text-anchor="middle" font-size="12" font-weight="600" fill="#5A6873">miesiące od rozpoczęcia projektu</text>`;
-    const znacznik = (m, kol, et, dy) => { if (m === null) return ''; const t = `${et}: miesiąc ${m}`, sz = Math.round(t.length * 7.4 + 18), bx = Math.max(L + 4, Math.min(x(m) + 6, W - Rp - sz));
-      return `<line x1="${x(m)}" x2="${x(m)}" y1="${T}" y2="${T + ph}" stroke="${kol}" stroke-width="2" stroke-dasharray="5 4"/><rect x="${bx}" y="${T + dy}" width="${sz}" height="24" rx="5" fill="#fff" stroke="${kol}" stroke-width="1.5"/><text x="${bx + sz / 2}" y="${T + dy + 16}" text-anchor="middle" font-size="12" font-weight="700" fill="${kol}">${t}</text>`; };
-    return `<div class="sym-przew"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" class="sym-svg" role="img" aria-label="Wykres skumulowanej straty, kosztu i korzyści projektu">
-      ${g}<line x1="${L}" x2="${W - Rp}" y1="${T + ph}" y2="${T + ph}" stroke="#5A6873" stroke-width="1.5"/>
-      ${linia('st', '#C8202E', 2.5, '7 5')}${linia('c', '#E8B62C', 3.5)}${linia('bw', '#6F8FA8', 3, '3 4')}${linia('bt', '#1F4460', 3.5)}
-      ${znacznik(R.zT, '#1F4460', 'Zwrot z oszczędności twardych', 4)}${znacznik(R.zW, '#2F7D4F', 'Zwrot z twardych i miękkich', 34)}</svg></div>`;
+    for (let m = 0; m <= u.hor; m += co) g += `<line x1="${x(m)}" x2="${x(m)}" y1="${T + ph}" y2="${T + ph + 5}" stroke="#5A6873"/><text x="${x(m)}" y="${T + ph + 19}" text-anchor="middle" font-size="12" fill="#5A6873">${m}</text>`;
+    g += `<text x="${L + pw / 2}" y="${H - 3}" text-anchor="middle" font-size="12" font-weight="600" fill="#5A6873">miesiące od rozpoczęcia projektu</text>`;
+    if (u.start > 0) g += `<rect x="${x(0)}" y="${T}" width="${x(u.start) - x(0)}" height="${ph}" fill="#F3D27A" opacity=".18"/><text x="${(x(0) + x(u.start)) / 2}" y="${T - 6}" text-anchor="middle" font-size="11" font-weight="700" fill="#5C4810">wdrożenie</text>`;
+    const pts = z => M.map(p => x(p.m).toFixed(1) + ',' + y(p[z.k]).toFixed(1)).join(' ');
+    g += serie.map(z => `<polyline fill="none" stroke="${z.kol}" stroke-width="${z.gr}" stroke-linejoin="round" ${z.dash ? `stroke-dasharray="${z.dash}"` : ''} points="${pts(z)}"/>`).join('');
+    /* wartości na końcu linii, rozsunięte w pionie, żeby się nie nakładały */
+    const kon = M[M.length - 1], et = serie.map(z => ({ z, yy: y(kon[z.k]) })).sort((a, b) => a.yy - b.yy);
+    for (let i = 1; i < et.length; i++) if (et[i].yy - et[i - 1].yy < 15) et[i].yy = et[i - 1].yy + 15;
+    g += et.map(e => `<text x="${L + pw + 6}" y="${e.yy + 4}" font-size="12" font-weight="700" fill="${e.z.kol}">${zlD(kon[e.z.k])}</text>`).join('');
+    (opt.znaczniki || []).forEach((z, i) => { if (z.m === null) return; const t = z.et, sz = Math.round(t.length * 6.9 + 16), bx = Math.max(L + 4, Math.min(x(z.m) + 6, L + pw - sz));
+      g += `<line x1="${x(z.m)}" x2="${x(z.m)}" y1="${T}" y2="${T + ph}" stroke="${z.kol}" stroke-width="2" stroke-dasharray="5 4"/><circle cx="${x(z.m)}" cy="${y(0)}" r="5" fill="${z.kol}"/><rect x="${bx}" y="${T + 6 + i * 28}" width="${sz}" height="23" rx="5" fill="#fff" stroke="${z.kol}" stroke-width="1.5"/><text x="${bx + sz / 2}" y="${T + 22 + i * 28}" text-anchor="middle" font-size="12" font-weight="700" fill="${z.kol}">${t}</text>`; });
+    if (opt.zmiana) g += `<text x="${x(u.start) + 10}" y="${y(opt.zmiana.v) - 8}" font-size="11" font-weight="700" fill="#5C4810">${opt.zmiana.et}</text>`;
+    /* podpowiedź z kwotami po najechaniu na miesiąc */
+    g += M.map(p => `<rect x="${x(p.m) - pw / u.hor / 2}" y="${T}" width="${pw / u.hor}" height="${ph}" fill="transparent"><title>Miesiąc ${p.m}\n${serie.map(z => z.et + ': ' + zlD(p[z.k])).join('\n')}</title></rect>`).join('');
+    return `<div class="sym-przew"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" class="sym-svg" role="img" aria-label="${opt.aria}">${g}</svg></div>`;
+  }
+  const leg = L => `<div class="sym-leg">${L.map(z => `<span><i style="border-top:${z.gr}px ${z.dash ? (z.dash.startsWith('3') ? 'dotted' : 'dashed') : 'solid'} ${z.kol}"></i>${z.et}</span>`).join('')}</div>`;
+  const SER_M = [{ k: 'st', kol: '#C8202E', gr: 2.5, dash: '7 5', et: 'Strata bez projektu' }, { k: 'k', kol: '#E8B62C', gr: 3.5, et: 'Koszt: wdrożenie, potem utrzymanie' },
+    { k: 'kw', kol: '#6F8FA8', gr: 3, dash: '3 4', et: 'Korzyść: twarda i miękka' }, { k: 'kt', kol: '#1F4460', gr: 3.5, et: 'Korzyść: twarda' }];
+  const SER_N = [{ k: 'nW', kol: '#2F7D4F', gr: 3.5, et: 'Wynik narastający: korzyści twarde i miękkie minus koszty' }, { k: 'nT', kol: '#1F4460', gr: 3.5, dash: '7 5', et: 'Wynik narastający: tylko korzyści twarde minus koszty' }];
+  function symWykresy(S, u, R) {
+    return `<div class="sym-tyt">Miesięcznie: strata, koszt i korzyść w każdym miesiącu</div>${wykres(R.M.slice(1), u, SER_M, { aria: 'Wykres miesięczny straty, kosztu i korzyści', zmiana: S.utrz > 0 || S.bud > 0 ? { v: S.utrz / 12, et: S.utrz > 0 ? 'od tego miesiąca: koszt utrzymania' : 'brak kosztu utrzymania w kroku 5' } : null })}${leg(SER_M)}
+      <div class="sym-tyt">Narastająco: suma korzyści minus suma kosztów od początku projektu</div>${wykres(R.M, u, SER_N, { aria: 'Wykres narastającego wyniku projektu', znaczniki: [{ m: R.zW, kol: '#2F7D4F', et: `Zwrot (twarde i miękkie): miesiąc ${R.zW}` }, { m: R.zT, kol: '#1F4460', et: `Zwrot (tylko twarde): miesiąc ${R.zT}` }] })}${leg(SER_N)}`;
   }
   function symWyniki(S, u, R) {
-    const kon = R.M[R.M.length - 1], txt = (z, kw) => kw <= 0 ? 'brak korzyści w kroku 3' : z === null ? `nie zwraca się w ciągu ${u.hor} miesięcy` : S.bud <= 0 ? 'brak kosztu w kroku 5' : `w miesiącu ${z}`;
+    const kon = R.M[R.M.length - 1], txt = (z, kw) => kw <= 0 ? 'brak korzyści w kroku 3' : z === null ? `nie zwraca się w ciągu ${u.hor} miesięcy` : `w miesiącu ${z}`;
     return `<div class="sym-wyn"><div>Zwrot z oszczędności twardych<b>${txt(R.zT, S.tw)}</b></div><div>Zwrot z oszczędności twardych i miękkich<b>${txt(R.zW, S.tw + S.mi)}</b></div>
-      <div>Wynik po ${u.hor} miesiącach, oszczędności twarde i miękkie<b>${zl(kon.bw - kon.c)}</b></div></div>`;
+      <div>Wynik po ${u.hor} miesiącach, oszczędności twarde i miękkie<b>${zl(kon.nW)}</b></div></div>`;
   }
-  const symLegenda = `<div class="sym-leg"><span><i style="border-top:3px dashed #C8202E"></i>Strata bez projektu (krok 1)</span><span><i style="border-top:4px solid #E8B62C"></i>Koszt projektu (krok 5)</span><span><i style="border-top:4px solid #1F4460"></i>Korzyści: oszczędności twarde</span><span><i style="border-top:3px dotted #6F8FA8"></i>Korzyści: twarde i miękkie</span></div>`;
-  const symZal = u => `Założenia: korzyści zaczynają się po ${u.start} mies. od rozpoczęcia projektu i osiągają pełną kwotę po ${u.doj} mies.; budżet projektu rozkłada się równo na miesiące przed pierwszymi korzyściami.`;
+  /* opis interpretacyjny składany z liczb karty, bez sztucznej inteligencji */
+  function symOpis(S, u, R) {
+    const kor = S.tw + S.mi, netto = kor - S.utrz, kon = R.M[R.M.length - 1], Z = [], O = [];
+    Z.push(`Problem kosztuje Spółkę ${zlD(S.strata)} rocznie (krok 1). Zespół szacuje, że po wdrożeniu rozwiązanie zmniejszy tę stratę o ${zlD(kor)} rocznie${S.strata > 0 ? `, czyli o ${Math.round(kor / S.strata * 100)}%` : ''}${kor > 0 ? (S.tw <= 0 ? '; w całości są to oszczędności miękkie' : S.mi <= 0 ? '; w całości są to oszczędności twarde' : `: ${zlD(S.tw)} to oszczędności twarde, a ${zlD(S.mi)} oszczędności miękkie`) : ''} (krok 3).`);
+    Z.push(`Wdrożenie kosztuje ${zlD(S.bud)} (krok 5)${S.utrz > 0 ? `, a po wdrożeniu utrzymanie rozwiązania kosztuje ${zlD(S.utrz)} rocznie. Po odjęciu kosztu utrzymania projekt przynosi ${zlD(netto)} rocznie` : '. Zespół nie wpisał kosztu utrzymania po wdrożeniu'}.`);
+    Z.push(`Górny wykres pokazuje kwoty w poszczególnych miesiącach. W czasie wdrożenia (${u.start} mies.) Spółka ponosi koszt i nie ma jeszcze korzyści. Potem korzyść rośnie przez ${u.doj} mies. do pełnej kwoty i dalej pozostaje stała, a koszt spada do poziomu utrzymania.`);
+    Z.push(`Dolny wykres pokazuje wynik narastający. Dopóki linia jest poniżej zera, suma kosztów jest wyższa niż suma korzyści. Miesiąc, w którym linia przekracza zero, to miesiąc zwrotu z inwestycji.`);
+    if (netto <= 0 && kor > 0) Z.push(`Roczne korzyści nie pokrywają rocznego kosztu utrzymania, więc w tych założeniach projekt się nie zwraca.`);
+    else if (R.zW !== null) Z.push(`W tych założeniach projekt zwraca się w miesiącu ${R.zW}, licząc ${S.tw <= 0 ? 'oszczędności miękkie' : S.mi <= 0 ? 'oszczędności twarde' : 'oszczędności twarde i miękkie'}${R.zT !== null ? `, a w miesiącu ${R.zT}, licząc tylko oszczędności twarde` : S.tw > 0 ? `; licząc tylko oszczędności twarde, nie zwraca się w ciągu ${u.hor} miesięcy` : ''}. Po ${u.hor} miesiącach wynik wynosi ${zlD(kon.nW)}.`);
+    else if (kor > 0) Z.push(`W tych założeniach projekt nie zwraca się w ciągu ${u.hor} miesięcy. Po ${u.hor} miesiącach wynik wynosi ${zlD(kon.nW)}.`);
+    if (kor > 0 && S.tw <= 0) O.push('Wszystkie korzyści są miękkie, czyli wynikają z uwolnionego czasu pracy. Staną się pieniędzmi dopiero wtedy, gdy Spółka przeznaczy ten czas na inne zadania; o tym decyduje sponsor.');
+    const w3 = (wart('w3') || []).filter(r => +r.kw > 0), naj = w3.slice().sort((a, b) => b.kw - a.kw)[0];
+    if (naj && kor > 0 && naj.kw / kor > .5 && w3.length > 1) O.push(`Pozycja „${String(naj.kor || '').trim().split('\n')[0]}” daje ${Math.round(naj.kw / kor * 100)}% wszystkich korzyści. Od wiarygodności tego jednego szacunku zależy wynik projektu.`);
+    if (S.strata > 0 && kor > S.strata) O.push('Korzyści z kroku 3 są wyższe niż strata z kroku 1. Projekt nie może usunąć większej straty, niż istnieje, więc któryś szacunek wymaga sprawdzenia.');
+    if (wart('w7') === 'niska') O.push('Zespół ocenił pewność szacunku jako niską (krok 7). Kwoty zostaną sprawdzone w diagnozie.');
+    return `<div class="sym-opis"><div class="sym-tyt" style="margin:0 0 4px">Jak czytać wykresy</div>${Z.map(t => `<p>${t}</p>`).join('')}${O.length ? `<div class="sym-ostrz"><b>Na co zwrócić uwagę</b><ul>${O.map(t => `<li>${t}</li>`).join('')}</ul></div>` : ''}</div>`;
+  }
+  const symZal = u => `Założenia czasowe: wdrożenie trwa ${u.start} mies.; korzyści zaczynają się po wdrożeniu i osiągają pełną kwotę po kolejnych ${u.doj} mies.; budżet wdrożenia rozkłada się równo na miesiące wdrożenia.`;
+  function symTresc(S, u, R) { return symWykresy(S, u, R) + symWyniki(S, u, R) + symOpis(S, u, R); }
   function symulacja(edycja) {
     const S = sumy(), u = symUst();
-    if (!(S.strata || S.tw || S.mi || S.bud)) return '<p class="pod" style="margin:8px 0 0;font-size:13px;color:var(--tekst2)">Wykres zwrotu z inwestycji pojawi się po wpisaniu kwot w krokach 1, 3 i 5.</p>';
+    if (!(S.strata || S.tw || S.mi || S.bud)) return '<p class="pod" style="margin:8px 0 0;font-size:13px;color:var(--tekst2)">Wykresy zwrotu z inwestycji pojawią się po wpisaniu kwot w krokach 1, 3 i 5.</p>';
     const R = symLicz(S, u);
     const suw = (k, et, min, max, st, jedn) => `<label class="sym-suw"><span>${et}: <b data-symw="${k}">${u[k]} ${jedn}</b></span><input type="range" min="${min}" max="${max}" step="${st}" value="${u[k]}" data-sym="${k}"></label>`;
     return `<div class="sym"><div class="et" style="font-weight:700;color:var(--g);font-size:15px;margin-bottom:4px">Kiedy projekt zacznie się zwracać</div>
-      ${edycja ? `<div class="sym-suwaki">${suw('start', 'Korzyści zaczynają się po', 1, 24, 1, 'mies.')}${suw('doj', 'Pełna kwota korzyści po kolejnych', 0, 12, 1, 'mies.')}${suw('hor', 'Okres na wykresie', 12, 60, 12, 'mies.')}</div>` : ''}
-      <div data-symwyk>${symSvg(S, u, R)}${symLegenda}${symWyniki(S, u, R)}</div>
-      <p class="pod" style="margin:6px 0 0;font-size:13px;color:var(--tekst2)">${symZal(u)}${edycja ? ' Ustawienia suwaków nie zmieniają treści ani wersji karty.' : ''}</p></div>`;
+      ${edycja ? `<div class="sym-suwaki">${suw('start', 'Wdrożenie trwa', 1, 24, 1, 'mies.')}${suw('doj', 'Pełna kwota korzyści po kolejnych', 0, 12, 1, 'mies.')}${suw('hor', 'Okres na wykresach', 12, 60, 12, 'mies.')}</div>` : ''}
+      <div data-symwyk>${symTresc(S, u, R)}</div>
+      <p class="pod sym-zal" style="margin:6px 0 0;font-size:13px;color:var(--tekst2)">${symZal(u)}${edycja ? ' Ustawienia suwaków nie zmieniają treści ani wersji karty.' : ''}</p></div>`;
   }
   function odswiezSym() {
     const box = document.querySelector('[data-symbox]'); if (!box) return;
     const w = box.querySelector('[data-symwyk]');
-    if (w && box.querySelector('[data-sym]')) { const S = sumy(), u = symUst(); if (S.strata || S.tw || S.mi || S.bud) { const R = symLicz(S, u); w.innerHTML = symSvg(S, u, R) + symLegenda + symWyniki(S, u, R); Object.keys(SYM_DOM).forEach(k => { const e = box.querySelector(`[data-symw="${k}"]`); if (e) e.textContent = u[k] + ' mies.'; }); const z = box.querySelector('.sym > p'); if (z) z.textContent = symZal(u) + ' Ustawienia suwaków nie zmieniają treści ani wersji karty.'; return; } }
+    if (w && box.querySelector('[data-sym]')) { const S = sumy(), u = symUst(); if (S.strata || S.tw || S.mi || S.bud) { w.innerHTML = symTresc(S, u, symLicz(S, u)); Object.keys(SYM_DOM).forEach(k => { const e = box.querySelector(`[data-symw="${k}"]`); if (e) e.textContent = u[k] + ' mies.'; }); const z = box.querySelector('.sym-zal'); if (z) z.textContent = symZal(u) + ' Ustawienia suwaków nie zmieniają treści ani wersji karty.'; return; } }
     box.innerHTML = symulacja(EDYTUJE || WIDOK_UCZ); podepnijSym();
   }
   let symT = null;
@@ -593,7 +635,7 @@ if (APM.wymagajLogowania()) (async () => {
   function budujWydruk(ekran) {
     const [, st] = stanDok(), brak = '<span class="w-brak">do uzupełnienia</span>';
     const wP = p => {
-      if (p.typ === 'wyliczenie') { const S = sumy(); return `<div class="w-pole"><div class="w-et">${p.et}</div><table class="w-tab"><tr><th>Strata rocznie</th><th>Ramowy budżet</th><th>Korzyść netto I roku (twarde)</th><th>Korzyść netto I roku (twarde i miękkie)</th></tr><tr><td class="l">${zl(S.strata)}</td><td class="l">${zl(S.bud)}</td><td class="l">${zl(S.tw - S.bud)}</td><td class="l">${zl(S.tw + S.mi - S.bud)}</td></tr></table>${symulacja(false)}</div>`; }
+      if (p.typ === 'wyliczenie') { const S = sumy(); return `<div class="w-pole"><div class="w-et">${p.et}</div><table class="w-tab"><tr><th>Strata rocznie</th><th>Ramowy budżet</th><th>Korzyść netto I roku (twarde)</th><th>Korzyść netto I roku (twarde i miękkie)</th></tr><tr><td class="l">${zl(S.strata)}</td><td class="l">${zl(S.bud)}</td><td class="l">${zl(S.tw - S.bud)}</td><td class="l">${zl(S.tw + S.mi - S.bud)}</td></tr></table></div>${symulacja(false)}`; }
       if (D.kroki[p.id] === 'pom') return `<div class="w-pole"><div class="w-et">${p.et}</div><div class="w-pom">Krok pominięty: nie dotyczy projektu.</div></div>`;
       const v = p.typ === 'tabela' ? wierszeTabeli(p) : wart(p.id);
       let t;
@@ -644,7 +686,7 @@ if (APM.wymagajLogowania()) (async () => {
       const nazwa = `PTBS_2026_APM_${T}_${ZESP}_wersja_${D.wersja}.pdf`;
       try {
         const pdf = await html2pdf().set({ margin: [12, 12, 16, 12], filename: nazwa, image: { type: 'jpeg', quality: 0.95 }, html2canvas: { scale: 2, useCORS: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['css'], avoid: ['.w-pole', 'tr', '.macierz', '.w-suma', '.w-glowa', '.sym'] } }).from(el).toPdf().get('pdf');
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['css'], avoid: ['.w-pole', 'tr', '.macierz', '.w-suma', '.w-glowa', '.sym-przew', '.sym-wyn', '.sym-opis', '.sym-leg', '.sym-tyt'] } }).from(el).toPdf().get('pdf');
         const n = pdf.internal.getNumberOfPages();
         for (let i = 1; i <= n; i++) { pdf.setPage(i); pdf.setFontSize(8); pdf.setTextColor(90, 104, 115); pdf.text(stopka, 12, 289); pdf.text(`Strona ${i} z ${n}`, 198, 289, { align: 'right' }); }
         pdf.setProperties({ title: nazwa });
