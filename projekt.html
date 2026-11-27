@@ -37,7 +37,7 @@
 <script>
 if (APM.wymagajLogowania()) (async () => {
   APM.naglowek(); APM.stopka();
-  if (!PODGLAD) await APM.init();
+  if (!PODGLAD || DEMO_DANE) await APM.init();
   const $ = APM.$, JA = ja(), UCZ = JA.rola === 'uczestnik' || (JA.rola === 'test' && !!JA.zespol), esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   if (PODGLAD) panelPodgladu($('#podglad'), () => '?podglad=1');
   const pg = PODGLAD ? '&podglad=1' : '';

@@ -4,13 +4,15 @@
    - Firebase: dokumenty w kolekcji „dokumenty”, historia zmian w podkolekcji „historia” (tylko dopisywanie);
    - podgląd: dane w pamięci tej przeglądarki (localStorage), zmiany z innych kart przeglądarki pojawiają się na bieżąco. */
 const PODGLAD = APM.trybPodgladu() || APM.podglad();
+/* DEMO_DANE: kod DEMO-2026 przy włączonej bazie — dokumenty zespołów czytane z bazy, bez żadnego zapisu */
+const DEMO_DANE = APM.demoDane();
 const DANE = (() => {
   const nowy = () => ({ pola: {}, kroki: {}, uwagi: {}, edycja: {}, wersja: 0, doAkc: null, akc: null, potw: null });
   const norm = d => Object.assign(nowy(), d || {});
   const kopia = o => JSON.parse(JSON.stringify(o));
   const teraz = () => new Date().toISOString();
   const klE = (pole, kto) => pole + '__' + String(kto).normalize('NFD').replace(/[^A-Za-z0-9]/g, '_');
-  if (PODGLAD) {
+  if (PODGLAD && !DEMO_DANE) {
     const kl = id => 'apm_dok_' + id, kh = id => 'apm_dokh_' + id, sl = {};
     const czyt = id => { try { return norm(JSON.parse(localStorage.getItem(kl(id)))); } catch (e) { return nowy(); } };
     const pisz = (id, d) => { localStorage.setItem(kl(id), JSON.stringify(d)); (sl[id] || []).forEach(cb => cb(czyt(id))); };
@@ -36,9 +38,15 @@ const DANE = (() => {
   }
   let B = null;
   const start = async () => { if (!B) { await APM.init(); B = APM.baza(); } return B; };
+  const tylkoOdczyt = o => DEMO_DANE ? Object.assign(o, {
+    tryb: 'demo',
+    async zapiszPole() { throw new Error('Kod DEMO-2026: tylko odczyt'); },
+    async zmien(id) { return o.czytaj(id); },
+    async edycja() {},
+    async dopiszHist() {} }) : o;
   const ref = id => B.fs.doc(B.db, 'dokumenty', id);
   const histRef = id => B.fs.collection(B.db, 'dokumenty', id, 'historia');
-  return {
+  return tylkoOdczyt({
     tryb: 'firebase',
     async czytaj(id) { await start(); const s = await B.fs.getDoc(ref(id)); return norm(s.exists() ? s.data() : null); },
     async otworz(id, cb) { await start(); B.fs.onSnapshot(ref(id), s => cb(norm(s.exists() ? s.data() : null)), e => console.warn('APM: odczyt dokumentu', e)); },
@@ -69,7 +77,7 @@ const DANE = (() => {
     },
     async hist(id) { await start(); const s = await B.fs.getDocs(B.fs.query(histRef(id), B.fs.orderBy('kiedy'))); return s.docs.map(x => x.data()); },
     async dopiszHist(id, w) { await start(); await B.fs.addDoc(histRef(id), Object.assign({ kiedy: teraz() }, w)); }
-  };
+  });
 })();
 
 /* ===== tożsamość ===== */

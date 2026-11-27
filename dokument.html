@@ -193,14 +193,16 @@ textarea.wej{min-height:78px;resize:vertical}
 <script>
 if (APM.wymagajLogowania()) (async () => {
   APM.naglowek(); APM.stopka();
-  if (!PODGLAD) await APM.init();
+  if (!PODGLAD || DEMO_DANE) await APM.init();
   const $ = APM.$, P = new URLSearchParams(location.search), T = P.get('t') || 'T01', DEF = DOKUMENTY[T];
-  const JA = ja(), EDYTUJE = JA.rola === 'uczestnik' || (JA.rola === 'test' && !!JA.zespol);
-  const ZESP = EDYTUJE ? JA.zespol : (P.get('z') || 'P1');
+  const JA = ja(), CZLONEK = JA.rola === 'uczestnik' || (JA.rola === 'test' && !!JA.zespol);
+  /* kod DEMO-2026 z bazą: osoba z panelu P widzi dokumenty swojego zespołu z bazy, w swoim układzie, bez możliwości zmian */
+  const EDYTUJE = CZLONEK && !DEMO_DANE;
+  const ZESP = CZLONEK ? JA.zespol : (P.get('z') || 'P1');
   const ID = ZESP + '_' + T;
   /* widok uczestnika dla prowadzącego: dokument w układzie, który widzi zespół, z danymi z bazy, bez możliwości edycji */
-  let WIDOK_UCZ = false;
-  if (JA.rola === 'prowadzacy') { try { WIDOK_UCZ = localStorage.getItem('apm_widok_ucz') === '1'; } catch (e) {}
+  let WIDOK_UCZ = DEMO_DANE && CZLONEK;
+  if (JA.rola === 'prowadzacy' && !DEMO_DANE) { try { WIDOK_UCZ = localStorage.getItem('apm_widok_ucz') === '1'; } catch (e) {}
     const pd = $('#przyciskiDok'); pd.style.gridTemplateColumns = 'repeat(4,1fr)'; pd.style.maxWidth = '1180px';
     pd.insertAdjacentHTML('beforeend', `<button class="zml-btn" id="widokBtn">${WIDOK_UCZ ? 'Widok dokumentu' : 'Widok uczestnika'}</button>`); }
   if (!ZESP) { $('#tresc').innerHTML = '<div class="uwaga">Twój kod nie jest jeszcze przypisany do zespołu. Skontaktuj się z prowadzącym.</div>'; return; }
@@ -230,6 +232,7 @@ if (APM.wymagajLogowania()) (async () => {
 
   /* ----- tryb podglądu: wybór osoby ----- */
   if (PODGLAD) panelPodgladu($('#podglad'), o => `?t=${T}&z=${o.zespol || ZESP}&podglad=1`);
+  if (DEMO_DANE) $('#podglad').insertAdjacentHTML('beforeend', '<div class="uwaga" style="margin:0 0 12px">Kod DEMO-2026: dokument z bazy, tylko do odczytu. Pola są zablokowane, a suwaki wykresu działają tylko na tym ekranie.</div>');
   $('#kodDok').textContent = T; $('#tytul').textContent = DEF.nazwa + ' · ' + ZESP;
   document.title = DEF.nazwa + ' ' + ZESP + ' — Akademia Zarządzania Projektami PTBS';
   if (false) $('#wyborZesp').innerHTML = `<div class="zespoly">${Object.keys(ZESPOLY).map(z => `<a href="?t=${T}&z=${z}${PODGLAD ? '&podglad=1' : ''}" class="${z === ZESP ? 'wyb' : ''}">${z} · ${ZESPOLY[z].projekt}</a>`).join('')}</div>`;
@@ -395,13 +398,13 @@ if (APM.wymagajLogowania()) (async () => {
       + (p.dod ? pole(p.dod, dis) : '');
   }
   function uwagiSekcji(s) {
-    const L = D.uwagi[s.id] || [], prow = JA.rola === 'prowadzacy';
+    const L = D.uwagi[s.id] || [], prow = JA.rola === 'prowadzacy' && !DEMO_DANE;
     if (!L.length && !prow) return '';
     return `<div class="uwagi"><div class="et" style="font-weight:700;color:var(--g);font-size:14px">Uwagi prowadzącego</div>${L.map((u, i) => `<div class="uwaga ${u.ok ? 'ok' : ''}">${esc(u.t)}<small>${esc(u.kto)}, ${dt(u.kiedy)}${u.ok ? ' · uwzględniona' : ''}</small>${!u.ok && EDYTUJE ? `<button class="btn-maly" style="margin-top:6px" data-uwz="${s.id}|${i}">Oznacz jako uwzględnioną</button>` : ''}</div>`).join('')}
       ${prow ? `<textarea class="wej" style="margin-top:8px" id="nu-${s.id}" placeholder="Nowa uwaga do tej sekcji"></textarea><button class="btn-maly" style="margin-top:6px" data-nu="${s.id}">Dodaj uwagę</button>` : ''}</div>`;
   }
   function sekcjaAkc() {
-    const zar = JA.rola === 'zarzad', zm = zmienionePoAkc();
+    const zar = JA.rola === 'zarzad' && !DEMO_DANE, zm = zmienionePoAkc();
     let h = '';
     if (D.akc) h += `<div class="uwaga ${D.akc.decyzja === 'do poprawy' ? '' : 'ok'}"><b>Decyzja sponsora: ${esc(D.akc.decyzja)}</b> (wersja ${D.akc.wersja})${D.akc.uwagi ? '<br>' + esc(D.akc.uwagi) : ''}<small>${esc(D.akc.kto)}, ${dt(D.akc.kiedy)}</small></div>`;
     if (zm.length && D.akc) h += `<div class="nowsza">Po akceptacji zespół zmienił pola: ${zm.map(k => (defPola(k) || { et: k }).et).join('; ')}.</div>`;

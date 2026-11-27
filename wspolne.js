@@ -60,6 +60,8 @@ const APM = (() => {
   function wymagajLogowania(){ if(!kod()){ location.replace('index.html'); return false; } return true; }
   /* tryb podglądu dokumentów: włączany adresem z ?podglad=1, wyłączany adresem z ?podglad=0 */
   /* kod testowy DEMO-2026 zawsze pracuje w trybie podglądu: widzi całą stronę jako dowolna osoba, bez zmian w danych zespołów */
+  /* kod DEMO-2026 przy włączonej bazie: podgląd osób z panelu P na prawdziwych danych zespołów, tylko do odczytu */
+  function demoDane(){ return !!FIREBASE_CONFIG && kod()==='DEMO-2026'; }
   function podglad(){ try{ if(kod()==='DEMO-2026') return true; const p=new URLSearchParams(location.search).get('podglad'); if(p==='1') localStorage.setItem('apm_podglad','1'); if(p==='0') localStorage.removeItem('apm_podglad'); return localStorage.getItem('apm_podglad')==='1'; }catch(e){ return false; } }
   function naglowek(){
     const biez = location.pathname.split('/').pop() || 'index.html';
@@ -379,5 +381,5 @@ const APM = (() => {
       ${gr('Kompetencje merytoryczne',KOMPETENCJE.filter(k=>k.k[0]==='M'))}${gr('Kompetencje społeczne',KOMPETENCJE.filter(k=>k.k[0]==='S'))}
     </div></div><div class="ge-leg"><span><i class="ge-p w"></i>kompetencja wiodąca w etapie</span><span><i class="ge-p s"></i>kompetencja wspierająca</span><span>W polach: spotkania, na których pracujemy z kompetencją.</span></div>`;
   };
-  return { $, baza, podglad, rola, kiedy, grafEtapy, ikona, znak, kod, ustawKod, wyloguj, wymagajLogowania, naglowek, stopka, init, sprawdzKod, wczytaj, zapisz, trybPodgladu:()=>!FIREBASE_CONFIG };
+  return { $, baza, podglad, demoDane, rola, kiedy, grafEtapy, ikona, znak, kod, ustawKod, wyloguj, wymagajLogowania, naglowek, stopka, init, sprawdzKod, wczytaj, zapisz, trybPodgladu:()=>!FIREBASE_CONFIG };
 })();

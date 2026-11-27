@@ -29,8 +29,12 @@ service cloud.firestore {
       return zalogowanyKodem() && osoba().rola == 'zarzad';
     }
     function czlonek(z) {
-      /* rola „test” (kod DEMO-2026) działa jak członek zespołu, do którego kod jest przypisany */
-      return zalogowanyKodem() && osoba().rola in ['uczestnik', 'test'] && osoba().get('zespol', '') == z;
+      /* rola „test” działa jak członek zespołu, do którego kod jest przypisany; kod DEMO-2026 nigdy niczego nie zapisuje */
+      return zalogowanyKodem() && mojKod() != 'DEMO-2026' && osoba().rola in ['uczestnik', 'test'] && osoba().get('zespol', '') == z;
+    }
+    /* kod DEMO-2026: podgląd stron oczami dowolnej osoby; czyta dokumenty wszystkich zespołów, nie zapisuje */
+    function demo() {
+      return zalogowanyKodem() && mojKod() == 'DEMO-2026';
     }
     function zmienione() {
       return request.resource.data.diff(resource.data).affectedKeys();
@@ -81,7 +85,7 @@ service cloud.firestore {
 
     /* dokumenty projektowe: identyfikator ZESPÓŁ_NARZĘDZIE, na przykład P1_T01 */
     match /dokumenty/{id} {
-      allow read: if prowadzacy() || zarzad() || czlonek(id.split('_')[0]);
+      allow read: if prowadzacy() || zarzad() || czlonek(id.split('_')[0]) || demo();
       /* zespół tworzy dokument bez decyzji sponsora */
       allow create: if czlonek(id.split('_')[0])
         && request.resource.data.get('akc', null) == null
@@ -94,7 +98,7 @@ service cloud.firestore {
 
       /* ewidencja zmian: tylko dopisywanie, autor musi być osobą zalogowaną kodem */
       match /historia/{wpis} {
-        allow read: if prowadzacy() || zarzad() || czlonek(id.split('_')[0]);
+        allow read: if prowadzacy() || zarzad() || czlonek(id.split('_')[0]) || demo();
         allow create: if czlonek(id.split('_')[0])
           && request.resource.data.kto == osoba().get('imie', '')
           && request.resource.data.keys().hasOnly(['pole', 'stara', 'nowa', 'kto', 'kiedy', 'wersja', 'opis']);
