@@ -174,7 +174,7 @@ const DOKUMENTY = {
                  { id: 'jak', t: 'Jak wyliczono', typ: 'obszar', s: 1.8 },
                  { id: 'zr', t: 'Źródło danych', typ: 'tekst', s: 1.2 } ], suma: 'kw', sumaWg: 'rodz', sumaEt: 'Korzyści razem',
           wyj: { po: 'Korzyści pokazują, o ile projekt zmniejszy stratę z kroku 1. Sponsor porównuje je z kosztem projektu.',
-            jak: 'Dla każdej straty z kroku 1 oceńcie, jaką jej część usunie rozwiązanie, i zapiszcie rachunek. Oszczędność twarda zmniejsza wydatki albo zwiększa przychód. Oszczędność miękka uwalnia czas pracy; staje się korzyścią finansową tylko wtedy, gdy Spółka przeznaczy ten czas na inne zadania, o czym decyduje sponsor.',
+            jak: 'Dla każdej straty z kroku 1 oceńcie, jaką jej część usunie rozwiązanie, i zapiszcie rachunek. Oszczędność twarda zmniejsza wydatki albo zwiększa przychód. Oszczędność miękka uwalnia czas pracy; staje się korzyścią finansową tylko wtedy, gdy Spółka przeznaczy ten czas na inne zadania, o czym decyduje sponsor. Ograniczenia ryzyka z rodzaju E nie wpisujcie w tym kroku, tylko w kroku 4 jako wycenę ryzyka: takie zdarzenie może w ogóle nie wystąpić, więc jego wartość nie może skracać okresu zwrotu.',
             p1: 'Mniej spraw sądowych · twarda · 18 000 zł · połowa z 36 000 zł', p2: 'Brak przepisywania zgłoszeń · miękka · 42 000 zł · dwie trzecie z 63 000 zł',
             blad: 'Zaliczenie uwolnionego czasu pracy do oszczędności twardych. Czas staje się pieniędzmi dopiero wtedy, gdy Spółka zmniejszy wydatki albo wykona dodatkową pracę.' } },
         { id: 'w4', typ: 'tabela', et: 'Krok 4. Korzyści bez kwoty',
