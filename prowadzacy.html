@@ -129,7 +129,7 @@ const csv=(nazwa,wiersze)=>{ const t='﻿'+wiersze.map(w=>w.map(x=>`"${String(x?
     try{ await b.commit(); msg('#msgPrzyp',`Zapisano przypisania: ${wiersze.length}. Uczestnicy zobaczą swój zespół po ponownym otwarciu strony.`); $('#przypisz').value=''; wczytajKody(); }
     catch(e){ msg('#msgPrzyp','Zapis nie powiódł się: '+e.code,true); }
   });
-  $('#doProjektow').addEventListener('click',()=>{ try{ if(!localStorage.getItem('apm_kod')) localStorage.setItem('apm_kod','PROWADZACY'); }catch(e){} });
+  $('#doProjektow').addEventListener('click',()=>{ try{ /* kod testowy DEMO-2026 i tryb podglądu zastępuje logowanie prowadzącego, żeby strona pokazywała dane zespołów z bazy */ const k=localStorage.getItem('apm_kod'); if(!k||k==='DEMO-2026'){ localStorage.setItem('apm_kod','PROWADZACY'); localStorage.removeItem('apm_podglad'); localStorage.removeItem('apm_podglad_osoba'); sessionStorage.removeItem('apm_podglad_osoba'); sessionStorage.removeItem('apm_podglad_rola'); } }catch(e){} });
   $('#csvKody').addEventListener('click',()=>csv('PTBS_2026_Akademia_PM_Kody.csv',[['Lp.','Kod','Rola','Grupa','Aktywny'],...KODY.map((k,i)=>[i+1,k.kod,k.rola,k.grupa,k.aktywny?'tak':'nie'])]));
   async function wczytajWyniki(){
     const s=await fs.getDocs(fs.collection(db,'samoocena'));
