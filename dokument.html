@@ -183,7 +183,7 @@ textarea.wej{min-height:78px;resize:vertical}
     <div><span class="nadtytul" id="kodDok">T01</span><h1 id="tytul">Dokument</h1></div>
     <div id="stanDok"></div>
   </div>
-  <div class="przyciski" style="grid-template-columns:1fr 1fr 1fr;max-width:900px"><button class="zml-btn" id="instrBtn">Instrukcja</button><button class="zml-btn" id="drukBtn">Drukuj lub zapisz PDF</button><button class="zml-btn" id="rejBtn">Rejestr zmian</button></div>
+  <div class="przyciski" id="przyciskiDok" style="grid-template-columns:1fr 1fr 1fr;max-width:900px"><button class="zml-btn" id="instrBtn">Instrukcja</button><button class="zml-btn" id="drukBtn">Drukuj lub zapisz PDF</button><button class="zml-btn" id="rejBtn">Rejestr zmian</button></div>
   <div id="tresc"></div>
 </main>
 <div id="stopka"></div>
@@ -198,6 +198,11 @@ if (APM.wymagajLogowania()) (async () => {
   const JA = ja(), EDYTUJE = JA.rola === 'uczestnik' || (JA.rola === 'test' && !!JA.zespol);
   const ZESP = EDYTUJE ? JA.zespol : (P.get('z') || 'P1');
   const ID = ZESP + '_' + T;
+  /* widok uczestnika dla prowadzącego: dokument w układzie, który widzi zespół, z danymi z bazy, bez możliwości edycji */
+  let WIDOK_UCZ = false;
+  if (JA.rola === 'prowadzacy') { try { WIDOK_UCZ = localStorage.getItem('apm_widok_ucz') === '1'; } catch (e) {}
+    const pd = $('#przyciskiDok'); pd.style.gridTemplateColumns = 'repeat(4,1fr)'; pd.style.maxWidth = '1180px';
+    pd.insertAdjacentHTML('beforeend', `<button class="zml-btn" id="widokBtn">${WIDOK_UCZ ? 'Widok dokumentu' : 'Widok uczestnika'}</button>`); }
   if (!ZESP) { $('#tresc').innerHTML = '<div class="uwaga">Twój kod nie jest jeszcze przypisany do zespołu. Skontaktuj się z prowadzącym.</div>'; return; }
   let D; try { D = await DANE.czytaj(ID); } catch (e) { console.warn('APM: odczyt', e); D = { pola: {}, kroki: {}, uwagi: {}, edycja: {}, wersja: 0, doAkc: null, akc: null, potw: null }; }
   /* dokumenty powiązane: T12 korzysta z listy interesariuszy z T02; T02 przy pierwszym otwarciu pobiera interesariuszy z karty (karta się nie zmienia) */
@@ -368,7 +373,7 @@ if (APM.wymagajLogowania()) (async () => {
     const box = document.querySelector('[data-symbox]'); if (!box) return;
     const w = box.querySelector('[data-symwyk]');
     if (w && box.querySelector('[data-sym]')) { const S = sumy(), u = symUst(); if (S.strata || S.tw || S.mi || S.bud) { const R = symLicz(S, u); w.innerHTML = symSvg(S, u, R) + symLegenda + symWyniki(S, u, R); Object.keys(SYM_DOM).forEach(k => { const e = box.querySelector(`[data-symw="${k}"]`); if (e) e.textContent = u[k] + ' mies.'; }); const z = box.querySelector('.sym > p'); if (z) z.textContent = symZal(u) + ' Ustawienia suwaków nie zmieniają treści ani wersji karty.'; return; } }
-    box.innerHTML = symulacja(EDYTUJE); podepnijSym();
+    box.innerHTML = symulacja(EDYTUJE || WIDOK_UCZ); podepnijSym();
   }
   let symT = null;
   function podepnijSym() {
@@ -384,7 +389,7 @@ if (APM.wymagajLogowania()) (async () => {
     return `${inny ? `<span class="edytuje">edytuje: ${esc(e.kto)}</span>` : ''}<div class="meta">${p ? `<span>Ostatnia zmiana: ${esc(p.kto)}, ${dt(p.kiedy)}</span>` : (defPola(id) && defPola(id).dom ? `<span>${esc(defPola(id).domEt || 'Wartość wpisana z programu Akademii; zespół może ją zmienić')}</span>` : '<span>Pole jeszcze niewypełnione</span>')}${p ? `<button data-hist="${id}">Historia zmian</button>` : ''}</div>`;
   }
   function pole(p, dis) {
-    if (p.typ === 'wyliczenie') return `<div class="pole" id="pole-${p.id}"><div class="et et-w">${p.et}${p.wyj ? `<button class="wy-btn" data-wyj="${p.id}" aria-expanded="false">Wyjaśnienie</button>` : ''}</div><div class="wy ukryty" id="wy-${p.id}">${htmlWyjasnienia(p.wyj)}</div><div data-wyl>${wyliczenie()}</div><div data-symbox>${symulacja(EDYTUJE)}</div></div>`;
+    if (p.typ === 'wyliczenie') return `<div class="pole" id="pole-${p.id}"><div class="et et-w">${p.et}${p.wyj ? `<button class="wy-btn" data-wyj="${p.id}" aria-expanded="false">Wyjaśnienie</button>` : ''}</div><div class="wy ukryty" id="wy-${p.id}">${htmlWyjasnienia(p.wyj)}</div><div data-wyl>${wyliczenie()}</div><div data-symbox>${symulacja(EDYTUJE || WIDOK_UCZ)}</div></div>`;
     const tresc = p.typ === 'tabela' ? tabela(p, dis) : p.typ === 'etapy' ? etapyHtml(p, dis) : wejscie(p, wart(p.id), dis);
     return `<div class="pole" id="pole-${p.id}"><div class="et et-w">${p.et}${p.wyj ? `<button class="wy-btn" data-wyj="${p.id}" aria-expanded="false">Wyjaśnienie</button>` : ''}</div><div class="wy ukryty" id="wy-${p.id}">${htmlWyjasnienia(p.wyj)}</div><div data-in="${p.id}">${tresc}</div><div data-meta="${p.id}">${metaPola(p.id)}</div><div data-nowsza="${p.id}"></div></div>`
       + (p.dod ? pole(p.dod, dis) : '');
@@ -411,7 +416,7 @@ if (APM.wymagajLogowania()) (async () => {
     return h;
   }
   function rysuj() {
-    if (!EDYTUJE) { rysujPodglad(); return; }
+    if (!EDYTUJE && !WIDOK_UCZ) { rysujPodglad(); return; }
     const dis = !EDYTUJE;
     $('#tresc').innerHTML = DEF.sekcje.map(s => {
       let b;
@@ -559,11 +564,12 @@ if (APM.wymagajLogowania()) (async () => {
     $('#rZamknij').onclick = zamknijOkno;
   }
   $('#rejBtn').addEventListener('click', rejestr);
+  const wb = $('#widokBtn'); if (wb) wb.addEventListener('click', () => { WIDOK_UCZ = !WIDOK_UCZ; try { localStorage.setItem('apm_widok_ucz', WIDOK_UCZ ? '1' : '0'); } catch (e) {} wb.textContent = WIDOK_UCZ ? 'Widok dokumentu' : 'Widok uczestnika'; rysuj(); });
   $('#instrBtn').addEventListener('click', () => window.open(`instrukcja.html?t=${T}`, '_blank'));
 
   /* ----- zmiany innych osób ----- */
   const naZmiane = nowe => {
-    if (!EDYTUJE) { D = nowe; if (!(document.activeElement && document.activeElement.closest('.wej'))) rysujPodglad(); return; }
+    if (!EDYTUJE) { D = nowe; if (!(document.activeElement && document.activeElement.closest('.wej'))) (WIDOK_UCZ ? rysuj : rysujPodglad)(); return; }
     const stare = D; D = nowe;
     Object.keys(D.pola).forEach(id => {
       const L = lok[id] || {}, zm = !stare.pola[id] || stare.pola[id].w !== D.pola[id].w;

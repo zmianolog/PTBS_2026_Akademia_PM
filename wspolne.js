@@ -153,6 +153,7 @@ const APM = (() => {
         'Decyzję o dokumencie zapisujesz w części „Decyzja sponsora” na dole strony.'] },
       prowadzacy:{ t:'Dokument zespołu', k:[
         'Strona pokazuje pełną treść dokumentu zespołu.',
+        'Przycisk „Widok uczestnika” pokazuje dokument w układzie, który widzi zespół, z danymi z bazy i bez możliwości edycji. Przycisk „Widok dokumentu” przywraca widok do czytania.',
         'Uwagi do sekcji wpisujesz w polu „Nowa uwaga do tej sekcji” i zapisujesz przyciskiem „Dodaj uwagę”.'] } },
     'instrukcja.html': { t:'Instrukcja dokumentu', k:[
       'Instrukcja opisuje każde pole dokumentu: po co jest, jak je wypełnić, przykłady i typowe błędy.',
@@ -251,8 +252,9 @@ const APM = (() => {
         { s:'.akc-dec', t:'Decyzja o dokumencie: „Akceptuję”, „Akceptuję z uwagami” albo „Do poprawy”. Kliknięcie przycisku zapisuje decyzję.' } ],
       prowadzacy: [
         { s:'#stanDok', t:'Status dokumentu i numer wersji.' },
+        { s:'#widokBtn', t:'Przycisk przełącza między widokiem dokumentu do czytania a widokiem uczestnika, czyli układem, który widzi zespół. W widoku uczestnika pola są zablokowane, a suwaki wykresu zwrotu działają tylko na Twoim ekranie i niczego nie zapisują.' },
         { s:'#podgladDok', t:'Pełna treść dokumentu zespołu.' },
-        { s:'#podgladDok .uwagi', t:'Uwagi do sekcji: wpisz uwagę w polu i kliknij „Dodaj uwagę”.' } ] },
+        { s:'#podgladDok .uwagi, #tresc .uwagi', t:'Uwagi do sekcji: wpisz uwagę w polu i kliknij „Dodaj uwagę”.' } ] },
     'instrukcja.html': [
       { s:'.ins-gl', t:'Najważniejsze informacje o dokumencie: po co jest, kto go wypełnia, kiedy i kto go akceptuje.' },
       { s:'.ins-sek', t:'Opis pól jednej sekcji dokumentu. Przy każdym polu jest wyjaśnienie, sposób wypełnienia i przykłady.' },
