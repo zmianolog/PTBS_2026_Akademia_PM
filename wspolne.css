@@ -166,7 +166,18 @@ p{margin:0 0 12px}
 .przewodnik-panel .prz-gl span{font-size:13px;font-weight:600;color:var(--tekst2)}
 .przewodnik-panel ol{margin:0 0 14px;padding-left:22px}
 .przewodnik-panel li{margin:0 0 8px}
-.przewodnik-panel .zml-btn{width:100%;min-width:0}
+.przewodnik-panel .prz-akcje{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.przewodnik-panel .zml-btn{width:100%;min-width:0;padding:0 10px}
+/* oprowadzanie po stronie */
+.opr{position:fixed;inset:0;z-index:60}
+.opr-tlo{position:absolute;inset:0}
+.opr-ramka{position:fixed;border:3px solid var(--m);border-radius:10px;box-shadow:0 0 0 9999px rgba(20,30,40,.6);pointer-events:none;transition:top .25s,left .25s,width .25s,height .25s}
+.opr-okno{position:fixed;background:#fff;border:2px solid var(--g);border-radius:12px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.3);font:400 15px/1.5 var(--font);color:var(--tekst)}
+.opr-licz{font-size:12px;font-weight:700;color:var(--tekst2);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--m);padding-bottom:6px;margin-bottom:8px}
+.opr-t{margin-bottom:12px}
+.opr-akcje{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.opr-akcje .zml-btn{width:100%;min-width:0;padding:0 8px;font-size:14px}
+@media (prefers-reduced-motion:reduce){.opr-ramka{transition:none}}
 /* przycisk R: pola tekstowe rozwinięte do pełnej treści */
 body.rozwin textarea{overflow:hidden;resize:none}
 @media (prefers-reduced-motion:reduce){.przewodnik .oddech,.przewodnik .puls{animation:none}.przewodnik .puls{opacity:0}}

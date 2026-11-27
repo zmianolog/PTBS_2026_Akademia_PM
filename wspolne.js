@@ -74,7 +74,7 @@ const APM = (() => {
     $('#rozwinBtn').addEventListener('click',()=>ustawRozwin(!document.body.classList.contains('rozwin')));
     ustawRozwin((()=>{ try{ return localStorage.getItem('apm_rozwin')==='1'; }catch(e){ return false; } })());
     $('#przewodnikBtn').addEventListener('click',e=>{ e.stopPropagation(); const d=$('#przewodnikPanel'); const otw=d.classList.toggle('akt'); $('#przewodnikBtn').setAttribute('aria-expanded',String(otw)); if(otw) d.innerHTML=przewodnikTresc(); });
-    $('#przewodnikPanel').addEventListener('click',e=>{ if(e.target.closest('[data-prz-zamknij]')){ $('#przewodnikPanel').classList.remove('akt'); $('#przewodnikBtn').setAttribute('aria-expanded','false'); } });
+    $('#przewodnikPanel').addEventListener('click',e=>{ if(e.target.closest('[data-oprowadz]')){ $('#przewodnikPanel').classList.remove('akt'); $('#przewodnikBtn').setAttribute('aria-expanded','false'); oprowadz(); return; } if(e.target.closest('[data-prz-zamknij]')){ $('#przewodnikPanel').classList.remove('akt'); $('#przewodnikBtn').setAttribute('aria-expanded','false'); } });
     document.addEventListener('click',e=>{ const d=$('#przewodnikPanel'); if(d&&d.classList.contains('akt')&&!e.target.closest('.przewodnik-w')){ d.classList.remove('akt'); $('#przewodnikBtn').setAttribute('aria-expanded','false'); } });
     document.addEventListener('keydown',e=>{ const d=$('#przewodnikPanel'); if(e.key==='Escape'&&d&&d.classList.contains('akt')){ d.classList.remove('akt'); $('#przewodnikBtn').setAttribute('aria-expanded','false'); } });
     (function mrugaj(){ setTimeout(()=>{ const o=document.querySelector('#przewodnikBtn .oczy'); if(o){ o.classList.add('mrug'); setTimeout(()=>o.classList.remove('mrug'),140); } mrugaj(); }, 2200+Math.random()*3800); })();
@@ -140,7 +140,7 @@ const APM = (() => {
       'Strona nie pokazuje odpowiedzi poszczególnych osób.'] },
     'dokument.html': {
       uczestnik:{ t:'Dokument zespołu', k:[
-        'Dokument składa się z numerowanych sekcji. Pasek z numerami pokazuje sekcje wypełnione (granatowe), sekcje w toku (złote) i sekcje do uzupełnienia (szare).',
+        'Dokument składa się z numerowanych sekcji. Status całego dokumentu i numer jego wersji są w prawym górnym rogu, nad treścią.',
         'Treść wpisujesz bezpośrednio w polach. Strona zapisuje ją automatycznie, a zielony znak „Dane zapisane” potwierdza zapis.',
         'Przycisk „Wyjaśnienie” przy polu pokazuje, po co jest pole, jak je wypełnić, przykłady i typowe błędy.',
         'Przycisk „R · Rozwiń pola” w górnym menu powiększa wszystkie pola tekstowe tak, aby była widoczna cała wpisana treść. Ponowne kliknięcie przywraca zwykłą wysokość pól.',
@@ -164,7 +164,146 @@ const APM = (() => {
     const biez=location.pathname.split('/').pop()||'index.html', w=PRZEWODNIK[biez];
     const r=rola(), o=w&&(w.k?w:(w[r]||w[r==='test'?'uczestnik':'']||w.uczestnik));
     const lista=o?`<ol>${o.k.map(x=>`<li>${x}</li>`).join('')}</ol>`:'<p>Dla tej strony nie ma jeszcze opisu.</p>';
-    return `<div class="prz-gl"><b>Przewodnik po stronie</b><span>${o?o.t:''}</span></div>${lista}<button type="button" class="zml-btn" data-prz-zamknij>Zamknij</button>`;
+    const kroki=krokiOprowadzania();
+    return `<div class="prz-gl"><b>Przewodnik po stronie</b><span>${o?o.t:''}</span></div>${lista}<div class="prz-akcje">${kroki.length?'<button type="button" class="zml-btn" data-oprowadz>Oprowadź mnie</button>':''}<button type="button" class="zml-btn" data-prz-zamknij>Zamknij</button></div>`;
+  }
+  /* ===== Oprowadzanie po stronie =====
+     Klucz = plik strony; wartość = lista kroków (wspólna albo osobno dla roli). Krok: s = selektor CSS (pierwszy widoczny element),
+     z = tekst, od którego musi zaczynać się treść elementu (opcjonalnie), t = opis. Kroki z elementami, których na stronie nie ma, są pomijane. */
+  const KROK_MENU = [
+    { s:'#menu', t:'Górne menu jest takie samo na każdej stronie Akademii. Prowadzi do opisu Akademii, samooceny, programów spotkań, Narzędziownika i konsultacji.' },
+    { s:'#menuBtn', t:'Przycisk „Menu” otwiera listę stron Akademii: opis Akademii, samoocenę, programy spotkań, Narzędziownik i konsultacje.' },
+    { s:'#rozwinBtn', t:'Przycisk „R · Rozwiń pola” powiększa wszystkie pola tekstowe tak, aby była widoczna cała wpisana treść. Ponowne kliknięcie przywraca zwykłą wysokość pól.' },
+    { s:'#przewodnikBtn', t:'Przewodnik po stronie. Kliknięcie otwiera opis bieżącej strony i przycisk „Oprowadź mnie”.' } ];
+  const OPROWADZANIE = {
+    'akademia.html': [
+      { s:'main h1', t:'Tytuł i dwa akapity pod nim opisują, czym jest Akademia i w jaki sposób uczestnicy w niej pracują.' },
+      { s:'#efM', t:'Efekty uczenia się w kompetencjach merytorycznych. Każda karta opisuje, co uczestnik potrafi zrobić w projekcie po zakończeniu Akademii.' },
+      { s:'#efS', t:'Efekty uczenia się w kompetencjach społecznych: współpraca w zespole, komunikacja z interesariuszami i wprowadzanie zmiany.' },
+      { s:'#efR', t:'Efekty realizacyjne, czyli rezultaty, które Akademia ma przynieść Spółce na zakończenie programu.' },
+      { s:'#petla', t:'Sposób pracy w Akademii: spotkanie szkoleniowe, praca zespołu nad projektem między spotkaniami i omówienie tej pracy na kolejnym spotkaniu.' },
+      { s:'#etapy', t:'Sześć etapów projektu. Przy każdym etapie są spotkania, na których zespoły nad nim pracują.' },
+      { s:'#kM', t:'Opisy sześciu kompetencji merytorycznych. Każda kompetencja odpowiada działaniom w kolejnych etapach projektu.' },
+      { s:'#kS', t:'Opisy sześciu kompetencji społecznych, z których uczestnik korzysta przez cały czas trwania projektu.' },
+      { s:'#grafEtapy', t:'Wykres pokazuje, w których etapach projektu uczestnicy pracują z każdą kompetencją. Ciemne pole oznacza kompetencję wiodącą, złote pole kompetencję wspierającą.' },
+      ...KROK_MENU ],
+    'samoocena.html': [
+      { s:'#wStart .ramka-info', t:'Zasady samooceny: ile trwa, jak wybierać odpowiedzi i do czego służą wyniki.' },
+      { s:'#startBtn', t:'Przycisk rozpoczyna samoocenę. Jeśli część odpowiedzi jest już zapisana, przycisk pozwala ją kontynuować.' },
+      { s:'#wynikStart', t:'Twój profil kompetencji z samooceny. Kliknięcie ikony pokazuje opis kompetencji i Twoją ocenę.' },
+      { s:'#pPasek', t:'Pasek pokazuje, ile kompetencji już oceniłeś, a ile zostało.' },
+      { s:'#pytanie', t:'Opis działania w jednej kompetencji i cztery zdania do wyboru. Wybierz zdanie, które najlepiej opisuje Twoje obecne działanie.' },
+      { s:'#dalej', t:'Przycisk „Dalej” przechodzi do kolejnej kompetencji, a przycisk „Wstecz” do poprzedniej. Odpowiedzi zapisują się na bieżąco.' } ],
+    'programy.html': [
+      { s:'#kafle', t:'Lista czternastu spotkań szkoleniowych w kolejności. Kliknięcie spotkania pokazuje jego opis.' },
+      { s:'#program .gl', t:'Kod i nazwa wybranego spotkania.' },
+      { s:'#program .przyciski', t:'Przycisk „Otwórz stronę spotkania” prowadzi do materiałów szkoleniowych i zadań z tego spotkania.' },
+      { s:'#program .meta', t:'Etap projektu, do którego należy spotkanie, oraz jego termin.' },
+      { s:'#program .blok', z:'Cele', t:'Cele spotkania: co uczestnik potrafi zrobić po spotkaniu.' },
+      { s:'#program .blok', z:'Kompetencje', t:'Kompetencje, z którymi uczestnicy pracują na spotkaniu: wiodące i wspierające.' },
+      { s:'#program .blok', z:'Praca w projekcie', t:'Praca, którą zespół wykonuje w swoim projekcie przed spotkaniem i po spotkaniu.' },
+      { s:'#program .blok', z:'Wzory', t:'Narzędzia, które zespoły poznają na spotkaniu, i narzędzia, z których dalej korzystają.' } ],
+    'spotkanie.html': [
+      { s:'main .gl', t:'Kod i nazwa spotkania.' },
+      { s:'main .meta', t:'Termin i miejsce spotkania.' },
+      { s:'nav.zakladki', t:'Zakładki przełączają widok między materiałami szkoleniowymi a zadaniami ze spotkania.' },
+      { s:'#z-materialy', t:'Materiały szkoleniowe. Przycisk „Otwórz” przy materiale otwiera go w nowej karcie przeglądarki.' },
+      { s:'.nawig', t:'Przyciski prowadzą do poprzedniego spotkania, do listy wszystkich spotkań i do następnego spotkania.' } ],
+    'projekt.html': {
+      uczestnik: [
+        { s:'#tresc .nk-grupa', t:'Narzędzia są pogrupowane według spotkań, na których zespoły je poznają.' },
+        { s:'#tresc .nk.akt', t:'Granatowy kafelek oznacza narzędzie dostępne do pracy. Kliknięcie kafelka otwiera dokument waszego zespołu.' },
+        { s:'#tresc .nk:not(.akt)', t:'Szary kafelek oznacza narzędzie, które zostanie udostępnione później.' } ],
+      zarzad: [
+        { s:'#tresc .tp', t:'Tabela dokumentów wszystkich zespołów. W kolumnach są zespoły, w wierszach dokumenty, a w polach status każdego dokumentu.' },
+        { s:'#tresc a[href*="pdf=1"]', t:'Przycisk „Pełny dokument (PDF)” pobiera dokument zespołu w formie do przeczytania i wydruku.' },
+        { s:'#tresc [data-akc]', t:'Przycisk „Akceptuję” staje się aktywny, gdy zespół przekaże dokument do akceptacji. Kliknięcie przycisku zapisuje akceptację.' } ] },
+    'konsultacje.html': [
+      { s:'.kz-zasady', t:'Zasady konsultacji: kiedy się odbywają, kto zapisuje zespół i do kiedy można odwołać zapis.' },
+      { s:'.kz-slot.nasz', t:'Konsultacja, na którą zapisał się wasz zespół, z tematem i przyciskiem do odwołania zapisu.' },
+      { s:'.kz-slot.wolny', t:'Wolny termin. Wpiszcie temat konsultacji w polu i kliknijcie „Zapisz zespół”.' },
+      { s:'#tresc section', z:'Wszystkie zapisy', t:'Lista wszystkich zapisów na konsultacje.' } ],
+    'wyniki.html': [
+      { s:'main .lead', t:'Opis wykresu: średnia samoocena grupy w dwunastu kompetencjach, w skali od 1 do 4.' },
+      { s:'#stanW .ramka-info', t:'Informacja, od ilu zapisanych samoocen strona pokazuje wyniki grupy.' },
+      { s:'#wykres', t:'Wykres wyników grupy. Kliknięcie ikony kompetencji pokazuje jej opis i rozkład odpowiedzi.' } ],
+    'dokument.html': {
+      uczestnik: [
+        { s:'#tytul', t:'Nazwa dokumentu i kod zespołu.' },
+        { s:'#stanDok', t:'Status dokumentu i numer wersji. Numer rośnie przy każdej zapisanej zmianie.' },
+        { s:'main > .przyciski', t:'Przycisk „Instrukcja” otwiera opis wszystkich pól. Przycisk „Drukuj lub zapisz PDF” przygotowuje dokument do wydruku. Przycisk „Rejestr zmian” pokazuje, kto i kiedy zmienił każde pole.' },
+        { s:'#tresc .sek .sg', t:'Nagłówek sekcji z jej numerem i nazwą. Dokument składa się z kilku takich sekcji.' },
+        { s:'#tresc .wy-btn', t:'Przycisk „Wyjaśnienie” pokazuje, po co jest pole, jak je wypełnić, przykłady i najczęstszy błąd.' },
+        { s:'#tresc input.wej, #tresc textarea.wej', t:'Pole do wpisania treści. Strona zapisuje wpis automatycznie, a zielony znak „Dane zapisane” potwierdza zapis.' },
+        { s:'#tresc [data-dodaj]', t:'Przycisk „Dodaj wiersz” dodaje nowy wiersz do tabeli. Strzałki przy wierszu zmieniają jego kolejność, a znak × usuwa wiersz.' },
+        { s:'#tresc [data-krok]', t:'Krok, który nie dotyczy waszego projektu, pomijacie tym przyciskiem. Kolejny krok pojawia się po wypełnieniu albo pominięciu bieżącego.' },
+        { s:'#tresc [data-symbox] .sym', t:'Wykres pokazuje, w którym miesiącu korzyści z projektu pokryją jego koszt. Suwakami ustawiacie, kiedy zaczynają się korzyści, jak szybko osiągają pełną kwotę i jaki okres obejmuje wykres.' },
+        { s:'#tresc .uwagi', t:'Uwagi prowadzącego do sekcji. Po uwzględnieniu uwagi kliknijcie „Oznacz jako uwzględnioną”.' },
+        { s:'#doAkcBtn', t:'Gdy dokument jest gotowy, zespół przekazuje go sponsorowi do akceptacji tym przyciskiem.' },
+        { s:'#rozwinBtn', t:'Przycisk „R · Rozwiń pola” powiększa wszystkie pola tekstowe tak, aby była widoczna cała wpisana treść.' } ],
+      zarzad: [
+        { s:'#tytul', t:'Nazwa dokumentu i kod zespołu.' },
+        { s:'#stanDok', t:'Status dokumentu i numer wersji.' },
+        { s:'#drukBtn', t:'Przycisk „Drukuj lub zapisz PDF” przygotowuje dokument do wydruku albo do zapisania jako plik PDF.' },
+        { s:'#podgladDok', t:'Pełna treść dokumentu zespołu w formie do czytania.' },
+        { s:'#podgladDok .sym', t:'Wykres pokazuje, w którym miesiącu korzyści z projektu pokryją jego koszt, według założeń zespołu opisanych pod wykresem.' },
+        { s:'#akcUw', t:'Pole na uwagi do decyzji. Wpisanie uwag nie jest obowiązkowe.' },
+        { s:'.akc-dec', t:'Decyzja o dokumencie: „Akceptuję”, „Akceptuję z uwagami” albo „Do poprawy”. Kliknięcie przycisku zapisuje decyzję.' } ],
+      prowadzacy: [
+        { s:'#stanDok', t:'Status dokumentu i numer wersji.' },
+        { s:'#podgladDok', t:'Pełna treść dokumentu zespołu.' },
+        { s:'#podgladDok .uwagi', t:'Uwagi do sekcji: wpisz uwagę w polu i kliknij „Dodaj uwagę”.' } ] },
+    'instrukcja.html': [
+      { s:'.ins-gl', t:'Najważniejsze informacje o dokumencie: po co jest, kto go wypełnia, kiedy i kto go akceptuje.' },
+      { s:'.ins-sek', t:'Opis pól jednej sekcji dokumentu. Przy każdym polu jest wyjaśnienie, sposób wypełnienia i przykłady.' },
+      { s:'#drukBtn', t:'Przycisk „Drukuj lub zapisz PDF” przygotowuje instrukcję do wydruku.' } ],
+    'prowadzacy.html': [
+      { s:'section.sekcja', z:'Kody uczestników', t:'Tworzenie kodów uczestników i pobieranie ich listy w pliku CSV.' },
+      { s:'section.sekcja', z:'Zespoły', t:'Przypisanie osób i kodów do zespołów.' },
+      { s:'section.sekcja', z:'Samoocena', t:'Wyniki samooceny kompetencji.' } ]
+  };
+  const widoczny = e => { if(!e) return false; const r=e.getBoundingClientRect(), st=getComputedStyle(e); return r.width>0&&r.height>0&&st.visibility!=='hidden'&&st.display!=='none'; };
+  function znajdz(k){ const L=[...document.querySelectorAll(k.s)].filter(widoczny); return k.z?L.find(e=>(e.innerText||'').trim().startsWith(k.z)):L[0]; }
+  function krokiOprowadzania(){
+    const biez=location.pathname.split('/').pop()||'index.html', w=OPROWADZANIE[biez]; if(!w) return [];
+    const r=rola(), L=Array.isArray(w)?w:(w[r]||w[r==='test'?'uczestnik':'']||w.uczestnik||[]);
+    const seen=new Set(); return L.map(k=>({k,e:znajdz(k)})).filter(x=>x.e&&!seen.has(x.e)&&seen.add(x.e));
+  }
+  function oprowadz(){
+    const K=krokiOprowadzania(); if(!K.length) return;
+    let i=0;
+    const w=document.createElement('div'); w.className='opr'; w.innerHTML='<div class="opr-tlo"></div><div class="opr-ramka"></div><div class="opr-okno" role="dialog" aria-live="polite"><div class="opr-licz"></div><div class="opr-t"></div><div class="opr-akcje"><button type="button" class="zml-btn" data-o="w">Wstecz</button><button type="button" class="zml-btn" data-o="d">Dalej</button><button type="button" class="zml-btn" data-o="z">Zakończ</button></div></div>';
+    document.body.appendChild(w);
+    const ramka=w.querySelector('.opr-ramka'), okno=w.querySelector('.opr-okno');
+    const naglH=()=>{ const h=document.querySelector('.naglowek'); return h?h.getBoundingClientRect().bottom:0; };
+    const ustaw=()=>{
+      const e=K[i].e, r=e.getBoundingClientRect(), vh=innerHeight, vw=innerWidth, p=6, wNagl=!!e.closest('.naglowek');
+      const top=Math.max(r.top-p, wNagl?0:naglH()), bot=Math.min(r.bottom+p, vh);
+      ramka.style.cssText=`top:${top}px;left:${Math.max(r.left-p,2)}px;width:${Math.min(r.width+2*p,vw-4)}px;height:${Math.max(bot-top,20)}px`;
+      if(vw<700){ okno.style.cssText='left:8px;right:8px;bottom:8px;top:auto;width:auto'; return; }
+      const ow=Math.min(420,vw-24), oh=okno.offsetHeight||190; let oy=bot+12, ox=Math.min(Math.max(r.left,12),vw-ow-12);
+      if(oy+oh>vh-8) oy=top-oh-12;
+      if(oy<naglH()+8) { oy=Math.max(naglH()+8, Math.min(vh-oh-12, top+12)); ox=vw-ow-16; }
+      oy=Math.max(naglH()+8,Math.min(oy,vh-oh-8));
+      okno.style.cssText=`top:${oy}px;left:${ox}px;width:${ow}px`;
+    };
+    const pokaz=()=>{
+      const e=K[i].e;
+      w.querySelector('.opr-licz').textContent=`Krok ${i+1} z ${K.length}`;
+      w.querySelector('.opr-t').textContent=K[i].k.t;
+      w.querySelector('[data-o="w"]').disabled=i===0;
+      const ost=i===K.length-1; w.querySelector('[data-o="d"]').classList.toggle('ukryty',ost); w.querySelector('.opr-akcje').style.gridTemplateColumns=ost?'repeat(2,1fr)':'';
+      if(!e.closest('.naglowek')){ const r=e.getBoundingClientRect(), nh=naglH(), mobOkno=innerWidth<700?okno.offsetHeight+16:0, wolne=innerHeight-nh-mobOkno;
+        e.style.scrollMarginTop=(nh+12)+'px'; e.style.scrollMarginBottom=(mobOkno+12)+'px';
+        e.scrollIntoView({block:r.height+24>wolne?'start':'center',behavior:'smooth'}); }
+      ustaw(); setTimeout(ustaw,350); setTimeout(ustaw,700);
+      w.querySelector(ost?'[data-o="z"]':'[data-o="d"]').focus({preventScroll:true});
+    };
+    const koniec=()=>{ removeEventListener('scroll',ustaw,true); removeEventListener('resize',ustaw); document.removeEventListener('keydown',kl,true); w.remove(); };
+    const kl=e=>{ if(e.key==='Escape'){ e.preventDefault(); koniec(); } else if(e.key==='ArrowRight'){ e.preventDefault(); if(i<K.length-1){i++;pokaz();} else koniec(); } else if(e.key==='ArrowLeft'){ e.preventDefault(); if(i>0){i--;pokaz();} } };
+    w.addEventListener('click',e=>{ const b=e.target.closest('[data-o]'); if(!b) return; const o=b.dataset.o; if(o==='z') return koniec(); if(o==='w'&&i>0){i--;pokaz();} if(o==='d'){ if(i<K.length-1){i++;pokaz();} else koniec(); } });
+    addEventListener('scroll',ustaw,true); addEventListener('resize',ustaw); document.addEventListener('keydown',kl,true);
+    pokaz();
   }
   function przewodnikBtn(){
     const B='fill="#fff"';
