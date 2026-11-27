@@ -222,7 +222,8 @@ if (APM.wymagajLogowania()) (async () => {
   const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const zl = n => (Math.round(+n || 0)).toLocaleString('pl-PL') + ' zł';
   const dt = s => s ? new Date(s).toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
-  const wszystkiePola = DEF.sekcje.flatMap(s => (s.pola || []).flatMap(p => p.dod ? [p, p.dod] : [p]));
+  const zDod = p => p.dod ? [p, ...zDod(p.dod)] : [p];
+  const wszystkiePola = DEF.sekcje.flatMap(s => (s.pola || []).flatMap(zDod));
   const defPola = id => wszystkiePola.find(p => p.id === id);
   const wart = id => { const p = D.pola[id]; if (p) return p.v; const df = defPola(id); if (df && df.typ === 'etapy') return {}; if (df && df.dom) return df.dom(ZESP, POWIAZANE); if (df && df.stale) return df.wiersze.map(w => Object.assign({}, w)); return df && df.typ === 'tabela' ? [] : ''; };
   const pusty = pustaWartosc;
@@ -316,12 +317,12 @@ if (APM.wymagajLogowania()) (async () => {
   }
   function sumy() {
     const t = id => (wart(id) || []), s = (id, f) => t(id).filter(f || (() => 1)).reduce((a, r) => a + (+r.kw || 0), 0);
-    return { strata: s('w1'), tw: s('w3', r => r.rodz === 'twarda'), mi: s('w3', r => r.rodz === 'miękka'), bud: s('w5'), utrz: D.kroki.w5u === 'pom' ? 0 : s('w5u') };
+    return { strata: s('w1'), tw: s('w3', r => r.rodz === 'twarda'), mi: s('w3', r => r.rodz === 'miękka'), bud: s('w5'), utrz: D.kroki.w5u === 'pom' ? 0 : s('w5u'), lata: +wart('w5c') > 0 ? +wart('w5c') : 0 };
   }
   function wyliczenie() {
     const S = sumy();
-    return `<div class="netto"><div>Strata rocznie (krok 1)<b>${zl(S.strata)}</b></div><div>Ramowy budżet (krok 5)<b>${zl(S.bud)}</b></div>
-      <div>Korzyść netto I roku, tylko oszczędności twarde<b>${zl(S.tw - S.bud)}</b></div><div>Korzyść netto I roku, twarde i miękkie<b>${zl(S.tw + S.mi - S.bud)}</b></div></div>`;
+    return `<div class="netto"><div>Strata rocznie (krok 1)<b>${zl(S.strata)}</b></div><div>Koszt utrzymania rocznie (krok 5)<b>${zl(S.utrz)}</b></div>
+      <div>Roczna korzyść netto po wdrożeniu, tylko oszczędności twarde<b>${zl(S.tw - S.utrz)}</b></div><div>Roczna korzyść netto po wdrożeniu, twarde i miękkie<b>${zl(S.tw + S.mi - S.utrz)}</b></div></div>`;
   }
   /* ----- symulacja zwrotu z inwestycji (krok 6 karty) -----
      Ustawienia suwaków (czas) zespół zapisuje w polu „sym” dokumentu, poza polami karty: zapis nie zmienia wersji ani statusu karty.
@@ -357,7 +358,7 @@ if (APM.wymagajLogowania()) (async () => {
     const x = m => L + pw * m / u.hor, y = v => T + ph * (hi - v) / (hi - lo);
     let g = '';
     for (let v = lo; v <= hi + 1e-6; v += krok) g += `<line x1="${L}" x2="${L + pw}" y1="${y(v)}" y2="${y(v)}" stroke="${Math.abs(v) < 1e-6 ? '#5A6873' : '#DDE2E7'}" stroke-width="${Math.abs(v) < 1e-6 ? 1.5 : 1}"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="#5A6873" style="cursor:help"><title>${opt.osY}</title>${tysZl(v)}</text>`;
-    const co = u.hor <= 24 ? 3 : 6;
+    const co = u.hor <= 24 ? 3 : u.hor <= 60 ? 6 : 12;
     for (let m = 0; m <= u.hor; m += co) g += `<line x1="${x(m)}" x2="${x(m)}" y1="${T + ph}" y2="${T + ph + 5}" stroke="#5A6873"/><text x="${x(m)}" y="${T + ph + 19}" text-anchor="middle" font-size="12" fill="#5A6873">${m}</text>`;
     g += `<text x="${L + pw / 2}" y="${H - 3}" text-anchor="middle" font-size="12" font-weight="600" fill="#5A6873">miesiące od rozpoczęcia projektu</text>`;
     if (u.start > 0) g += `<rect x="${x(0)}" y="${T}" width="${x(u.start) - x(0)}" height="${ph}" fill="#F3D27A" opacity=".18"/><text x="${(x(0) + x(u.start)) / 2}" y="${T - 6}" text-anchor="middle" font-size="11" font-weight="700" fill="#5C4810">wdrożenie</text>`;
@@ -382,7 +383,7 @@ if (APM.wymagajLogowania()) (async () => {
     { k: 'nT', kol: '#1F4460', gr: 3.5, dash: '7 5', et: 'Wynik narastający: tylko korzyści twarde minus koszty', opis: (u, v) => `Wynik po ${u.hor} miesiącach liczony tylko z oszczędności twardych: ${zlD(v)}. To suma oszczędności twardych od początku projektu minus suma kosztów wdrożenia i utrzymania. ${v >= 0 ? 'Wartość dodatnia oznacza, że same oszczędności twarde pokrywają koszty.' : 'Wartość ujemna oznacza, że same oszczędności twarde nie pokrywają kosztów.'}` }];
   function symWykresy(S, u, R) {
     return `<div class="sym-tyt">Miesięcznie: koszt i korzyść w każdym miesiącu</div>${wykres(R.M.slice(1), u, SER_M, { aria: 'Wykres miesięczny kosztu i korzyści', osY: 'Kwota w złotych w danym miesiącu', schodki: true, zmiana: S.utrz > 0 || S.bud > 0 ? { v: S.utrz / 12, et: S.utrz > 0 ? 'od tego miesiąca: koszt utrzymania' : 'brak kosztu utrzymania w kroku 5' } : null })}${leg(SER_M)}
-      <div class="sym-tyt">Narastająco: suma korzyści minus suma kosztów od początku projektu</div>${wykres(R.M, u, SER_N, { aria: 'Wykres narastającego wyniku projektu', osY: 'Suma korzyści minus suma kosztów od początku projektu, w złotych; poniżej zera projekt jeszcze się nie zwrócił', znaczniki: [{ m: R.zW, kol: '#2F7D4F', et: `Zwrot (twarde i miękkie): miesiąc ${R.zW}`, opis: `Miesiąc zwrotu: w ${R.zW}. miesiącu od rozpoczęcia projektu suma korzyści twardych i miękkich zrównuje się z sumą kosztów wdrożenia i utrzymania.` }, { m: R.zT, kol: '#1F4460', et: `Zwrot (tylko twarde): miesiąc ${R.zT}`, opis: `Miesiąc zwrotu z samych oszczędności twardych: w ${R.zT}. miesiącu suma oszczędności twardych zrównuje się z sumą kosztów wdrożenia i utrzymania.` }] })}${leg(SER_N)}`;
+      <div class="sym-tyt">Narastająco: suma korzyści minus suma kosztów od początku projektu</div>${wykres(R.M, u, SER_N, { aria: 'Wykres narastającego wyniku projektu', osY: 'Suma korzyści minus suma kosztów od początku projektu, w złotych; poniżej zera projekt jeszcze się nie zwrócił', znaczniki: [{ m: R.zW, kol: '#2F7D4F', et: `Zwrot (twarde i miękkie): miesiąc ${R.zW}`, opis: `Miesiąc zwrotu: w ${R.zW}. miesiącu od rozpoczęcia projektu suma korzyści twardych i miękkich zrównuje się z sumą kosztów wdrożenia i utrzymania.` }, { m: R.zT, kol: '#1F4460', et: `Zwrot (tylko twarde): miesiąc ${R.zT}`, opis: `Miesiąc zwrotu z samych oszczędności twardych: w ${R.zT}. miesiącu suma oszczędności twardych zrównuje się z sumą kosztów wdrożenia i utrzymania.` }, { m: S.lata && S.lata * 12 <= u.hor ? S.lata * 12 : null, kol: '#C8202E', et: `Koniec używania: miesiąc ${S.lata * 12}`, opis: `Koniec używania rozwiązania według kroku 5: po ${S.lata} latach, czyli w ${S.lata * 12}. miesiącu od rozpoczęcia projektu. Korzyści po tym miesiącu nie są pewne, bo rozwiązanie trzeba będzie wymienić albo zmodernizować.` }] })}${leg(SER_N)}`;
   }
   function symWyniki(S, u, R) {
     const kon = R.M[R.M.length - 1], txt = (z, kw) => kw <= 0 ? 'brak korzyści w kroku 3' : z === null ? `nie zwraca się w ciągu ${u.hor} miesięcy` : `w miesiącu ${z}`;
@@ -403,6 +404,9 @@ if (APM.wymagajLogowania()) (async () => {
     const w3 = (wart('w3') || []).filter(r => +r.kw > 0), naj = w3.slice().sort((a, b) => b.kw - a.kw)[0];
     if (naj && kor > 0 && naj.kw / kor > .5 && w3.length > 1) O.push(`Pozycja „${String(naj.kor || '').trim().split('\n')[0]}” daje ${Math.round(naj.kw / kor * 100)}% wszystkich korzyści. Od wiarygodności tego jednego szacunku zależy wynik projektu.`);
     if (S.strata > 0 && kor > S.strata) O.push('Korzyści z kroku 3 są wyższe niż strata z kroku 1. Projekt nie może usunąć większej straty, niż istnieje, więc któryś szacunek wymaga sprawdzenia.');
+    if (S.lata && kor > 0) { const mz = S.lata * 12;
+      if (R.zW === null || R.zW > mz) O.push(`Zespół zakłada, że rozwiązanie będzie używane przez ${S.lata} ${S.lata === 1 ? 'rok' : S.lata < 5 ? 'lata' : 'lat'} (${mz} mies.). ${R.zW === null ? `W okresie pokazanym na wykresach projekt się nie zwraca` : `Projekt zwraca się dopiero w miesiącu ${R.zW}`}, więc w tych założeniach rozwiązanie przestanie być używane, zanim korzyści pokryją koszty. Jeśli projekt ma powstać, zespół musi go uzasadnić korzyściami bez kwoty z kroku 4 albo obniżyć koszty.`);
+      else if (S.tw > 0 && (R.zT === null || R.zT > mz)) O.push(`Licząc wszystkie korzyści, projekt zwraca się w czasie używania rozwiązania (${S.lata} × 12 = ${mz} mies.). Licząc tylko oszczędności twarde, ${R.zT === null ? 'nie zwraca się w okresie pokazanym na wykresach' : `zwraca się dopiero w miesiącu ${R.zT}`}, czyli po zakończeniu używania. Wynik zależy więc od tego, czy Spółka przeznaczy uwolniony czas na inne zadania.`); }
     if (wart('w7') === 'niska') O.push('Zespół ocenił pewność szacunku jako niską (krok 7). Kwoty zostaną sprawdzone w diagnozie.');
     return `<div class="sym-opis"><div class="sym-tyt" style="margin:0 0 4px">Jak czytać wykresy</div>${Z.map(t => `<p>${t}</p>`).join('')}${O.length ? `<div class="sym-ostrz"><b>Na co zwrócić uwagę</b><ul>${O.map(t => `<li>${t}</li>`).join('')}</ul></div>` : ''}</div>`;
   }
@@ -414,7 +418,7 @@ if (APM.wymagajLogowania()) (async () => {
     const R = symLicz(S, u);
     const suw = (k, et, min, max, st, jedn) => `<label class="sym-suw"><span>${et}: <b data-symw="${k}">${u[k]} ${jedn}</b></span><input type="range" min="${min}" max="${max}" step="${st}" value="${u[k]}" data-sym="${k}"></label>`;
     return `<div class="sym"><div class="et" style="font-weight:700;color:var(--g);font-size:15px;margin-bottom:4px">Kiedy projekt zacznie się zwracać</div>
-      ${edycja ? `<div class="sym-suwaki">${suw('start', 'Wdrożenie trwa', 1, 24, 1, 'mies.')}${suw('doj', 'Korzyści rosną stopniowo do pełnej kwoty przez', 0, 12, 1, 'mies.')}${suw('hor', 'Okres na wykresach', 12, 60, 12, 'mies.')}</div>` : ''}
+      ${edycja ? `<div class="sym-suwaki">${suw('start', 'Wdrożenie trwa', 1, 24, 1, 'mies.')}${suw('doj', 'Korzyści rosną stopniowo do pełnej kwoty przez', 0, 12, 1, 'mies.')}${suw('hor', 'Okres na wykresach', 12, 120, 12, 'mies.')}</div>` : ''}
       <div data-symwyk>${symTresc(S, u, R)}</div>
       <p class="pod sym-zal" style="margin:6px 0 0;font-size:13px;color:var(--tekst2)">${symZal(u)}${edycja ? ' Ustawienia suwaków nie zmieniają treści ani wersji karty.' : ''}</p></div>`;
   }
@@ -537,7 +541,7 @@ if (APM.wymagajLogowania()) (async () => {
     document.querySelectorAll('[data-podp]').forEach(e => { const dp = defPola(e.dataset.podp); if (dp && dp.podpowiedz) e.innerHTML = dp.podpowiedz(wierszeTabeli(dp) || [], wart); });
     if (df && df.typ === 'tabela' && df.suma) { const box = $(`[data-in="${id}"]`); const f = document.activeElement && box.contains(document.activeElement); if (!f) { box.innerHTML = tabela(df, !EDYTUJE); podepnijPola(box); } else { const s = box.querySelector('.suma'); if (s) { const t = document.createElement('div'); t.innerHTML = tabela(df, !EDYTUJE); s.replaceWith(t.querySelector('.suma')); } } }
     const wy = document.querySelector('[data-wyl]'); if (wy) { wy.innerHTML = wyliczenie(); odswiezSym(); }
-    const sek = DEF.sekcje.find(s => s.kroki && s.pola.some(p => p.id === id || (p.dod && p.dod.id === id)));
+    const sek = DEF.sekcje.find(s => s.kroki && s.pola.some(p => zDod(p).some(q => q.id === id)));
     if (sek) { const przed = sek.pola.map(p => krokZrobiony(p.id)).join(); if (lok._kroki !== przed) { lok._kroki = przed; if (!document.activeElement || !document.activeElement.closest('.wej')) rysuj(); else setTimeout(() => { if (!document.activeElement || !document.activeElement.closest('.wej')) rysuj(); }, 0); } }
     odswiezStan();
   }
@@ -637,7 +641,7 @@ if (APM.wymagajLogowania()) (async () => {
   function budujWydruk(ekran) {
     const [, st] = stanDok(), brak = '<span class="w-brak">do uzupełnienia</span>';
     const wP = p => {
-      if (p.typ === 'wyliczenie') { const S = sumy(); return `<div class="w-pole"><div class="w-et">${p.et}</div><table class="w-tab"><tr><th>Strata rocznie</th><th>Ramowy budżet</th><th>Korzyść netto I roku (twarde)</th><th>Korzyść netto I roku (twarde i miękkie)</th></tr><tr><td class="l">${zl(S.strata)}</td><td class="l">${zl(S.bud)}</td><td class="l">${zl(S.tw - S.bud)}</td><td class="l">${zl(S.tw + S.mi - S.bud)}</td></tr></table></div>${symulacja(false)}`; }
+      if (p.typ === 'wyliczenie') { const S = sumy(); return `<div class="w-pole"><div class="w-et">${p.et}</div><table class="w-tab"><tr><th>Strata rocznie</th><th>Koszt utrzymania rocznie</th><th>Roczna korzyść netto po wdrożeniu (twarde)</th><th>Roczna korzyść netto po wdrożeniu (twarde i miękkie)</th></tr><tr><td class="l">${zl(S.strata)}</td><td class="l">${zl(S.utrz)}</td><td class="l">${zl(S.tw - S.utrz)}</td><td class="l">${zl(S.tw + S.mi - S.utrz)}</td></tr></table></div>${symulacja(false)}`; }
       if (D.kroki[p.id] === 'pom') return `<div class="w-pole"><div class="w-et">${p.et}</div><div class="w-pom">Krok pominięty: nie dotyczy projektu.</div></div>`;
       const v = p.typ === 'tabela' ? wierszeTabeli(p) : wart(p.id);
       let t;
